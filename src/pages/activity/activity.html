@@ -1,0 +1,18 @@
+<!--- Settings TAB lauout-1 -->
+<ion-header>
+    <ion-navbar>
+        <ion-title>Actividad</ion-title>
+    </ion-navbar>
+</ion-header>
+<ion-content>
+    <ion-list tabPage1 *ngIf="params != null">
+        <ion-item border no-lines *ngFor="let item of params.items; let i = index;" (click)="onItemClick(item)">
+            <ion-avatar item-start>
+                <img [src]="item.avatar" />
+            </ion-avatar>
+            <h2 item-title>{{item.title}}</h2>
+            <h3 item-subtitle text-wrap>{{item.subtitle}}</h3>
+            <ion-badge item-end class="badge-dark">{{item.follow}}</ion-badge>
+        </ion-item>
+    </ion-list>
+</ion-content>

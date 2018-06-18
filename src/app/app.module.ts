@@ -6,24 +6,34 @@ import { StatusBar } from '@ionic-native/status-bar';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
+import { Login } from '../pages/login/login';
+import { LoadingService } from '../services/loading-service';
+import { TabsModule } from '../components/tabs/tabs.module';
+import { ExpandableList } from '../components/expandable-list/expandable-list';
 
 @NgModule({
   declarations: [
     MyApp,
-    HomePage
+    HomePage,
+    Login,
+    ExpandableList
   ],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
+    TabsModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
-    HomePage
+    HomePage,
+    Login,
+    ExpandableList
   ],
   providers: [
     StatusBar,
     SplashScreen,
+    LoadingService,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

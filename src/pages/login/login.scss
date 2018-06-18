@@ -1,0 +1,66 @@
+/*  #Style Login + logo 1
+================================================*/
+login-layout-1 {
+  ion-grid,
+  ion-row {
+    height: 100%;
+  }
+  // Settings Logo
+  img {
+    max-width: 72px;
+    max-height: 72px;
+    margin-bottom: 24px;
+    display: block;
+  }
+
+  ion-item {
+    padding-left: 0 !important;
+    padding-bottom: 15px !important;
+
+    [error-field] {
+      margin: 0 !important;
+      position: absolute !important;
+      bottom: 0 !important;
+      right: 0 !important;
+      font-size: 12px;
+    }
+    .item-inner {
+      border-bottom-color: theme-colors('textColors', 'secondary') !important;
+      box-shadow: none !important;
+  }
+  ion-label {
+    margin: 0 !important;
+  }
+}
+
+  [stacked] {
+    font-size: 10px !important;
+  }
+
+  [login-title] {
+    color: color($loginPage, login-title-logo-1);
+  }
+
+  [login-subtitle] {
+    color: color($loginPage, login-subtitle-logo-1);
+  }
+
+
+  [description] {
+    font-size: $h5-font-size !important;
+    font-weight: 100;
+    letter-spacing: 1px;
+    color: theme-colors('textColors', 'secondary');
+  }
+
+  // Settings Button
+  [bottom-form] {
+    button:nth-child(1) {
+      margin: 12px 0;
+    }
+
+    [default-button] {
+      font-weight: 400 !important;
+    }
+  }
+}
