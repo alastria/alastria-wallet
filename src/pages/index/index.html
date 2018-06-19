@@ -1,12 +1,16 @@
 <!--- Settings TAB lauout-1 -->
 <ion-header>
-    <ion-navbar>
-        <ion-title>Inicio</ion-title>
-    </ion-navbar>
+    <ion-toolbar style="padding-top: 10px">
+        <div background-size *ngIf="data != null" [ngStyle]="{'background-image': 'url(' + data.headerImage + ')'}">
+            <div search-bar-bcg>
+                <!-- Header Title -->
+                <h1 ion-text no-margin padding-left search-bar-title>{{data.title}}</h1>
+                <ion-searchbar [(ngModel)]="searchTerm" (ionInput)="onEvent('onTextChange', $event)"></ion-searchbar>
+            </div>
+        </div>
+    </ion-toolbar>
 </ion-header>
 <ion-content>
-    <expandable-list
-        [data]="params.data"
-        [events]="params.events">
+    <expandable-list [data]="params.data" [events]="params.events">
     </expandable-list>
 </ion-content>

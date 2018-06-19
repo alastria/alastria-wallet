@@ -9,14 +9,15 @@ import { HomePage } from '../pages/home/home';
 import { Login } from '../pages/login/login';
 import { LoadingService } from '../services/loading-service';
 import { TabsModule } from '../components/tabs/tabs.module';
-import { ExpandableList } from '../components/expandable-list/expandable-list';
+import { QRScanner } from '@ionic-native/qr-scanner'
+import { TabsPage } from '../pages/tabsPage/tabsPage';
 
 @NgModule({
   declarations: [
     MyApp,
     HomePage,
-    Login,
-    ExpandableList
+    TabsPage,
+    Login
   ],
   imports: [
     BrowserModule,
@@ -27,13 +28,14 @@ import { ExpandableList } from '../components/expandable-list/expandable-list';
   entryComponents: [
     MyApp,
     HomePage,
-    Login,
-    ExpandableList
+    TabsPage,
+    Login
   ],
   providers: [
     StatusBar,
     SplashScreen,
     LoadingService,
+    QRScanner,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

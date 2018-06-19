@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
-import { IonicPage } from 'ionic-angular';
+import { Component, ViewChild } from '@angular/core';
 import { ToastService } from '../../services/toast-service';
 import { TabsService } from '../../services/tabs-service';
+import { IonicPage, NavController } from 'ionic-angular/umd';
 
 @IonicPage()
 @Component({
@@ -10,14 +10,16 @@ import { TabsService } from '../../services/tabs-service';
 })
 export class Index {
 
-  params: any = {};
+  //@ViewChild('home') nav: NavController
 
-  constructor(private tabsService: TabsService, private toastCtrl: ToastService) {
-    this.tabsService.load("tab1").subscribe(snapshot => {
-      this.params = snapshot;
-    });
+  params: any = {};
+  data: any = {};
+  searchTerm: string = "";
+
+  constructor(private toastCtrl: ToastService) {
+    console.log("[Debug] Index enter");
     this.getList();
-    
+    this.setSearchBar();
   }
 
   ngOnChanges(changes: { [propKey: string]: any }) {
@@ -244,6 +246,16 @@ export class Index {
       'onButtonClick' : function(item: any) {
          console.log('onButtonClick');
       }
-  };
+    };
+  }
+
+  setSearchBar(){
+    this.data.headerTitle = "Inicio";
+    this.data.title = "Inicio";
+  }
+
+  onEvent(event: string, item: any) {//ITEM [EVENT OR SELECTED ITEM]
+    
+    console.log(event);
   }
 }

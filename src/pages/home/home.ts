@@ -1,16 +1,19 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { NavController } from 'ionic-angular';
+import { TabsPage } from '../tabsPage/tabsPage';
 
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
 })
 export class HomePage {
+
   login: any = {};
   tabs: any = {};
   isLoged: Boolean;
 
   constructor(public navCtrl: NavController) {
+    console.log("[Debug] HOME enter");
     let user = sessionStorage.getItem("loginName");
     console.log("Username " + user);
     if(!user){
@@ -18,13 +21,14 @@ export class HomePage {
       this.setLoginParams();
     }else{
       this.isLoged = true;
+      this.navCtrl.push(TabsPage);
     }
-    this.setTabsParams();
   }
 
   onLogin(params: any) {
     this.isLoged = true;
     sessionStorage.setItem("loginName", params.username);
+    this.navCtrl.push(TabsPage);
   }
 
   setLoginParams() {
@@ -62,21 +66,4 @@ export class HomePage {
       }
     };
   }
-
-  setTabsParams() {
-    this.tabs.data = [
-      { page: "Index", icon: "ios-home", title: "Inicio" },
-      { page: "Activity", icon: "ios-albums", title: "Actividad" },
-      { page: "Index", icon: "ios-qr-scanner", title: "Leer Qr" },
-      { page: "Index", icon: "ios-notifications", title: "Avisos" },
-      { page: "Index", icon: "ios-more", title: "Mas" }
-    ];
-
-    this.tabs.events = {
-      'onItemClick': function (item: any) {
-        console.log("onItemClick");
-      }
-    };
-  }
-
 }

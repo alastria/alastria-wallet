@@ -15,4 +15,4 @@ import { ExpandableList } from './expandable-list';
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 
-export class ExpandableLayout2Module { }
+export class ExpandableListModule { }
