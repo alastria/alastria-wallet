@@ -11,25 +11,31 @@ import { LoadingService } from '../services/loading-service';
 import { TabsModule } from '../components/tabs/tabs.module';
 import { QRScanner } from '@ionic-native/qr-scanner'
 import { TabsPage } from '../pages/tabsPage/tabsPage';
+import { RegisterHub } from '../pages/register/register-hub/register-hub';
+import { RegisterForm } from '../pages/register/register-form/register-form';
+import { RegisterFormModule } from '../pages/register/register-form/register-form.module';
 
 @NgModule({
   declarations: [
     MyApp,
     HomePage,
     TabsPage,
-    Login
+    Login,
+    RegisterHub
   ],
   imports: [
     BrowserModule,
     IonicModule.forRoot(MyApp),
-    TabsModule
+    TabsModule,
+    RegisterFormModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
     HomePage,
     TabsPage,
-    Login
+    Login,
+    RegisterHub
   ],
   providers: [
     StatusBar,

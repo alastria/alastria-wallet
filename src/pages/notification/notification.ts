@@ -44,7 +44,7 @@ export class Notification {
           "subtitle": "Lorem ipsum dolor sit amet, consectetur",
           "image": "assets/images/avatar/17.jpg",
           "ionBadge": "follow",
-          "delate": "Delete"
+          "delete": "Delete"
         },
         {
           "id": 2,
@@ -52,7 +52,7 @@ export class Notification {
           "subtitle": "Lorem ipsum dolor sit amet, consectetur",
           "image": "assets/images/avatar/18.jpg",
           "ionBadge": "follow",
-          "delate": "Delete"
+          "delete": "Delete"
         },
         {
           "id": 3,
@@ -60,7 +60,7 @@ export class Notification {
           "subtitle": "Lorem ipsum dolor sit amet, consectetur",
           "image": "assets/images/avatar/19.jpg",
           "ionBadge": "follow",
-          "delate": "Delete"
+          "delete": "Delete"
         },
         {
           "id": 4,
@@ -68,7 +68,7 @@ export class Notification {
           "subtitle": "Lorem ipsum dolor sit amet, consectetur",
           "image": "assets/images/avatar/20.jpg",
           "ionBadge": "follow",
-          "delate": "Delete"
+          "delete": "Delete"
         },
         {
           "id": 5,
@@ -76,7 +76,7 @@ export class Notification {
           "subtitle": "Lorem ipsum dolor sit amet, consectetur",
           "image": "assets/images/avatar/21.jpg",
           "ionBadge": "follow",
-          "delate": "Delete"
+          "delete": "Delete"
         },
         {
           "id": 6,
@@ -84,7 +84,7 @@ export class Notification {
           "subtitle": "Lorem ipsum dolor sit amet, consectetur",
           "image": "assets/images/avatar/22.jpg",
           "ionBadge": "follow",
-          "delate": "Delete"
+          "delete": "Delete"
         },
         {
           "id": 7,
@@ -92,7 +92,7 @@ export class Notification {
           "subtitle": "Lorem ipsum dolor sit amet, consectetur",
           "image": "assets/images/avatar/11.jpg",
           "ionBadge": "follow",
-          "delate": "Delete"
+          "delete": "Delete"
         },
         {
           "id": 8,
@@ -100,7 +100,7 @@ export class Notification {
           "subtitle": "Lorem ipsum dolor sit amet, consectetur",
           "image": "assets/images/avatar/17.jpg",
           "ionBadge": "follow",
-          "delate": "Delete"
+          "delete": "Delete"
         },
         {
           "id": 9,
@@ -108,7 +108,7 @@ export class Notification {
           "subtitle": "Lorem ipsum dolor sit amet, consectetur",
           "image": "assets/images/avatar/18.jpg",
           "ionBadge": "follow",
-          "delate": "Delete"
+          "delete": "Delete"
         }
       ]
     }

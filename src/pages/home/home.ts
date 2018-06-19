@@ -1,6 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { TabsPage } from '../tabsPage/tabsPage';
+import { RegisterHub } from '../register/register-hub/register-hub';
 
 @Component({
   selector: 'page-home',
@@ -31,6 +32,10 @@ export class HomePage {
     this.navCtrl.push(TabsPage);
   }
 
+  onRegister(params: any) {
+    this.navCtrl.push(RegisterHub);
+  }
+
   setLoginParams() {
     this.login.data = {
       "forgotPassword": "Forgot password?",
@@ -56,6 +61,7 @@ export class HomePage {
         console.log('onForgot:');
       },
       onRegister: function (params) {
+        that.onRegister(params);
         console.log('onRegister:');
       },
       onSkip: function (params) {
