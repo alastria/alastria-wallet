@@ -61,13 +61,19 @@ export class RegisterHub {
                     title: "Test 1",
                     description: "Desc test_1",
                     subtitle: "test1",
-                    logo: "assets/images/avatar/18.jpg"
+                    logo: "assets/images/alastria/index_1.jpg"
                 },
                 {
                     title: "Test 2",
                     description: "Desc test_2",
                     subtitle: "test2",
-                    logo: "assets/images/avatar/20.jpg"
+                    logo: "assets/images/alastria/index_2.jpg"
+                },
+                {
+                    title: "Test 3",
+                    description: "Desc test_3",
+                    subtitle: "test3",
+                    logo: "assets/images/alastria/index_3.jpg"
                 },
                 {
                     title: "Register"
