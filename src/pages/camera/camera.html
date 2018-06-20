@@ -13,6 +13,7 @@
   <ion-grid no-padding>
     <ion-row>
         <ion-col col-12>
+            <img *ngIf="!cameraEnabled" src="assets/images/gallery/qr.jpg" />
             <ion-list no-margin>
                 <ion-item item-bcg padding-right text-wrap>
                     <h1 item-title>{{data.format}}</h1>

@@ -40,74 +40,29 @@ export class Notification {
       items: [
         {
           "id": 1,
-          "title": "Grant Marshall",
-          "subtitle": "Lorem ipsum dolor sit amet, consectetur",
-          "image": "assets/images/avatar/17.jpg",
+          "title": "Samelan",
+          "subtitle": "Solicita acceso a 1 dato",
+          "image": "assets/images/logo/logo-samelan.jpg",
           "ionBadge": "follow",
+          "accept": "Accept",
           "delete": "Delete"
         },
         {
           "id": 2,
-          "title": "Pena Valdez",
-          "subtitle": "Lorem ipsum dolor sit amet, consectetur",
-          "image": "assets/images/avatar/18.jpg",
+          "title": "Univ. de Barcelona",
+          "subtitle": "Solicita acceso a 3 datos",
+          "image": "assets/images/logo/logo-univ.jpg",
           "ionBadge": "follow",
+          "accept": "Accept",
           "delete": "Delete"
         },
         {
           "id": 3,
-          "title": "Jessica Miles",
-          "subtitle": "Lorem ipsum dolor sit amet, consectetur",
-          "image": "assets/images/avatar/19.jpg",
+          "title": "Univ. de Barcelona",
+          "subtitle": "Solicita acceso a 1 dato",
+          "image": "assets/images/logo/logo-univ.jpg",
           "ionBadge": "follow",
-          "delete": "Delete"
-        },
-        {
-          "id": 4,
-          "title": "Kerri Barber",
-          "subtitle": "Lorem ipsum dolor sit amet, consectetur",
-          "image": "assets/images/avatar/20.jpg",
-          "ionBadge": "follow",
-          "delete": "Delete"
-        },
-        {
-          "id": 5,
-          "title": "Natasha Gamble",
-          "subtitle": "Lorem ipsum dolor sit amet, consectetur",
-          "image": "assets/images/avatar/21.jpg",
-          "ionBadge": "follow",
-          "delete": "Delete"
-        },
-        {
-          "id": 6,
-          "title": "White Castaneda",
-          "subtitle": "Lorem ipsum dolor sit amet, consectetur",
-          "image": "assets/images/avatar/22.jpg",
-          "ionBadge": "follow",
-          "delete": "Delete"
-        },
-        {
-          "id": 7,
-          "title": "Vanessa Ryan",
-          "subtitle": "Lorem ipsum dolor sit amet, consectetur",
-          "image": "assets/images/avatar/11.jpg",
-          "ionBadge": "follow",
-          "delete": "Delete"
-        },
-        {
-          "id": 8,
-          "title": "Carol Kelly",
-          "subtitle": "Lorem ipsum dolor sit amet, consectetur",
-          "image": "assets/images/avatar/17.jpg",
-          "ionBadge": "follow",
-          "delete": "Delete"
-        },
-        {
-          "id": 9,
-          "title": "Barrera Ramsey",
-          "subtitle": "Lorem ipsum dolor sit amet, consectetur",
-          "image": "assets/images/avatar/18.jpg",
-          "ionBadge": "follow",
+          "accept": "Accept",
           "delete": "Delete"
         }
       ]

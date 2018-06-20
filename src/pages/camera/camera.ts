@@ -13,6 +13,7 @@ export class Camera {
 
   data: any = {};
   qr: QRScanner;
+  cameraEnabled: boolean = true;
 
   constructor( qr: QRScanner ) {
     this.data = {
@@ -21,7 +22,10 @@ export class Camera {
       text: "Text"
     }
     
-    qr.prepare().then(this.onDone).catch((e: any) => console.log('Error is', e));
+    qr.prepare().then(this.onDone).catch((e: any) => {
+      this.cameraEnabled = false;
+      console.log('Error is', e)
+    });
 
   }
 

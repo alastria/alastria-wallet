@@ -30,9 +30,12 @@
                 <!--Action Button-->
                 <ion-item-options no-lines>
                   <!-- Button -->
-                  <button ion-button text-capitalize ion-text (click)="delete(item)">
-                  {{item.delete}}
-                </button>
+                  <button ion-button text-capitalize ion-text (click)="accept(item)">
+                    {{item.accept}}
+                  </button>
+                  <button ion-button style="background-color: #f44242" text-capitalize ion-text (click)="delete(item)">
+                    {{item.delete}}
+                  </button>
                 </ion-item-options>
               </ion-item-sliding>
             </ion-list>
