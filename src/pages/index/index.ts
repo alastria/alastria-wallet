@@ -14,7 +14,7 @@ export class Index {
 
   params: any = {};
   data: any = {};
-  searchTerm: string = "";
+  searchTerm: string = "Buscar";
 
   constructor(private toastCtrl: ToastService) {
     console.log("[Debug] Index enter");
@@ -34,7 +34,7 @@ export class Index {
     this.params.data = {
       "items" : [ {
         "backgroundImage" : "assets/images/alastria/index_1.jpg",
-        "expandItems" : {
+        "expandItems" : [{
           "description" : "00000000-X añadido el 31/12/2017",
           "iconsStars" : [ {
             "iconActive" : "icon-star",
@@ -48,28 +48,12 @@ export class Index {
             "iconActive" : "icon-star",
             "iconInactive" : "icon-star-outline",
             "isActive" : true
-          }, {
-            "iconActive" : "icon-star",
-            "iconInactive" : "icon-star-outline",
-            "isActive" : true
-          }, {
-            "iconActive" : "icon-star",
-            "iconInactive" : "icon-star-outline",
-            "isActive" : false
-          },
+          }
          ],
-          "reviews" : "4 (nivel 4)",
+          "reviews" : "3 (nivel 3)",
           "title" : "Documento Nacional de Identidad (DNI español)  "          
-        },
-        "icon" : "ios-arrow-dropright",
-        "iconText" : "Ver",
-        "id" : 1,
-        "subtitle" : "Tus datos más valiosos bajo control: tu dirección, tu fecha de nacimiento, tu email...",
-        "title" : "Datos básicos"
-      }, {
-        "backgroundImage" : "assets/images/alastria/index_2.jpg",
-        "expandItems" : {
-          "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
+        }, {
+          "description" : "c/ Pez, 1. 28010 Madrid",
           "iconsStars" : [ {
             "iconActive" : "icon-star",
             "iconInactive" : "icon-star-outline",
@@ -81,19 +65,27 @@ export class Index {
           }, {
             "iconActive" : "icon-star",
             "iconInactive" : "icon-star-outline",
-            "isActive" : true
-          }, {
-            "iconActive" : "icon-star",
-            "iconInactive" : "icon-star-outline",
-            "isActive" : true
-          }, {
-            "iconActive" : "icon-star",
-            "iconInactive" : "icon-star-outline",
             "isActive" : false
-          } ],
-          "reviews" : "4 (nivel 4)",
-          "title" : "Lorem ipsum dolor sit amet"
+          }
+         ],
+          "reviews" : "2 (nivel 2)",
+          "title" : "Dirección (vivienda)"
+        }],
+        "icon" : "ios-arrow-dropright",
+        "iconText" : "Ver",
+        "id" : 1,
+        "subtitle" : "Tus datos más valiosos bajo control: tu dirección, tu fecha de nacimiento, tu email...",
+        "title" : "Datos básicos"
+      }, {
+        "backgroundImage" : "assets/images/alastria/index_2.jpg",
+        "expandItems" : [{
+          "description" : "1 Dato compartido (12:45)",
+          "title" : "Cinesa"
         },
+        {
+          "description" : "Autentificación con AlastriaID (12:40)",
+          "title" : "Cinesa"
+        }],
         "icon" : "ios-arrow-dropright",
         "iconText" : "Ver",
         "id" : 2,
@@ -101,10 +93,10 @@ export class Index {
         "title" : "Actividad reciente"
       }, {
         "backgroundImage" : "assets/images/alastria/index_3.jpg",
-        "expandItems" : {
+        "expandItems" : [{
           "description" : "Accede a nuestros sistema de ayuda y consulta on-line para cualquier duda que tengas sobre Alastria.",
           "title" : "Ayuda on-line"
-        },
+        }],
         "icon" : "ios-arrow-dropright",
         "iconText" : "Ver",
         "id" : 3,

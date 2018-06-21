@@ -23,22 +23,24 @@
               </div>
               <!-- Expandable Full image with CTA Body -->
               <div class="item-accordion" [ngClass]="{'active': isGroupShown(group) }" [hidden]="!isGroupShown(group)">
-                <ion-item text-wrap no-lines>
-                  <!-- Icon Rating Star -->
-                  <ion-icon float-left *ngFor="let item of group.expandItems.iconsStars;let i = index"
-                  (click)="onStarClass(group.expandItems.iconsStars, i, $event);">
-                    <i icon-small *ngIf="item.isActive" class="icon {{item.iconActive}}"></i>
-                    <i icon-small *ngIf="!item.isActive" class="icon {{item.iconInactive}}"></i>
-                  </ion-icon>
-                  <!-- Reviews Star -->
-                  <span span-small>{{group.expandItems.reviews}}</span>
-                  <div (click)="onEvent('onItemClick', group, $event)">
-                    <!-- Titile -->
-                    <h2 margin-top subitem-title>{{group.expandItems.title}}</h2>
-                    <!-- Description -->
-                    <p subitem-subtitle>{{group.expandItems.description}}</p>
-                  </div>
-                </ion-item>
+                <div *ngFor="let groupItem of group.expandItems;">
+                  <ion-item text-wrap no-lines>
+                    <!-- Icon Rating Star -->
+                    <ion-icon float-left *ngFor="let item of groupItem.iconsStars;let i = index"
+                    (click)="onStarClass(groupItem.iconsStars, i, $event);">
+                      <i icon-small *ngIf="item.isActive" class="icon {{item.iconActive}}"></i>
+                      <i icon-small *ngIf="!item.isActive" class="icon {{item.iconInactive}}"></i>
+                    </ion-icon>
+                    <!-- Reviews Star -->
+                    <span span-small>{{groupItem.reviews}}</span>
+                    <div (click)="onEvent('onItemClick', groupItem, $event)">
+                      <!-- Titile -->
+                      <h2 margin-top subitem-title>{{groupItem.title}}</h2>
+                      <!-- Description -->
+                      <p subitem-subtitle>{{groupItem.description}}</p>
+                    </div>
+                  </ion-item>
+                </div>
               </div>
             </li>
           </ul>
