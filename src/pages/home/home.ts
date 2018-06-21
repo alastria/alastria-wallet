@@ -38,17 +38,18 @@ export class HomePage {
 
   setLoginParams() {
     this.login.data = {
-      "forgotPassword": "Forgot password?",
-      "labelPassword": "PASSWORD",
-      "labelUsername": "USERNAME",
-      "login": "Login",
+      "forgotPassword": "¿Olvidaste tu contraseña?",
+      "labelPassword": "CONTRASEÑA",
+      "labelUsername": "USUARIO",
+      "login": "Acceder",
       "logo": "assets/images/logo/logo.png",
-      "password": "Enter your password",
-      "register": "Register now!",
+      "password": "Introduce tu contraseña:",
+      "register": "Regístrate ahora",
       "skip": "",
-      "subtitle": "Welcome",
-      "title": "Login to your account",
-      "username": "Enter your username"
+      "subtitle": "Bienvenido",
+      "title": "Accede a tu cuenta",
+      "username": "Introduce tu usuario",
+      "dontHaveAccount": "¿No tienes una cuenta?"
     }
 
     let that = this;

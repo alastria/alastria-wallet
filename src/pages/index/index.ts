@@ -35,7 +35,7 @@ export class Index {
       "items" : [ {
         "backgroundImage" : "assets/images/alastria/index_1.jpg",
         "expandItems" : {
-          "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
+          "description" : "00000000-X añadido el 31/12/2017",
           "iconsStars" : [ {
             "iconActive" : "icon-star",
             "iconInactive" : "icon-star-outline",
@@ -56,14 +56,15 @@ export class Index {
             "iconActive" : "icon-star",
             "iconInactive" : "icon-star-outline",
             "isActive" : false
-          } ],
-          "reviews" : "4.12 (78 reviews)",
-          "title" : "Lorem ipsum dolor sit amet"
+          },
+         ],
+          "reviews" : "4 (nivel 4)",
+          "title" : "Documento Nacional de Identidad (DNI español)  "          
         },
         "icon" : "ios-arrow-dropright",
-        "iconText" : "Read more",
+        "iconText" : "Ver",
         "id" : 1,
-        "subtitle" : "Tus datos más valiosos bajo control",
+        "subtitle" : "Tus datos más valiosos bajo control: tu dirección, tu fecha de nacimiento, tu email...",
         "title" : "Datos básicos"
       }, {
         "backgroundImage" : "assets/images/alastria/index_2.jpg",
@@ -90,46 +91,24 @@ export class Index {
             "iconInactive" : "icon-star-outline",
             "isActive" : false
           } ],
-          "reviews" : "4.12 (78 reviews)",
+          "reviews" : "4 (nivel 4)",
           "title" : "Lorem ipsum dolor sit amet"
         },
         "icon" : "ios-arrow-dropright",
-        "iconText" : "Read more",
+        "iconText" : "Ver",
         "id" : 2,
-        "subtitle" : "Lorem ipsum dolor sit amet",
-        "title" : "Seguridad"
+        "subtitle" : "Revista toda tu actividad reciente relacionada con tu AlastriaID",
+        "title" : "Actividad reciente"
       }, {
         "backgroundImage" : "assets/images/alastria/index_3.jpg",
         "expandItems" : {
-          "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
-          "iconsStars" : [ {
-            "iconActive" : "icon-star",
-            "iconInactive" : "icon-star-outline",
-            "isActive" : true
-          }, {
-            "iconActive" : "icon-star",
-            "iconInactive" : "icon-star-outline",
-            "isActive" : true
-          }, {
-            "iconActive" : "icon-star",
-            "iconInactive" : "icon-star-outline",
-            "isActive" : true
-          }, {
-            "iconActive" : "icon-star",
-            "iconInactive" : "icon-star-outline",
-            "isActive" : true
-          }, {
-            "iconActive" : "icon-star",
-            "iconInactive" : "icon-star-outline",
-            "isActive" : false
-          } ],
-          "reviews" : "4.12 (78 reviews)",
-          "title" : "Lorem ipsum dolor sit amet"
+          "description" : "Accede a nuestros sistema de ayuda y consulta on-line para cualquier duda que tengas sobre Alastria.",
+          "title" : "Ayuda on-line"
         },
         "icon" : "ios-arrow-dropright",
-        "iconText" : "Read more",
+        "iconText" : "Ver",
         "id" : 3,
-        "subtitle" : "Lorem ipsum dolor sit amet",
+        "subtitle" : "Aprende cómo utilizar AlastriaID.",
         "title" : "Ayuda"
       }]
     }

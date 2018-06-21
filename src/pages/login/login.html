@@ -8,12 +8,16 @@
       </ion-col>
       <ion-col align-self-end col-12 col-sm-12 col-md-12 offset-lg-3 col-lg-6 offset-xl-3 col-xl-6>
         <!---Logo-->
-        <img style="filter: invert(1)" [src]="data.logo">
+        <ion-row>
+          <ion-col text-center>
+            <img style="filter: invert(1)" [src]="data.logo">
+          </ion-col>
+        </ion-row>        
         <br>
         <!---Logo Subtitle-->
-        <h2 login-subtitle no-margin>{{data.subtitle}}</h2>
+        <!--h2 login-subtitle no-margin>{{data.subtitle}}</h2-->
         <!---Logo Title-->
-        <h1 ion-text padding-bottom login-title no-margin>{{data.title}}</h1>
+        <h1 ion-text padding-bottom login-title no-margin class="top10">{{data.title}}</h1>
         <br><br><br>
       </ion-col>
       <ion-col align-self-start col-12 col-sm-12 col-md-12 offset-lg-3 col-lg-6 offset-xl-3 col-xl-6>
@@ -31,15 +35,15 @@
         </ion-item>
       </ion-col>
       <!---Share Section-->
-      <ion-col align-self-end bottom-form col-12 col-sm-12 col-md-12 offset-lg-3 col-lg-6 offset-xl-3 col-xl-6>
+      <ion-col align-self-end bottom-form col-12 col-sm-12 col-md-12 offset-lg-3 col-lg-6 offset-xl-3 col-xl-6 class="top30">
         <!---Login button-->
         <button ion-button  full text-capitalize default-button (click)="onEvent('onLogin')">{{data.login}}</button>
         <!---Facebook button-->
-        <button ion-button default-button color="facebook" full text-capitalize block (click)="onEvent('onFacebook')">Login with Facebook</button>
+        <button ion-button default-button color="facebook" full text-capitalize block (click)="onEvent('onFacebook')">Login con AlastriaID</button>
       </ion-col>
       <ion-col col-12>
         <div description text-center>
-          <p>Don't have account? <a text-capitalize ion-text color="primary" (click)="onEvent('onRegister')">{{data.register}}</a></p>
+          <p>{{data.dontHaveAccount}} <a text-capitalize ion-text color="primary" (click)="onEvent('onRegister')">{{data.register}}</a></p>
         </div>
       </ion-col>
       <!---End Share Section-->
