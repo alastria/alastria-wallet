@@ -21,21 +21,21 @@ export class Options {
     this.animateItems = [
       {
         id: 1,
-        title: "Test 1",
+        title: "Modo oculto",
         selected: true,
         icon: "leaf",
         button: false
       },
       {
         id: 2,
-        title: "Test 2",
+        title: "Conexión con Bitcoin",
         selected: false,
         icon: "logo-bitcoin",
         button: false
       },
       {
         id: 2,
-        title: "LogOut",
+        title: "Salir del sistema",
         selected: false,
         icon: "log-out",
         button: true,
