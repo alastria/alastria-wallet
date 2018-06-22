@@ -43,7 +43,6 @@ export class Login {
         if (!this.password || this.password.length == 0) {
             this.isPasswordValid = false;
         }
-        
         return this.isPasswordValid && this.isUsernameValid;
      }
 }

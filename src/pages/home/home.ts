@@ -45,12 +45,14 @@ export class HomePage {
       "loginalastria": "Login con AlastriaID",
       "logo": "assets/images/logo/logo.png",
       "password": "Introduce tu contraseña:",
-      "register": "Regístrate ahora",
+      "register": "¡Regístrate ahora!",
       "skip": "",
       "subtitle": "Bienvenido",
       "title": "Accede a tu cuenta",
       "username": "Introduce tu usuario",
-      "dontHaveAccount": "¿No tienes una cuenta?"
+      "dontHaveAccount": "¿No tienes una cuenta?",
+      "errorUser": "Dato requerido",
+      "errorPassword": "Dato requerido"
     }
 
     let that = this;
