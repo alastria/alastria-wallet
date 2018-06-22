@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { IonicPage, NavController, App } from 'ionic-angular';
 import { ToastService } from '../../services/toast-service';
 import { TabsService } from '../../services/tabs-service';

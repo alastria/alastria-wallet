@@ -1,7 +1,6 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { TabsPage } from '../tabsPage/tabsPage';
-import { RegisterHub } from '../register/register-hub/register-hub';
 import { RegisterForm } from '../register/register-form/register-form';
 
 @Component({

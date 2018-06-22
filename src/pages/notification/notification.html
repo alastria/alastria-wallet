@@ -5,7 +5,7 @@
             <div search-bar-bcg>
                 <!-- Header Title -->
                 <h1 ion-text no-margin padding-left search-bar-title>{{data.title}}</h1>
-                <ion-searchbar [(ngModel)]="searchTerm" (ionInput)="onEvent('onTextChange', $event)"></ion-searchbar>
+                <ion-searchbar (ionInput)="onEvent('onTextChange', $event)"></ion-searchbar>
             </div>
         </div>
     </ion-toolbar>
@@ -30,7 +30,7 @@
                 <!--Action Button-->
                 <ion-item-options no-lines>
                   <!-- Button -->
-                  <button ion-button text-capitalize ion-text (click)="accept(item)">
+                  <button ion-button text-capitalize ion-text>
                     {{item.accept}}
                   </button>
                   <button ion-button style="background-color: #f44242" text-capitalize ion-text (click)="delete(item)">
