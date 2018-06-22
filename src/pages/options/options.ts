@@ -28,7 +28,7 @@ export class Options {
       },
       {
         id: 2,
-        title: "Conexión con Bitcoin",
+        title: "Uso de Wallet Criptomoneda",
         selected: false,
         icon: "logo-bitcoin",
         button: false
