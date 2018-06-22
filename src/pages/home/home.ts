@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { TabsPage } from '../tabsPage/tabsPage';
-import { RegisterForm } from '../register/register-form/register-form';
+import { RegisterHub } from '../register/register-hub/register-hub';
 
 @Component({
   selector: 'page-home',
@@ -33,7 +33,7 @@ export class HomePage {
   }
 
   onRegister(params: any) {
-    this.navCtrl.push(RegisterForm);
+    this.navCtrl.push(RegisterHub);
   }
 
   setLoginParams() {

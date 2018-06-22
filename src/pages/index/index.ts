@@ -125,8 +125,8 @@ export class Index {
     this.params.dataHeader = {
         "headerTitle": "News List",
         "headerImage": "assets/images/background-small/0.jpg",
-        "title": "What models will do when robots take their jobs?",
-        "subtitle": "Showbiz",
+        "title": sessionStorage.getItem("loginName"),
+        "subtitle": "Tu perfil",
         "expList" : {
           "data" : {
             "items": [{

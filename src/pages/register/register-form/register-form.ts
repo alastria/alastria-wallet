@@ -96,10 +96,6 @@ export class RegisterForm {
             this.isPasswordValid = false;
         }
 
-        if (!this.city || this.city.length == 0) {
-            this.isCityValid = false;
-        }
-
         if (!this.country || this.country.length == 0) {
             this.isCountryValid = false;
         }
@@ -109,7 +105,6 @@ export class RegisterForm {
         return this.isEmailValid &&
             this.isPasswordValid &&
             this.isUsernameValid &&
-            this.isCityValid &&
             this.isCountryValid;
     }
 }
