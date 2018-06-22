@@ -1,0 +1,15 @@
+<ion-content elastic-header>
+  <!-- Parallax Big Image -->
+  <div background-size id="elastic-header" [ngStyle]="{'background-image': 'url(' + headerImage + ')'}">
+    <!--Parallax Header Top-->
+    <div parallax-header *ngIf="data != null">
+      <!--Parallax Subtitle -->
+      <h2 no-margin parallax-subtitle>{{data.subtitle}}</h2>
+      <!--Parallax Title -->
+      <h2 no-margin parallax-title>{{data.title}}</h2>
+    </div>
+  </div>
+  <!--Content-->
+  <expandable-list [data]="data.expList.data" [events]="data.expList.events">
+    </expandable-list>
+</ion-content>
