@@ -37,12 +37,7 @@
                     <ion-input required placeholder="{{data.country}}" type="text" pattern="[a-zA-Z ]*" required [(ngModel)]="country"></ion-input>
                     <ion-label style="font-size: 16px;" error-field color="primary" *ngIf="!isCountryValid">{{data.errorCountry}}</ion-label>
                 </ion-item>
-                <!---Input field city-->
-                <ion-item>
-                    <ion-label stacked>{{data.lableCity}}</ion-label>
-                    <ion-input required placeholder="{{data.city}}" type="text" pattern="[a-zA-Z ]*" required [(ngModel)]="city"></ion-input>
-                    <ion-label style="font-size: 16px;" error-field color="primary" *ngIf="!isCityValid">{{data.errorCity}}</ion-label>
-                </ion-item>
+
                 <!---Register button-->
                 <button ion-button float-left clear button-clear text-capitalize (click)="onEvent('onBack')">{{data.back}}</button>
                 <button ion-button float-right clear button-clear text-capitalize (click)="onEvent('onRegister')">{{data.register}}</button>

@@ -27,26 +27,26 @@ export class RegisterForm {
 
     constructor(private navCtrl: NavController) {
         this.data = {
-            "toolbarTitle": "Register",
+            "toolbarTitle": "Registro",
             "logo": "assets/images/logo/logo.png",
-            "register": "register",
-            "title": "Register your new account",
-            "username": "Enter your username",
+            "register": "registro",
+            "title": "Registre su nueva cuenta",
+            "username": "Elija un nombre de usuario",
             "city": "Your home town",
-            "country": "Where are you from?",
-            "password": "Enter your password",
-            "email": "Your e-mail address",
+            "country": "¿De dónde eres?",
+            "password": "Introduzca una contraseña",
+            "email": "Introduzca un correo electrónico",
             "back": "Volver",
-            "lableUsername": "USERNAME",
-            "lablePassword": "PASSWORD",
+            "lableUsername": "CUENTA",
+            "lablePassword": "CONTRASEÑA",
             "lableEmail": "E-MAIL",
-            "lableCountry": "COUNTRY",
-            "lableCity": "CITY",
-            "errorUser": "Field can't be empty.",
-            "errorPassword": "Field can't be empty.",
-            "errorEmail": "Invalid email address.",
-            "errorCountry": "Field can't be empty.",
-            "errorCity": "Field can't be empty."
+            "lableCountry": "PAIS",
+            "lableCity": "CIUDAD",
+            "errorUser": "Este campo no puede estar vacío.",
+            "errorPassword": "Este campo no puede estar vacío.",
+            "errorEmail": "Formato incorrecto.",
+            "errorCountry": "Este campo no puede estar vacío.",
+            "errorCity": "Este campo no puede estar vacío."
         };
 
         this.events = {

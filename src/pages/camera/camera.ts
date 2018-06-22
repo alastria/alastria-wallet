@@ -18,8 +18,8 @@ export class Camera {
   constructor( qr: QRScanner ) {
     this.data = {
       title: "Cámara",
-      format: "Format",
-      text: "Text"
+      format: "Escaneo de QRCodes blockchain",
+      text: "Desde aquí puede leer códigos blockchain formateados como QRCode. Utilice la cámara de su dispositivo."
     }
     
     qr.prepare().then(this.onDone).catch((e: any) => {

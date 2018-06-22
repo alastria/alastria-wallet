@@ -58,8 +58,8 @@ export class RegisterHub {
         this.data = {
             items: [
                 {
-                    title: "Test 1",
-                    description: "Desc test_1",
+                    title: "Datos iniciales",
+                    description: "Introduzca sus datos",
                     subtitle: "test1",
                     logo: "assets/images/alastria/index_1.jpg"
                 },

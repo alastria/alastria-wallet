@@ -2,6 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { TabsPage } from '../tabsPage/tabsPage';
 import { RegisterHub } from '../register/register-hub/register-hub';
+import { RegisterForm } from '../register/register-form/register-form';
 
 @Component({
   selector: 'page-home',
@@ -33,7 +34,7 @@ export class HomePage {
   }
 
   onRegister(params: any) {
-    this.navCtrl.push(RegisterHub);
+    this.navCtrl.push(RegisterForm);
   }
 
   setLoginParams() {
@@ -42,6 +43,7 @@ export class HomePage {
       "labelPassword": "CONTRASEÑA",
       "labelUsername": "USUARIO",
       "login": "Acceder",
+      "loginalastria": "Login con AlastriaID",
       "logo": "assets/images/logo/logo.png",
       "password": "Introduce tu contraseña:",
       "register": "Regístrate ahora",

@@ -54,6 +54,7 @@ $h3-font-size: 22px;
 $h4-font-size: 17px;
 $h5-font-size: 15px;
 $h6-font-size: 14px;
+$alastria-sections-font-size: 30px;
 $text-font-size: 14px;
 
 /* # Settings Size Avatar Section
@@ -138,6 +139,7 @@ $colors: (
   accent: theme-colors('textColors', 'accent'),
   facebook: #3D599D,
   delateButton: #FF2D55,
+  action: #3c8e2f,
   delateButtonColorText: theme-colors('textColors', 'secondaryBase'),
 );
 
@@ -466,7 +468,7 @@ $icon-size:( 'icon-small': 22px, 'icon-medium': 32px, 'icon-large': 60px);
 
 [header-title] {
     color: theme-colors('textColors', 'accent');
-    font-size: $h1-font-size !important;
+    font-size: $alastria-sections-font-size !important;
     font-weight: 700 !important;
     line-height: 34px;
     margin-bottom: 9px !important;
@@ -493,7 +495,7 @@ $icon-size:( 'icon-small': 22px, 'icon-medium': 32px, 'icon-large': 60px);
 
 [item-subtitle] {
     color: theme-colors('textColors', 'secondary');
-    font-size: $h5-font-size !important;
+    font-size: $h4-font-size !important;
     font-weight: 300 !important;
     letter-spacing: 1px;
     overflow: hidden;
