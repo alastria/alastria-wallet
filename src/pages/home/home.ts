@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { TabsPage } from '../tabsPage/tabsPage';
 import { RegisterHub } from '../register/register-hub/register-hub';
+import { Camera } from '../camera/camera';
 
 @Component({
   selector: 'page-home',

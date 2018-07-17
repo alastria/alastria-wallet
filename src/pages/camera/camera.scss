@@ -1,3 +1,7 @@
 /*  #Style Settings for Tab-1
 ===========================================*/
 [Index] { }
+
+ion-app.cameraView, ion-app.cameraView ion-content, ion-app.cameraView .nav-decor {
+  background: transparent none !important; 
+}

@@ -10,19 +10,22 @@
     </ion-toolbar>
 </ion-header>
 <ion-content>
-  <ion-grid no-padding>
-    <ion-row>
-        <ion-col col-12>
-            <img *ngIf="!cameraEnabled" src="assets/images/gallery/qr.jpg" />
-            <ion-list no-margin>
-                <ion-item item-bcg padding-right text-wrap>
-                    <h1 item-title>{{data.format}}</h1>
-                </ion-item>
-                <ion-item item-bcg no-lines padding-right text-wrap>
-                    <p item-subtitle>{{data.text}}</p>
-                </ion-item>
-            </ion-list>
-        </ion-col>
-    </ion-row>
-</ion-grid>
+    <!-- El div inferior es el cuadrado que pondremos de estilo -->
+    <div style=""></div>
 </ion-content>
+<ion-footer style="margin-bottom: 49px">
+    <ion-grid no-padding position="bottom">
+        <ion-row>
+            <ion-col col-12>
+                <ion-list no-margin>
+                    <ion-item item-bcg padding-right text-wrap>
+                        <h1 item-title>{{data.format}}</h1>
+                    </ion-item>
+                    <ion-item item-bcg no-lines padding-right text-wrap>
+                        <p item-subtitle>{{data.text}}</p>
+                    </ion-item>
+                </ion-list>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-footer>
