@@ -124,7 +124,7 @@ export class Index {
 
     this.params.dataHeader = {
         "headerTitle": "News List",
-        "headerImage": "assets/images/background-small/0.jpg",
+        "headerImage": "assets/images/background-small/network-background-vector-19712134.jpg",
         "title": sessionStorage.getItem("loginName"),
         "subtitle": "Tu perfil",
         "expList" : {

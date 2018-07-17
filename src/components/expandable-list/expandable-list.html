@@ -1,10 +1,10 @@
 <!-- Themes Expandable - Full image with CTA -->
-  <ion-grid no-padding *ngIf="data != null">
+  <ion-grid no-margin no-padding *ngIf="data != null">
     <ion-row>
-      <ion-col col-12 no-padding no-margin>
+      <ion-col no-margin col-12 no-padding no-margin>
         <ion-list>
           <ul no-margin no-padding class="collapsible">
-            <li margin *ngFor="let group of data.items;">
+            <li collapsible-li-margin *ngFor="let group of data.items;">
               <!-- Expandable Full image with CTA Header-->
               <div class="collapsible-header" (click)="toggleGroup(group)">
                 <ion-item no-margin padding no-lines background-size [ngStyle]="{'background-image': 'url(' + group.backgroundImage + ')'}">
@@ -29,7 +29,7 @@
                       <i icon-small *ngIf="!item.isActive" class="icon {{item.iconInactive}}"></i>
                     </ion-icon>
                     <!-- Reviews Star -->
-                    <span span-small>{{groupItem.reviews}}</span>
+                    <span span-small *ngIf="groupItem.reviews != null">{{groupItem.reviews}}</span>
                     <div (click)="onEvent('onItemClick', groupItem, $event)">
                       <!-- Title -->
                       <ion-item border no-lines>

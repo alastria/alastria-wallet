@@ -10,8 +10,8 @@ export class Login {
     @Input() data: any;
     @Input() events: any;
 
-    public username: string;
-    public password: string;
+    public username: string = "demo";
+    public password: string = "demo";
 
     private isUsernameValid: boolean = true;
     private isPasswordValid: boolean = true;

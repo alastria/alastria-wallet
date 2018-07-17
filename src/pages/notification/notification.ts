@@ -37,6 +37,7 @@ export class Notification {
   getList() {
     this.data = {
       title: "Avisos",
+      subtitle: "Deslize cada elemento a la izquierda para ver sus opciones.",
       items: [
         {
           "id": 1,
@@ -44,8 +45,8 @@ export class Notification {
           "subtitle": "Solicita acceso a 1 dato",
           "image": "assets/images/logo/logo-samelan.jpg",
           "ionBadge": "follow",
-          "accept": "Accept",
-          "delete": "Delete"
+          "accept": "Aceptar",
+          "delete": "Borrar"
         },
         {
           "id": 2,
@@ -53,8 +54,8 @@ export class Notification {
           "subtitle": "Solicita acceso a 3 datos",
           "image": "assets/images/logo/logo-univ.jpg",
           "ionBadge": "follow",
-          "accept": "Accept",
-          "delete": "Delete"
+          "accept": "Aceptar",
+          "delete": "Borrar"
         },
         {
           "id": 3,
@@ -62,8 +63,8 @@ export class Notification {
           "subtitle": "Solicita acceso a 1 dato",
           "image": "assets/images/logo/logo-univ.jpg",
           "ionBadge": "follow",
-          "accept": "Accept",
-          "delete": "Delete"
+          "accept": "Aceptar",
+          "delete": "Borrar"
         }
       ]
     }
