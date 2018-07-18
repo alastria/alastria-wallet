@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { IonicPage } from 'ionic-angular';
 import { QRScanner, QRScannerStatus } from '../../../node_modules/@ionic-native/qr-scanner';
+import { Subscription } from '../../../node_modules/rxjs/Subscription';
 
 @IonicPage()
 @Component({
@@ -12,6 +13,7 @@ export class Login {
     @Input() events: any;
 
     private isCamera:boolean = false;
+    private scan:Subscription;
 
     private isUsernameValid: boolean = true;
     private isPasswordValid: boolean = true;
@@ -22,9 +24,11 @@ export class Login {
 
     scanBarcode() {
         if(this.isCamera){
-            this.hideCamera();
-            this.qr.hide();
-            this.onEvent("onLogin");
+            this.qr.hide().then(()=>{
+                this.hideCamera();
+                this.scan.unsubscribe();
+                this.onEvent("onLogin");
+            });
         }
         this.isCamera = true;
         this.qr.prepare().then((status: QRScannerStatus) => {
@@ -32,12 +36,13 @@ export class Login {
               // W00t, you have camera access and the scanner is initialized.
               // QRscanner.show() should feel very fast.
               this.showCamera()
-              let scan = this.qr.scan().subscribe(text => {
+              this.scan = this.qr.scan().subscribe(text => {
                 alert(text);
-                this.hideCamera();
-                this.qr.hide();
-                this.onEvent("onLogin");
-                scan.unsubscribe();
+                this.qr.hide().then(()=>{
+                    this.hideCamera();
+                    this.scan.unsubscribe();
+                    this.onEvent("onLogin");
+                });
               }, err => {
                 alert(err);
                 this.hideCamera();

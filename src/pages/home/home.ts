@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, IonicPage } from 'ionic-angular';
 import { TabsPage } from '../tabsPage/tabsPage';
 import { RegisterHub } from '../register/register-hub/register-hub';
 
@@ -22,18 +22,18 @@ export class HomePage {
       this.setLoginParams();
     }else{
       this.isLoged = true;
-      this.navCtrl.push(TabsPage);
+      this.navCtrl.setRoot(TabsPage);
     }
   }
 
   onLogin(params: any) {
     this.isLoged = true;
     sessionStorage.setItem("loginName", params.username);
-    this.navCtrl.push(TabsPage);
+    this.navCtrl.setRoot(TabsPage);
   }
 
   onRegister(params: any) {
-    this.navCtrl.push(RegisterHub);
+    this.navCtrl.setRoot(RegisterHub);
   }
 
   setLoginParams() {
