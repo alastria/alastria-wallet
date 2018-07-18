@@ -1,0 +1,52 @@
+<!-- Themes Expandable - Full image with CTA -->
+  <ion-grid no-margin no-padding *ngIf="data != null">
+    <ion-row>
+      <ion-col no-margin col-12 no-padding no-margin>
+        <ion-list>
+          <ul no-margin no-padding class="collapsible">
+            <li collapsible-li-margin *ngFor="let group of data.items;">
+              <!-- Expandable Full image with CTA Header-->
+              <div class="collapsible-header" (click)="toggleGroup(group)">
+                <ion-item no-margin padding no-lines background-size [ngStyle]="{'background-image': 'url(' + group.backgroundImage + ')'}">
+                  <!-- Subtitle Card -->
+                  <h3 ion-text text-wrap text-capitalize item-subtitle>{{group.subtitle}}</h3>
+                  <!-- Title Card -->
+                  <h1 ion-text text-wrap header-title>{{group.title}}</h1>
+                  <!-- Icon And Text For Read More-->
+                  <div read-more>
+                    <ion-icon icon-medium float-left name="{{group.icon}}"></ion-icon>
+                    <span span-medium>{{group.iconText}}</span>
+                  </div>
+                </ion-item>
+              </div>
+              <!-- Expandable Full image with CTA Body -->
+              <div class="item-accordion" [ngClass]="{'active': isGroupShown(group) }" [hidden]="!isGroupShown(group)">
+                <div *ngFor="let groupItem of group.expandItems;">
+                  <ion-item text-wrap no-lines>
+                    <!-- Icon Rating Star -->
+                    <ion-icon float-left *ngFor="let item of groupItem.iconsStars;let i = index" (click)="onStarClass(groupItem.iconsStars, i, $event);">
+                      <i icon-small *ngIf="item.isActive" class="icon {{item.iconActive}}"></i>
+                      <i icon-small *ngIf="!item.isActive" class="icon {{item.iconInactive}}"></i>
+                    </ion-icon>
+                    <!-- Reviews Star -->
+                    <span span-small *ngIf="groupItem.reviews != null">{{groupItem.reviews}}</span>
+                    <div (click)="onEvent('onItemClick', groupItem, $event)">
+                      <!-- Title -->
+                      <ion-item border no-lines>
+                        <ion-avatar item-start *ngIf="groupItem.avatar != null">
+                          <img [src]="groupItem.avatar" />
+                        </ion-avatar>
+                        <h2 margin-top subitem-title>{{groupItem.title}}</h2>
+                        <!-- Description -->
+                        <p subitem-subtitle>{{groupItem.description}}</p>
+                      </ion-item>
+                    </div>
+                  </ion-item>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-grid>

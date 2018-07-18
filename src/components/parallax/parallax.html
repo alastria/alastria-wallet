@@ -1,0 +1,15 @@
+<ion-content elastic-header style="margin-top: 100px">
+  <!-- Parallax Big Image -->
+  <div background-size id="elastic-header" [ngStyle]="{'background-image': 'url(' + headerImage + ')'}">
+    <!--Parallax Header Top-->
+    <div parallax-header *ngIf="data != null">
+      <img parallax-img style="filter: invert(1)" src="assets/images/logo/logo.png">
+      <!--Parallax Title -->
+      <h2 no-margin parallax-title>Wallet de {{data.title}}</h2>
+    </div>
+  </div>
+  <!--Content-->
+  <expandable-list [data]="data.expList.data" [events]="data.expList.events">
+  </expandable-list>
+  <div style="height: 200px"></div>
+</ion-content>
