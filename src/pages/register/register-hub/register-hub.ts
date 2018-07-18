@@ -1,6 +1,6 @@
 import { Component, Input, ViewChild } from '@angular/core';
 import { Slides, NavController } from 'ionic-angular';
-import { RegisterForm } from '../register-form/register-form';
+import { RegisterForm } from './register-form/register-form';
 
 @Component({
     selector: 'register-hub',

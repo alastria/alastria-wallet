@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { ToastService } from '../../services/toast-service';
-import { TabsService } from '../../services/tabs-service';
+import { ToastService } from '../../../services/toast-service';
+import { TabsService } from '../../../services/tabs-service';
 import { IonicPage } from 'ionic-angular/umd';
 
 @IonicPage()

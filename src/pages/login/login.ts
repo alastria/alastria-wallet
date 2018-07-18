@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { IonicPage, NavController } from 'ionic-angular';
-import { Camera } from '../camera/camera';
+import { IonicPage } from 'ionic-angular';
 import { QRScanner, QRScannerStatus } from '../../../node_modules/@ionic-native/qr-scanner';
 
 @IonicPage()

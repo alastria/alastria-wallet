@@ -1,8 +1,7 @@
 import { Component, Input } from '@angular/core';
-import { IonicPage, NavController } from 'ionic-angular';
-import { HomePage } from '../../home/home';
+import { NavController } from 'ionic-angular';
+import { HomePage } from '../../../home/home';
 
-@IonicPage()
 @Component({
     selector: 'register-form',
     templateUrl: 'register-form.html'

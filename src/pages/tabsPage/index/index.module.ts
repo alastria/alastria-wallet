@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
 import { Index } from './index';
-import { ExpandableListModule } from '../../components/expandable-list/expandable-list.module';
-import { ParallaxLayout1Module } from '../../components/layout-1/parallax-layout-1.module';
+import { ExpandableListModule } from '../../../components/expandable-list/expandable-list.module';
+import { ParallaxLayout1Module } from '../../../components/parallax/parallax-layout-1.module';
 
 @NgModule({
     declarations: [

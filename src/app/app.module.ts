@@ -12,7 +12,7 @@ import { TabsModule } from '../components/tabs/tabs.module';
 import { QRScanner } from '@ionic-native/qr-scanner'
 import { TabsPage } from '../pages/tabsPage/tabsPage';
 import { RegisterHub } from '../pages/register/register-hub/register-hub';
-import { RegisterFormModule } from '../pages/register/register-form/register-form.module';
+import { RegisterFormModule } from '../pages/register/register-hub/register-form/register-form.module';
 
 @NgModule({
   declarations: [

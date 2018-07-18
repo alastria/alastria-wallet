@@ -1,7 +1,7 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
 import { Login } from './login';
-import { Camera } from '../camera/camera';
+import { Camera } from '../tabsPage/camera/camera';
 
 @NgModule({
     declarations: [

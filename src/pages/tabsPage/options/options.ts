@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, App } from 'ionic-angular';
-import { ToastService } from '../../services/toast-service';
-import { TabsService } from '../../services/tabs-service';
-import { HomePage } from '../home/home';
+import { ToastService } from '../../../services/toast-service';
+import { TabsService } from '../../../services/tabs-service';
+import { HomePage } from '../../home/home';
 
 @IonicPage()
 @Component({

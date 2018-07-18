@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage } from 'ionic-angular';
-import { ToastService } from '../../services/toast-service';
-import { TabsService } from '../../services/tabs-service';
+import { ToastService } from '../../../services/toast-service';
+import { TabsService } from '../../../services/tabs-service';
 import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner';
 
 @IonicPage()
