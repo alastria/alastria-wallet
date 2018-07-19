@@ -1,0 +1,47 @@
+<!-- Themes Register + logo -->
+<!--Content -->
+<ion-content>
+    <ion-grid *ngIf="data != null">
+        <ion-row padding-horizontal align-items-start>
+            <ion-col col-12 no-padding>
+                <button ion-button text-capitalize button-clear clear float-right (click)="onEvent('onSkip')">{{data.skip}}</button>
+            </ion-col>
+            <ion-col no-padding col-12 col-sm-12 col-md-12 offset-lg-3 col-lg-6 offset-xl-3 col-xl-6>
+                <!---Logo-->
+                <ion-thumbnail>
+                    <img style="filter: invert(1)" [src]="data.logo">
+                </ion-thumbnail>
+                <!--Form Title-->
+                <h1 ion-text register-title padding-bottom color="registerTitle">{{data.title}}</h1>
+                <!---Input field username-->
+                <ion-item>
+                    <ion-label stacked>{{data.lableUsername}}</ion-label>
+                    <ion-input required placeholder="{{data.username}}" type="text" [(ngModel)]="username"></ion-input>
+                    <ion-label style="font-size: 16px;" error-field color="primary" no-margin *ngIf="!isUsernameValid">{{data.errorUser}}</ion-label>
+                </ion-item>
+                <!---Input field password-->
+                <ion-item>
+                    <ion-label stacked>{{data.lablePassword}}</ion-label>
+                    <ion-input required placeholder="{{data.password}}" type="password" [(ngModel)]="password"></ion-input>
+                    <ion-label style="font-size: 16px;" error-field color="primary" no-margin *ngIf="!isPasswordValid">{{data.errorPassword}}</ion-label>
+                </ion-item>
+                <!---Input field email-->
+                <ion-item>
+                    <ion-label stacked>{{data.lableEmail}}</ion-label>
+                    <ion-input required placeholder="{{data.email}}" type="email" pattern="[a-zA-Z0-9.-_]{1,}@[a-zA-Z.-]{2,}[.]{1}[a-zA-Z]{2,}" required [(ngModel)]="email"></ion-input>
+                    <ion-label style="font-size: 16px;" error-field color="primary" *ngIf="!isEmailValid">{{data.errorEmail}}</ion-label>
+                </ion-item>
+                <!---Input field country-->
+                <ion-item>
+                    <ion-label stacked>{{data.lableCountry}}</ion-label>
+                    <ion-input required placeholder="{{data.country}}" type="text" pattern="[a-zA-Z ]*" required [(ngModel)]="country"></ion-input>
+                    <ion-label style="font-size: 16px;" error-field color="primary" *ngIf="!isCountryValid">{{data.errorCountry}}</ion-label>
+                </ion-item>
+
+                <!---Register button-->
+                <button ion-button float-left clear button-clear text-capitalize (click)="onEvent('onBack')">{{data.back}}</button>
+                <button ion-button float-right clear button-clear text-capitalize (click)="onEvent('onRegister')">{{data.register}}</button>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-content>
