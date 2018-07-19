@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
 import { Camera } from './camera';
+import { NgxQRCodeModule } from '../../../../node_modules/ngx-qrcode2';
 
 @NgModule({
     declarations: [
@@ -8,10 +9,11 @@ import { Camera } from './camera';
     ],
     imports: [
         IonicPageModule.forChild(Camera),
+        NgxQRCodeModule
     ],
     exports:[
         Camera
     ]
 })
 
-export class ActivityModule { }
+export class CameraModule { }

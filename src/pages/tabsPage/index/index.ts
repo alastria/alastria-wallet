@@ -3,7 +3,9 @@ import { ToastService } from '../../../services/toast-service';
 import { TabsService } from '../../../services/tabs-service';
 import { IonicPage } from 'ionic-angular/umd';
 
-@IonicPage()
+@IonicPage({
+  defaultHistory: ['TabsPage']
+})
 @Component({
   templateUrl: 'index.html',
   providers: [TabsService, ToastService]

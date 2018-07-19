@@ -9,6 +9,10 @@ Example mobile application to implement Alastria user stories
 * Yarn
 * Ionic 3 / Angular 6
 * Android / iOS SDK
+* Cordova 7.1.0+
+* Barcode Scanner
+
+ionic cordova plugin add phonegap-plugin-barcodescanner
 
 ## Installation
 

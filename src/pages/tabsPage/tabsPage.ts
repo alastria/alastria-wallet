@@ -1,7 +1,8 @@
 import { Component, ViewChild } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, IonicPage } from 'ionic-angular';
 import { MyApp } from '../../app/app.component';
 
+@IonicPage()
 @Component({
   selector: 'tabsPage',
   templateUrl: 'tabsPage.html'
