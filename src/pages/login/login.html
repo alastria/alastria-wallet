@@ -1,9 +1,9 @@
 <!-- Themes Login + logo 1 -->
 <ion-content>
-  <ion-grid no-padding *ngIf="data != null">
+  <ion-grid ion-fixed no-padding *ngIf="data != null">
     <ion-row padding-horizontal align-self-center>
 
-      <ion-col align-self-end col-12 col-sm-12 col-md-12 offset-lg-3 col-lg-6 offset-xl-3 col-xl-6>
+      <ion-col style="margin-top: 50px" align-self-end col-12 col-sm-12 col-md-12 offset-lg-3 col-lg-6 offset-xl-3 col-xl-6>
         <!---Logo-->
         <ion-row>
           <ion-col text-center>
@@ -11,31 +11,10 @@
           </ion-col>
         </ion-row>
         <br>
-        <!---Logo Subtitle-->
-        <!--h2 login-subtitle no-margin>{{data.subtitle}}</h2-->
-        <!---Logo Title-->
         <h1 ion-text padding-bottom login-title no-margin text-center>{{data.title}}</h1>
         <br />
       </ion-col>
-      <!-- <ion-col align-self-start col-12 col-sm-12 col-md-12 offset-lg-3 col-lg-6 offset-xl-3 col-xl-6> -->
-        <!---Input field username-->
-        <!-- <ion-item transparent>
-          <ion-label stacked>{{data.labelUsername}}</ion-label>
-          <ion-input required placeholder="{{data.username}}" type="text" [(ngModel)]="username"></ion-input>
-          <ion-label error-field color="primary" no-margin *ngIf="!isUsernameValid">{{data.errorUser}}</ion-label>
-        </ion-item> -->
-        <!---Input field password-->
-        <!-- <ion-item>
-          <ion-label stacked>{{data.labelPassword}}</ion-label>
-          <ion-input required type="password" placeholder="{{data.password}}" [(ngModel)]="password"></ion-input>
-          <ion-label error-field color="primary" no-margin *ngIf="!isPasswordValid">{{data.errorPassword}}</ion-label>
-        </ion-item> -->
-      <!-- </ion-col> -->
-      <!---Share Section-->
-      <ion-col style="margin-top: 100%" align-self-end bottom-form col-12 col-sm-12 col-md-12 offset-lg-3 col-lg-6 offset-xl-3 col-xl-6>
-        <!---Login button-->
-        <!-- <button ion-button full text-capitalize default-button (click)="onEvent('onLogin')">{{data.login}}</button> -->
-        <!---Facebook button-->
+      <ion-col style="margin-top: 200px" align-self-end bottom-form col-12 col-sm-12 col-md-12 offset-lg-3 col-lg-6 offset-xl-3 col-xl-6>
         <button ion-button default-button color="facebook" full text-capitalize block (click)="scanBarcode()">{{data.loginalastria}}</button>
         <br />
         <div description text-center>
@@ -45,7 +24,6 @@
         </div>
       </ion-col>
       <ion-col align-self-start col-12 col-sm-12 col-md-12 offset-lg-3 col-lg-6 offset-xl-3 col-xl-6>
-        <button ion-button button-clear text-capitalize clear float-left (click)="onEvent('onSkip')">{{data.skip}}</button>
         <button ion-button button-clear text-capitalize clear float-right (click)="onEvent('onForgot')">{{data.forgotPassword}}</button>
       </ion-col>
 

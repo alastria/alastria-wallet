@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, IonicPage } from 'ionic-angular';
+import { NavController, App } from 'ionic-angular';
 import { TabsPage } from '../tabsPage/tabsPage';
 import { RegisterHub } from '../register/register-hub/register-hub';
 
@@ -13,7 +13,7 @@ export class HomePage {
   tabs: any = {};
   isLoged: Boolean;
 
-  constructor(public navCtrl: NavController) {
+  constructor(public navCtrl: NavController, private app: App) {
     console.log("[Debug] HOME enter");
     let user = sessionStorage.getItem("loginName");
     console.log("Username " + user);
@@ -22,18 +22,18 @@ export class HomePage {
       this.setLoginParams();
     }else{
       this.isLoged = true;
-      this.navCtrl.setRoot(TabsPage);
+      this.app.getRootNav().setRoot(TabsPage);
     }
   }
 
   onLogin(params: any) {
     this.isLoged = true;
     sessionStorage.setItem("loginName", params.username);
-    this.navCtrl.setRoot(TabsPage);
+    this.app.getRootNav().setRoot(TabsPage);
   }
 
   onRegister(params: any) {
-    this.navCtrl.setRoot(RegisterHub);
+    this.app.getRootNav().setRoot(RegisterHub);
   }
 
   setLoginParams() {

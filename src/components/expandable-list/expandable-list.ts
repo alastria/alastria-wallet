@@ -29,6 +29,7 @@ export class ExpandableList {
 
   toggleGroup(group: any) {
     group.show = !group.show;
+    console.log("toggleGroup " + group.show)
   }
 
   isGroupShown(group: any) {

@@ -11,7 +11,7 @@
 </ion-header>
 <ion-content>
     <!-- El div inferior es el cuadrado que pondremos de estilo -->
-    <div style=""></div>
+    <ngx-qrcode *ngIf="qrCode" [qrc-value]="qrCode" qrc-class = "qr-class"></ngx-qrcode>
 </ion-content>
 <ion-footer style="margin-bottom: 49px">
     <ion-grid no-padding position="bottom">
