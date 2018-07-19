@@ -50,7 +50,7 @@ export class Options {
   }
 
   goToRoot() {
-    this.navCtrl.setRoot(HomePage);
-    // this.app.getRootNav().setRoot(HomePage);
+    //this.navCtrl.setRoot(HomePage);
+    this.app.getRootNav().setRoot(HomePage);
   }
 }
