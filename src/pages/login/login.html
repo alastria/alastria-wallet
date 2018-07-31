@@ -1,16 +1,44 @@
+<ion-menu [content]="content">
+  <ion-header>
+  </ion-header>
+  <ion-content>
+    <ion-list class="login-menu">
+      <button ion-item (click)="openPage('changeUser')">
+          <div item-start><img  src="assets/svg/user.svg"/></div>Cambiar de usuario
+      </button>
+      <button ion-item (click)="openPage('infoPage')">
+          <div item-start><img src="assets/svg/bullhorn.svg"/></div>Información de interés
+      </button>
+      <button ion-item (click)="openPage('reportProblem')">
+          <div item-start><img src="assets/svg/flame.svg"/></div>Reportar Problema
+      </button>
+      <button ion-item (click)="openPage('legal')">
+          <div item-start><img src="assets/svg/info.svg"/></div>Aviso Legal
+      </button>
+    </ion-list>
+    <label class="version-info">Versión AlastriaID 1.1</label>
+    </ion-content>
+</ion-menu>
+
+<ion-nav class="main" id="nav" #content [root]="Login">
+</ion-nav>
+
+<ion-header >
+  <ion-navbar>
+    <button ion-button menuToggle clear icon-start>
+        <img class="menu" name='menu' src="assets/svg/hamburguer-menu.svg">
+    </button>
+    <img class="logo" [src]="data.logo">
+  </ion-navbar>
+</ion-header>
+
 <!-- Themes Login + logo 1 -->
-<ion-content>
-  <ion-grid ion-fixed no-padding *ngIf="data != null">
+<ion-content class="mainContent">
+  <ion-grid no-padding *ngIf="data != null">
     <ion-row padding-horizontal align-self-center>
 
       <ion-col style="margin-top: 50px" align-self-end col-12 col-sm-12 col-md-12 offset-lg-3 col-lg-6 offset-xl-3 col-xl-6>
-        <!---Logo-->
-        <ion-row>
-          <ion-col text-center>
-            <img style="filter: invert(1)" [src]="data.logo">
-          </ion-col>
-        </ion-row>
-        <br>
+
         <h1 ion-text padding-bottom login-title no-margin text-center>{{data.title}}</h1>
         <br />
       </ion-col>

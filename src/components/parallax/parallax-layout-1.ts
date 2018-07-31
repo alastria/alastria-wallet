@@ -1,5 +1,6 @@
 import { Component, Input, ViewChild } from '@angular/core';
 import { IonicPage, Content } from 'ionic-angular';
+import { UserInfoHeader } from '../user-info-header/user-info-header';
 
 @IonicPage()
 @Component({
@@ -9,8 +10,8 @@ import { IonicPage, Content } from 'ionic-angular';
 export class ParallaxLayout1 {
     @Input() data: any;
     @Input() events: any;
-    @ViewChild(Content)
-    content: Content;
+    @ViewChild(Content) content: Content;
+    @ViewChild(UserInfoHeader) userInfo: UserInfoHeader;
 
     active: boolean;
     headerImage:any = "";
@@ -48,6 +49,7 @@ export class ParallaxLayout1 {
     subscribeToIonScroll() {
         if (this.content != null && this.content.ionScroll != null) {
             this.content.ionScroll.subscribe((d) => {
+                this.userInfo.changeHeader(d.scrollTop > 50);
                 if (d.scrollTop < 200 ) {
                     this.active = false;
                     return;
