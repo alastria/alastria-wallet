@@ -21,12 +21,11 @@ export class UserInfoHeader {
         this.userImagePath = "./assets/images/avatar/0.jpg";
     }
 
-    public changeHeader(compact: boolean) : void {
+    public changeHeader(compact: boolean): void {
         this.compact = compact;
     }
 
-    public openUserSettings() : void {
-        console.log("user-info");
+    public openUserSettings(): void {
         this.navController.push(UserSettings);
     }
 

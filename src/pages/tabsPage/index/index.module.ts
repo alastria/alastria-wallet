@@ -12,8 +12,8 @@ import { ParallaxLayout1Module } from '../../../components/parallax/parallax-lay
         IonicPageModule.forChild(Index),
         ExpandableListModule,
         ParallaxLayout1Module
-        ],
-    exports:[
+    ],
+    exports: [
         Index
     ]
 })
