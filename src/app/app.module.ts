@@ -19,41 +19,40 @@ import { SecureStorage } from '@ionic-native/secure-storage';
 import { FingerprintAIO } from '@ionic-native/fingerprint-aio';
 
 @NgModule({
-  declarations: [
-    MyApp,
-    HomePage,
-    Login,
-    InfoPage,
-    UserSettings,
-    RegisterHub
+    declarations: [
+        MyApp,
+        HomePage,
+        Login,
+        InfoPage,
+        UserSettings,
+        RegisterHub
     ],
-  imports: [
-    BrowserModule,
-    IonicModule.forRoot(MyApp),
-    RegisterFormModule,
-    TabsPageModule,
-    NgxQRCodeModule,
-    UserInfoHeaderModule
-    
-  ],
-  bootstrap: [IonicApp],
-  entryComponents: [
-    MyApp,
-    HomePage,
-    Login,
-    InfoPage,
-    UserSettings,
-    RegisterHub
+    imports: [
+        BrowserModule,
+        IonicModule.forRoot(MyApp),
+        RegisterFormModule,
+        TabsPageModule,
+        NgxQRCodeModule,
+        UserInfoHeaderModule
+    ],
+    bootstrap: [IonicApp],
+    entryComponents: [
+        MyApp,
+        HomePage,
+        Login,
+        InfoPage,
+        UserSettings,
+        RegisterHub
 
-  ],
-  providers: [
-    StatusBar,
-    SplashScreen,
-    LoadingService,
-    BarcodeScanner,
-    FingerprintAIO,
-    SecureStorage,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
-  ]
+    ],
+    providers: [
+        StatusBar,
+        SplashScreen,
+        LoadingService,
+        BarcodeScanner,
+        FingerprintAIO,
+        SecureStorage,
+        { provide: ErrorHandler, useClass: IonicErrorHandler }
+    ]
 })
-export class AppModule {}
+export class AppModule { }

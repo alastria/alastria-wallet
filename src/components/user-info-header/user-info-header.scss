@@ -1,6 +1,6 @@
 #userInfoHeader {
   height: 140px;
-  margin-bottom: 50px;
+  margin-bottom: 15px;
 }
 
 #userInfoHeader  .ios .nav-decor{
@@ -8,15 +8,6 @@
 }
 
 #userInfoHeader  .outterOval {
-/*   width: 160%;
-  height: 142%;
-  position: absolute;
-  top: -50% !important;
-  left: -25% !important;
-  border-radius: 50%;
-  background-color:rgba(181, 222, 225, 0.24);
-  transform: translate(0, 10px); */
-
   border-radius: 50%;
   position: absolute;
   width: 525px;
@@ -24,20 +15,9 @@
   left: -75px;
   top: -26px;
   background-color:rgba(181, 222, 225, 0.24);
-/*   transition: width 150ms, height 150ms, top 150ms, left 150ms;
-  transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
-  transform: translate3d(1,1,1); */
-
 }
 
 #userInfoHeader  .innerOval {
-/*   width: 160%;
-  height: 142%;
-  position: absolute;
-  top: -50% !important;
-  left: -25% !important;
-  background: linear-gradient(155.73deg, #325B8E 41.01%, #00B2BC 73.25%); */
-
   border-radius: 50%;
 
   position: absolute;
@@ -47,10 +27,6 @@
   top: -91px;
 
   background: linear-gradient(155.73deg, #325B8E 44.4%, #00B2BC 73.25%);
-/*   transition: width 150ms, height 150ms, top 150ms, left 150ms;
-  transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
-  transform: translate3d(1,1,1); */
-
 }
 
 #userInfoHeader .outerUserCircle {
@@ -61,10 +37,6 @@
   position: absolute;
   top: 35px;
   left: 5px;
-/*   transition: width 150ms, height 150ms, top 150ms, left 150ms;
-  transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
-  transform: translate3d(1,1,1); */
-
 }
 
 #userInfoHeader .innerUserCircle {
@@ -76,10 +48,6 @@
   position: absolute;
   top: 49px;
   left: 19px;
-/*   transition: width 150ms, height 150ms, top 150ms, left 150ms;
-  transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
-  transform: translate3d(1,1,1); */
-
 }
 
 #userInfoHeader .name {
@@ -94,10 +62,6 @@
   font-size: 18px;
 
   color: #FEFFFF;
-/*   transition: top 150ms, left 150ms, right 150ms;
-  transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
-  transform: translate3d(1,1,1); */
-
 }
 
 #userInfoHeader  .scroll-content {
@@ -115,11 +79,7 @@
   height: 30px;
   right: 15px;
   top: 40px;
-  padding:0;;
-/*   transition: top 150ms, left 150ms, right 150ms;
-  transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
-  transform: translate3d(1,1,1); */
-
+  padding:0;
 }
 
 #userInfoHeader.compact .outterOval {
@@ -136,8 +96,6 @@
   border-radius: 0;
   width: 100%;
   z-index: 9999;
-
-
 }
 
 #userInfoHeader.compact .outerUserCircle {
@@ -182,4 +140,8 @@
   top: 10px;
   z-index: 9999;
 
+}
+
+.fixed-element {
+    position: fixed !important;
 }

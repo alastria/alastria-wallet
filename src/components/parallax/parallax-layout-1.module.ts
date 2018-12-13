@@ -1,8 +1,8 @@
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
 import { ParallaxLayout1 } from './parallax-layout-1';
-import { ElasticHeaderModule } from '../elastic-header/elastic-header.module';
 import { ExpandableListModule } from '../expandable-list/expandable-list.module';
+import { UserInfoHeaderModule } from '../user-info-header/user-info-header.module';
 
 @NgModule({
     declarations: [
@@ -10,8 +10,8 @@ import { ExpandableListModule } from '../expandable-list/expandable-list.module'
     ],
     imports: [
         IonicPageModule.forChild(ParallaxLayout1),
-        ElasticHeaderModule,
-        ExpandableListModule
+        ExpandableListModule,
+        UserInfoHeaderModule
     ],
     exports: [
         ParallaxLayout1
