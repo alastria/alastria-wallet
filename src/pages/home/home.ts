@@ -38,21 +38,24 @@ export class HomePage {
 
   setLoginParams() {
     this.login.data = {
-      "forgotPassword": "¿Olvidaste tu contraseña?",
-      "labelPassword": "CONTRASEÑA",
-      "labelUsername": "USUARIO",
+      "forgotPassword": "¿No recuerda la contraseña?",
+      "labelPassword": "Contraseña",
+      "labelUsername": "AlastriaID",
       "login": "Acceder",
-      "loginalastria": "Login con AlastriaID",
-      "logo": "assets/images/logo/logo.png",
+      "loginalastria": "INICIAR SESIÓN",
+      "logo": "assets/images/logo/logo2.png",
       "password": "Introduce tu contraseña:",
       "register": "¡Regístrate ahora!",
       "skip": "",
       "subtitle": "Bienvenido",
       "title": "Accede a tu cuenta",
       "username": "Introduce tu usuario",
-      "dontHaveAccount": "¿No tienes una cuenta?",
+      "dontHaveAccount": "¿Aun no tienes cuenta?",
+      "newAccount": "Créala aquí",
       "errorUser": "Dato requerido",
-      "errorPassword": "Dato requerido"
+      "errorPassword": "Dato requerido",
+      "loginFinger": "Accede con tu huella",
+      "help": "Ayuda"
     }
 
     let that = this;

@@ -1,7 +1,8 @@
 import { Component, Input } from '@angular/core';
-import { IonicPage, ModalController, ViewController, NavParams } from 'ionic-angular';
+import { IonicPage, ModalController, ViewController, NavParams, Platform } from 'ionic-angular';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner';
 import { SecureStorage, SecureStorageObject } from '@ionic-native/secure-storage';
+import { FingerprintAIO, FingerprintOptions } from '@ionic-native/fingerprint-aio';
 
 
 @IonicPage()
@@ -14,14 +15,92 @@ export class Login {
     @Input() data: any;
     @Input() events: any;
 
+    user: string;
+    pass: string;
+
     private isCamera: boolean = false;
 
     private isUsernameValid: boolean = true;
     private isPasswordValid: boolean = true;
 
-    constructor(public barcodeScanner: BarcodeScanner, public modalCtrl: ModalController, private secureStorage: SecureStorage) {
+    fingerprintOptions: FingerprintOptions;
 
+    constructor(public barcodeScanner: BarcodeScanner,
+                public modalCtrl: ModalController,
+                private secureStorage: SecureStorage,
+                private faio: FingerprintAIO,
+                private platform: Platform) {
+
+              /*      this.fingerprintOptions = {
+                        clientId: 'fingerprint-demo',
+                        clientSecret: 'password', //Only necessary for Android
+                        disableBackup: true, //Only for Android(optional)
+                        localizedFallbackTitle: 'Use Pin', //Only for iOS
+                        localizedReason: 'Please authenticate' //Only for iOS
+                    }
+                    */
+
+                    this.user = '';
+                    this.pass = '';
     }
+
+    regFinger() {
+        this.faio.isAvailable().then(result =>{
+            console.log('1 --> ', result);
+
+            this.faio.show({
+                clientId: "AlastriaID",
+                clientSecret: "NddAHBODmhACXHITWJTU",
+                disableBackup: true,
+                localizedFallbackTitle: 'Touch ID for AlastriaID', //Only for iOS
+            }).then(result => {
+                 console.log('2 --> ', result);
+                 this.onEvent("onLogin");
+               }).catch(err => {
+                 console.error('1 --> ', err);
+               });
+
+        }).catch(err => {
+        console.error('2 --> ', err);
+        if(err==="cordova_not_available"){
+            this.onEvent("onLogin");
+        }
+        });
+    }
+/*
+    async regFinger() {
+
+        try {
+            this.platform.ready().then(
+                ()=> {
+                    this.faio.isAvailable().then(
+                        (avaliable) => {
+                            console.log('avaliable --> ', avaliable);
+                            
+                            if (avaliable === 'finger') {
+                               this.faio.show(this.fingerprintOptions).then(
+                                    (succ) => {
+                                        console.log('Ok, estas dentro --> ', succ);
+                                    },
+                                    (err) => {
+                                        console.error('Error en lector de huellas --> ', err);
+                                    }
+                                );
+                            }
+                        }
+                    );
+                },
+                (error) => {
+                    console.error('Error --> ', error);
+                    
+                }
+            );
+            
+        } catch (error) {
+            console.error('Error en lector de huellas --> ', error);
+        }
+        
+    } */
 
     scanBarcode() {
         if (this.isCamera) {
@@ -34,7 +113,7 @@ export class Login {
         }
         this.barcodeScanner.scan(options).then(barcodeData => {
             console.log('Barcode data', barcodeData.text);
-            alert("Barcode data, " + barcodeData.text);
+            //alert("Barcode data, " + barcodeData.text);
             this.onEvent("onLogin");
         }).catch(err => {
             console.log('Error', err);
@@ -64,7 +143,7 @@ export class Login {
                     } else {
                         var a = keys.length + " Key/value pairs found in secure storage: \n";
                         var results = new Array<Promise<String>>();
-                        for (var key of keys) {
+                        for (let key of keys) {
                             results.push(storage.get(key));
                         }
 
@@ -121,8 +200,8 @@ export class Login {
 
             });
             this.events[event]({
-                'username': "demo",
-                'password': "demo"
+                'username': this.user,
+                'password': this.pass
             });
         }
     }

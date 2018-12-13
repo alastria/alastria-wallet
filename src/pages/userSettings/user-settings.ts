@@ -13,7 +13,8 @@ export class UserSettings {
     public userImagePath: string;
 
     constructor(public modalCtrl: ModalController) {
-        this.userName = "Alicia Fernández Roca";
+        let user = sessionStorage.getItem("loginName");
+        this.userName = user;
         this.userImagePath = "./assets/images/avatar/0.jpg";
     }
 }

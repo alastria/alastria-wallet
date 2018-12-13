@@ -16,6 +16,7 @@ import { TabsPageModule } from '../pages/tabsPage/tabsPage.module';
 import { UserSettings } from '../pages/userSettings/user-settings';
 import { UserInfoHeaderModule } from '../components/user-info-header/user-info-header.module';
 import { SecureStorage } from '@ionic-native/secure-storage';
+import { FingerprintAIO } from '@ionic-native/fingerprint-aio';
 
 @NgModule({
   declarations: [
@@ -50,6 +51,7 @@ import { SecureStorage } from '@ionic-native/secure-storage';
     SplashScreen,
     LoadingService,
     BarcodeScanner,
+    FingerprintAIO,
     SecureStorage,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]

@@ -28,7 +28,6 @@
     <button ion-button menuToggle clear icon-start>
         <img class="menu" name='menu' src="assets/svg/hamburguer-menu.svg">
     </button>
-    <img class="logo" [src]="data.logo">
   </ion-navbar>
 </ion-header>
 
@@ -37,22 +36,56 @@
   <ion-grid no-padding *ngIf="data != null">
     <ion-row padding-horizontal align-self-center>
 
-      <ion-col style="margin-top: 50px" align-self-end col-12 col-sm-12 col-md-12 offset-lg-3 col-lg-6 offset-xl-3 col-xl-6>
+      <ion-col align-self-end col-12 col-sm-12 col-md-12 offset-lg-3 col-lg-6 offset-xl-3 col-xl-6>
+        <img class="logo" [src]="data.logo">
+        <br />
+      </ion-col>
 
-        <h1 ion-text padding-bottom login-title no-margin text-center>{{data.title}}</h1>
-        <br />
-      </ion-col>
-      <ion-col style="margin-top: 200px" align-self-end bottom-form col-12 col-sm-12 col-md-12 offset-lg-3 col-lg-6 offset-xl-3 col-xl-6>
-        <button ion-button default-button color="facebook" full text-capitalize block (click)="scanBarcode()">{{data.loginalastria}}</button>
-        <br />
-        <div description text-center>
-          <p>{{data.dontHaveAccount}}
-            <button ion-button default-button color="action" full text-capitalize block (click)="onEvent('onRegister')">{{data.register}}</button>
-          </p>
+      <!-- Login -->
+      <ion-list >
+
+        <!-- User -->
+        <div style="position: relative" class="grey">
+          <img class="iconLogin" src="assets/images/logo/user.png"/>
+          <ion-item style="background-color: transparent;">
+            <ion-label floating class="grey">{{data.labelUsername}}</ion-label>
+            <ion-input class="menu" type="text" [(ngModel)]="user"></ion-input>
+          </ion-item>
         </div>
-      </ion-col>
-      <ion-col align-self-start col-12 col-sm-12 col-md-12 offset-lg-3 col-lg-6 offset-xl-3 col-xl-6>
-        <button ion-button button-clear text-capitalize clear float-right (click)="onEvent('onForgot')">{{data.forgotPassword}}</button>
+
+        <!-- Password -->
+        <div style="position: relative">
+          <img class="iconLogin" src="assets/images/logo/pass.png"/>
+          <ion-item style="background-color: transparent;">
+            <ion-label floating class="grey">{{data.labelPassword}}</ion-label>
+            <ion-input class="menu" type="password" [(ngModel)]="pass"></ion-input>
+          </ion-item>
+        </div>
+
+      </ion-list>
+
+      <!-- Boton Login Alastria -->
+      <ion-col align-self-end bottom-form col-12 col-sm-12 col-md-12 offset-lg-3 col-lg-6 offset-xl-3 col-xl-6>
+        <!-- TODO: Quitar estilos --> 
+        <br/>
+        <button ion-button block class="btnLogin"  (click)="scanBarcode()">{{data.loginalastria}}</button>
+       
+        <div class="grey">
+          {{data.dontHaveAccount}} <a class="menu" (click)="onEvent('onRegister')"> {{data.newAccount}} </a>
+        </div>
+        <br/>
+        <br/>
+        
+        <div >
+          <a class="fingerPrint" (click)="regFinger()"> <img width="30px" height="40px" margin-right="5px" src="assets/images/logo/BiometricFinger.png"/> {{data.loginFinger}} </a>
+        </div>
+        
+        <br />
+
+        <div class="grey">
+          {{data.forgotPassword}} <a class="menu"> {{data.help}}</a>
+        </div>
+
       </ion-col>
 
       <!---End Share Section-->

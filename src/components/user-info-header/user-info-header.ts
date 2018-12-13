@@ -16,7 +16,8 @@ export class UserInfoHeader {
     compact = false;
 
     constructor(public navController: NavController) {
-        this.userName = "Alicia Fernández Roca";
+        let user = sessionStorage.getItem("loginName");
+        this.userName = user;
         this.userImagePath = "./assets/images/avatar/0.jpg";
     }
 
@@ -25,7 +26,7 @@ export class UserInfoHeader {
     }
 
     public openUserSettings() : void {
-        console.log("asdasda");
+        console.log("user-info");
         this.navController.push(UserSettings);
     }
 

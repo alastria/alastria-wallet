@@ -90,7 +90,8 @@ $palettes: (
       secondaryBase: #ffffff, // Used for button, badge, parallax-title, parallax-subtitle, gallery-title, gallery-subtitle, checkbox, search-bar-title
       accentLight: #C7C7CC, //Used for icon, span-large
       accent : #5ac8fa, // Used for icon, span-medium, button, login-title, badge, wizard-title, wizard-subtitle, toolbar, alert
-      accentDark: #000000 // Used for header-title, item-title, subitem-title, login-subtitle, card-title, tabs, maps-title, maps-description-title
+      accentDark: #000000,
+      blueT: #325B8E  // Used for header-title, item-title, subitem-title, login-subtitle, card-title, tabs, maps-title, maps-description-title
     ),
     // Used for blend modes
     blendModes: (
@@ -754,18 +755,18 @@ $text-input-ios-highlight-color-valid: theme-colors('textColors', 'secondary') !
 ================================================
 ================================================*/
 // Settings for Android
-$tabs-background: theme-colors('mainColors', 'accent');
-$tabs-tab-color-active: theme-colors('textColors', 'accentDark');
-$tabs-md-tab-icon-color-active: theme-colors('textColors', 'secondaryBase');
-$tabs-md-tab-text-color-active: theme-colors('textColors', 'secondaryBase');
-$tabs-md-tab-icon-color: theme-colors('textColors', 'secondaryBase');
-$tabs-md-tab-text-color: theme-colors('textColors', 'secondaryBase');
+$tabs-background: theme-colors('mainColors', 'primary');
+$tabs-tab-color-active: theme-colors('textColors', 'blueT');
+$tabs-md-tab-icon-color-active: theme-colors('textColors', 'blueT');
+$tabs-md-tab-text-color-active: theme-colors('textColors', 'blueT');
+$tabs-md-tab-icon-color: theme-colors('textColors', 'blueT');
+$tabs-md-tab-text-color: theme-colors('textColors', 'blueT');
 
 // Settings for Ios
-$tabs-ios-tab-icon-color-active: theme-colors('textColors', 'secondaryBase');
-$tabs-ios-tab-text-color-active: theme-colors('textColors', 'secondaryBase');
-$tabs-ios-tab-icon-color: theme-colors('textColors', 'secondaryBase');
-$tabs-ios-tab-text-color: theme-colors('textColors', 'secondaryBase');
+$tabs-ios-tab-icon-color-active: theme-colors('textColors', 'blueT');
+$tabs-ios-tab-text-color-active: theme-colors('textColors', 'blueT');
+$tabs-ios-tab-icon-color: theme-colors('textColors', 'blueT');
+$tabs-ios-tab-text-color: theme-colors('textColors', 'blueT');
 
 
 /* # Settings Search Bar Section
@@ -942,4 +943,8 @@ $alert-ios-background: #fff;
 
 [no-padding] {
     padding: 0 !important;
+}
+
+ion-icon:active{
+    font-weight: bold !important;
 }

@@ -107,6 +107,15 @@ login-layout-1 {
   color: #FFFFFF;
 }
 
+.grey,
+.item-inner .input-wrapper .grey {
+  color :#cccccc;
+}
+
+.grey input::placeholder {
+  color :#cccccc;
+}
+
 .header-ios {
   padding-top:24px;
 }
@@ -128,4 +137,35 @@ login-layout-1 {
 
 .logo {
   padding-left: 10px;
+}
+
+.btnLogin {
+  background: linear-gradient(90deg, #325B8E 0%, #00CAD6 100%);
+  border-radius: 30px;
+}
+
+.btnLogin:before {
+  content: '>';
+  position: absolute;
+  left: 90%;
+  top: 10px;
+}
+
+.iconLogin {
+  position: absolute;
+  top: 60%;
+  left: -15px;
+  width: 25px;
+  height: 27px;
+  margin-right: 5px;
+}
+
+.fingerPrint {
+  font-size: 18px;
+  color: #FFFFFF;
+}
+
+
+.list-md .item-input:last-child {
+  border-bottom: 0;
 }
