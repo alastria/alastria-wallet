@@ -13,7 +13,6 @@ import { NgxQRCodeModule } from 'ngx-qrcode2';
 import { RegisterHub } from '../pages/register/register-hub/register-hub';
 import { RegisterFormModule } from '../pages/register/register-hub/register-form/register-form.module';
 import { TabsPageModule } from '../pages/tabsPage/tabsPage.module';
-import { UserSettings } from '../pages/userSettings/user-settings';
 import { UserInfoHeaderModule } from '../components/user-info-header/user-info-header.module';
 import { SecureStorage } from '@ionic-native/secure-storage';
 import { FingerprintAIO } from '@ionic-native/fingerprint-aio';
@@ -24,7 +23,6 @@ import { FingerprintAIO } from '@ionic-native/fingerprint-aio';
         HomePage,
         Login,
         InfoPage,
-        UserSettings,
         RegisterHub
     ],
     imports: [
@@ -41,9 +39,7 @@ import { FingerprintAIO } from '@ionic-native/fingerprint-aio';
         HomePage,
         Login,
         InfoPage,
-        UserSettings,
         RegisterHub
-
     ],
     providers: [
         StatusBar,

@@ -1,5 +1,7 @@
-<ion-content>
+<ion-header [scrollHide]="headerScrollConfig" [scrollContent]="pageContent">
     <user-info-header></user-info-header>
+</ion-header>
+<ion-content #pageContent fullscreen>
     <expandable-list [data]="data.expList.data" [events]="data.expList.events">
     </expandable-list>
 </ion-content>

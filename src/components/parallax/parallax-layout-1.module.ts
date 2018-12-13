@@ -3,10 +3,12 @@ import { IonicPageModule } from 'ionic-angular';
 import { ParallaxLayout1 } from './parallax-layout-1';
 import { ExpandableListModule } from '../expandable-list/expandable-list.module';
 import { UserInfoHeaderModule } from '../user-info-header/user-info-header.module';
+import { ScrollHideDirective } from './parallax.directive';
 
 @NgModule({
     declarations: [
         ParallaxLayout1,
+        ScrollHideDirective
     ],
     imports: [
         IonicPageModule.forChild(ParallaxLayout1),

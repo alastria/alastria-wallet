@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, ModalController } from 'ionic-angular';
+import { IonicPage, ModalController, NavController } from 'ionic-angular';
 
 @IonicPage()
 @Component({
@@ -12,9 +12,16 @@ export class UserSettings {
     public userName: string;
     public userImagePath: string;
 
-    constructor(public modalCtrl: ModalController) {
+    constructor(
+        public modalCtrl: ModalController,
+        private navCtrl: NavController
+    ) {
         let user = sessionStorage.getItem("loginName");
         this.userName = user;
         this.userImagePath = "./assets/images/avatar/0.jpg";
+    }
+
+    dismiss() {
+        this.navCtrl.pop();
     }
 }

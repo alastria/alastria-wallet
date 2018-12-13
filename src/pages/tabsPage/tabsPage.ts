@@ -27,11 +27,11 @@ export class TabsPage {
 
     setTabsParams() {
         this.tabs.data = [
-            { page: "Index", icon: "ios-home-outline", title: "Inicio" },
-            { page: "Activity", icon: "ios-albums-outline", title: "Actividad" },
-            { page: "Camera", icon: "ios-qr-scanner-outline", title: "Leer Qr" },
-            { page: "Notification", icon: "ios-notifications-outline", title: "Avisos" },
-            { page: "Options", icon: "ios-more-outline", title: "Mas" }
+            { page: "Index", icon: "home", title: "Inicio" },
+            { page: "Activity", icon: "act", title: "Actividad" },
+            { page: "Camera", icon: "leerQr", title: "Leer Qr" },
+            { page: "Notification", icon: "bell", title: "Avisos" },
+            { page: "Options", icon: "more", title: "Mas" }
         ];
 
         this.tabs.events = {

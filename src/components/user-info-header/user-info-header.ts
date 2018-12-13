@@ -1,6 +1,6 @@
 import { Component, ViewChild, Input } from '@angular/core';
 import { IonicPage, NavController, Content } from 'ionic-angular';
-import { UserSettings } from '../../pages/userSettings/user-settings';
+import { UserSettings } from './userSettings/user-settings';
 
 @IonicPage()
 @Component({
