@@ -5,6 +5,7 @@ login-layout-1 {
   ion-row {
     height: 100%;
   }
+
   // Settings Logo
   img {
     max-width: 72px;
@@ -152,12 +153,7 @@ login-layout-1 {
 }
 
 .iconLogin {
-  position: absolute;
-  top: 60%;
-  left: -15px;
-  width: 25px;
   height: 27px;
-  margin-right: 5px;
 }
 
 .fingerPrint {
@@ -168,4 +164,9 @@ login-layout-1 {
 
 .list-md .item-input:last-child {
   border-bottom: 0;
+}
+
+.col {
+    width: inherit;
+    min-height: inherit;
 }
