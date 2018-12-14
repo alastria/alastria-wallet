@@ -37,7 +37,7 @@ export class ScrollHideDirective {
         if (ev) {
             ev.domWrite(() => {
                 let scrollTop: number = ev.scrollTop > 0 ? ev.scrollTop : 0;
-                let scrolldiff: number = scrollTop - this.lastScrollPosition;
+                let scrolldiff: number = (scrollTop - this.lastScrollPosition) / 1.75;
                 this.lastScrollPosition = scrollTop;
                 let newValue = this.lastValue + scrolldiff;
                 newValue = Math.max(0, Math.min(newValue, this.config.maxValue));
