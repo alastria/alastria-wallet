@@ -37,9 +37,8 @@ contract AlastriaPublicKeyRegistry {
 
     //Functions
     /* constructor */
-    function AlastriaPublicKeyRegistry (address _previousPublishedVersion) public {
+    constructor () public {
         version = 3;
-        previousPublishedVersion = _previousPublishedVersion;
     }
 
     // Sets new key and revokes previous
@@ -62,7 +61,7 @@ contract AlastriaPublicKeyRegistry {
         if (value.exists && value.status < Status.RevokedBySubject) {
             value.status = Status.RevokedBySubject;
             value.endDate = now;
-            /* emit */ PublicKeyRevoked(publicKey);
+            emit PublicKeyRevoked(publicKey);
         }
     }
 
@@ -72,7 +71,7 @@ contract AlastriaPublicKeyRegistry {
         if (value.exists && value.status < Status.DeletedBySubject) {
             value.status = Status.DeletedBySubject;
             value.endDate = now;
-            /* emit */ PublicKeyDeleted(publicKey);
+            emit PublicKeyDeleted(publicKey);
         }
     }
 
