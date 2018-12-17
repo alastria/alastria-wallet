@@ -57,6 +57,7 @@
     "promise-polyfill": "6.0.2",
     "rxjs": "5.5.6",
     "sw-toolbox": "3.6.0",
+    "web3": "^0.20.5",
     "zone.js": "0.8.18"
   },
   "devDependencies": {
