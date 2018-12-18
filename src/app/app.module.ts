@@ -16,6 +16,7 @@ import { TabsPageModule } from '../pages/tabsPage/tabsPage.module';
 import { UserInfoHeaderModule } from '../components/user-info-header/user-info-header.module';
 import { SecureStorage } from '@ionic-native/secure-storage';
 import { FingerprintAIO } from '@ionic-native/fingerprint-aio';
+import { AlastriaPublicKeyRegistryService } from '../services/alastriaPublicKeyRegistry.service';
 
 @NgModule({
     declarations: [
@@ -48,6 +49,7 @@ import { FingerprintAIO } from '@ionic-native/fingerprint-aio';
         BarcodeScanner,
         FingerprintAIO,
         SecureStorage,
+        AlastriaPublicKeyRegistryService,
         { provide: ErrorHandler, useClass: IonicErrorHandler }
     ]
 })
