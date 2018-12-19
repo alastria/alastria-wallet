@@ -1,7 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { IonicPage, ModalController, ViewController, NavParams, Platform } from 'ionic-angular';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner';
-import { SecureStorage, SecureStorageObject } from '@ionic-native/secure-storage';
 import { FingerprintAIO, FingerprintOptions } from '@ionic-native/fingerprint-aio';
 
 
@@ -27,7 +26,6 @@ export class Login {
 
     constructor(public barcodeScanner: BarcodeScanner,
         public modalCtrl: ModalController,
-        private secureStorage: SecureStorage,
         private faio: FingerprintAIO,
         private platform: Platform) {
 
@@ -87,39 +85,7 @@ export class Login {
             return;
         }
         if (this.events[event]) {
-            this.secureStorage.create('secureStorageName2')
-                .then((storage: SecureStorageObject) => {
-                    storage.keys().then(keys => {
-                        if (keys.length == 0) {
-                            alert("No items found in secure storage");
-                            var key = 'testkey';
-                            var value = "testValue"
-                            storage.set(key, value).then(
-                                data => alert("Added value " + value + " for key " + data + " in secure storage "),
-                                error => alert(error)
-                            );
-                        } else {
-                            var a = keys.length + " Key/value pairs found in secure storage: \n";
-                            var results = new Array<Promise<String>>();
-                            for (let key of keys) {
-                                results.push(storage.get(key));
-                            }
 
-                            Promise.all(results).then(values => {
-                                var i = 0;
-                                for (var value of values) {
-                                    a = a + keys[i] + " => " + value;
-                                    i++;
-                                }
-                                alert(a);
-                                storage.clear();
-                                alert("Removed all secure storage content");
-                            });
-                        }
-                    });
-                }).catch(err => {
-
-                });
             this.events[event]({
                 'username': this.user,
                 'password': this.pass
