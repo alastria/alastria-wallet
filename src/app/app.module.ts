@@ -20,6 +20,7 @@ import { ContructionsPageModule } from './../pages/contructions/contructions.mod
 import { SuccessPageModule } from '../pages/success/success.module';
 import { ProfilePage } from '../pages/profile/profile';
 import { DetailProfilePage } from '../pages/detail-profile/detail-profile';
+import { AlastriaPublicKeyRegistryService } from '../services/alastriaPublicKeyRegistry.service';
 
 @NgModule({
     declarations: [
@@ -58,6 +59,7 @@ import { DetailProfilePage } from '../pages/detail-profile/detail-profile';
         BarcodeScanner,
         FingerprintAIO,
         SecureStorage,
+        AlastriaPublicKeyRegistryService,
         { provide: ErrorHandler, useClass: IonicErrorHandler }
     ]
 })
