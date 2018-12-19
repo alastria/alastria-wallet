@@ -33,30 +33,30 @@ export class Index {
 
     getList() {
         this.params.data = [
-              {
-                  "backgroundImage": "../../../assets/images/alastria/datosBasicos.png",
-                  "title": "Datos básicos",
-                  "description": "Tus datos más valiosos bajo tu control: tu dirección, tu fecha de nacimiento, tu email...",
-                  "link": "page-contructions"
-              },
-              {
-                  "backgroundImage": "../../../assets/images/alastria/salud.png",
-                  "title": "Salud",
-                  "description": "Aquí puedes encontrar tus datos sanitarios, tu historial de vacunación o tus recetas médicas ",
-                  "link": "page-contructions"
-              },
-              {
-                  "backgroundImage": "../../../assets/images/alastria/finanzas.png",
-                  "title": "Finanzas",
-                  "description": "Añade tus datos de titularidad de tus cuentas corrientes u otros datos financieros.",
-                  "link": "page-contructions"
-              },
-              {
-                  "backgroundImage": "../../../assets/images/alastria/estudios.png",
-                  "title": "Estudios",
-                  "description": "Añade tus datos académicos, tanto si ya has finalizado tus estudios como si aún estás en ello.",
-                  "link": "page-contructions"
-              }
-            ];
+            {
+                "backgroundImage": "assets/images/alastria/datosBasicos.png",
+                "title": "Datos básicos",
+                "description": "Tus datos más valiosos bajo tu control: tu dirección, tu fecha de nacimiento, tu email...",
+                "link": "page-contructions"
+            },
+            {
+                "backgroundImage": "assets/images/alastria/salud.png",
+                "title": "Salud",
+                "description": "Aquí puedes encontrar tus datos sanitarios, tu historial de vacunación o tus recetas médicas ",
+                "link": "page-contructions"
+            },
+            {
+                "backgroundImage": "assets/images/alastria/finanzas.png",
+                "title": "Finanzas",
+                "description": "Añade tus datos de titularidad de tus cuentas corrientes u otros datos financieros.",
+                "link": "page-contructions"
+            },
+            {
+                "backgroundImage": "assets/images/alastria/estudios.png",
+                "title": "Estudios",
+                "description": "Añade tus datos académicos, tanto si ya has finalizado tus estudios como si aún estás en ello.",
+                "link": "page-contructions"
+            }
+        ];
     }
 }
