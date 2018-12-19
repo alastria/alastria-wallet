@@ -1,0 +1,34 @@
+<ion-header >
+    <user-info-header></user-info-header>
+</ion-header>
+
+<ion-content style="margin-top: 20px;">
+    <div style="margin-left: 20px">
+        <span style="font-size: 20px;">Tu AlastriaID</span>
+    </div>
+    <ion-searchbar placeholder="busca tus datos" class="search"></ion-searchbar>
+
+    <!-- Lista de elementos -->
+    <ion-card *ngFor="let item of data" style="padding-bottom: 10px;">
+        <ion-card-content>
+            <ion-card-title >
+                <strong style="font-size: 15px">{{ item.titleP }}</strong> <span style="font-size: 13px"> - {{ item.place }} </span>
+            </ion-card-title>
+            <p>
+                {{ item.value }}
+            </p>
+            <!-- Icon Rating Star -->
+            <ion-icon float-left *ngFor="let ico of item.iconsStars;let i = index" (click)="onStarClass(item.iconsStars, i, $event);">
+                <i icon-small *ngIf="ico.isActive" class="icon {{ico.iconActive}}"></i>
+                <i icon-small *ngIf="!ico.isActive" class="icon {{ico.iconInactive}}"></i>
+            </ion-icon>
+            <!-- Reviews Star -->
+            <div  style="padding-top: 3px;"><span span-small > {{ item.level }}, {{ item.endDate }}</span></div>
+            
+            <div float-right>
+                <img src="assets/images/alastria/more.png" (click)="detail(item)"/>
+            </div>
+        </ion-card-content>
+    </ion-card>
+
+</ion-content>

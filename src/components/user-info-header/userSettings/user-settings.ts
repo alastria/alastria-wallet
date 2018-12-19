@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, ModalController, NavController } from 'ionic-angular';
+import { ProfilePage } from '../../../pages/profile/profile';
 
 @IonicPage()
 @Component({
@@ -23,5 +24,9 @@ export class UserSettings {
 
     dismiss() {
         this.navCtrl.pop();
+    }
+
+    profilePage() {
+        this.navCtrl.push(ProfilePage);
     }
 }

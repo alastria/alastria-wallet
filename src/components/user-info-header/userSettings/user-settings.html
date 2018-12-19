@@ -5,10 +5,10 @@
     <span class="outerUserCircle"></span>
     <img class="innerUserCircle" [src]="userImagePath">
     <span class="editPhoto">
-        <img src="assets/svg/edit.svg">
+        <img src="assets/svg/edit.svg" (click)="profilePage()" /> 
     </span>
     <ion-buttons end>
-        <button ion-button (click)="dismiss()">Cerrar</button>
+        <button ion-button (click)="dismiss()" class="btnSecond">Cerrar</button>
     </ion-buttons>
 </div>
 
