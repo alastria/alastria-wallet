@@ -1,5 +1,6 @@
 import { Component, Input, ViewChild } from '@angular/core';
-import { IonicPage, Content } from 'ionic-angular';
+import { IonicPage, Content, ModalController } from 'ionic-angular';
+import { ContructionsPage } from '../../pages/contructions/contructions';
 
 @IonicPage()
 @Component({
@@ -7,12 +8,15 @@ import { IonicPage, Content } from 'ionic-angular';
   templateUrl: 'expandable-list.html'
 })
 export class ExpandableList {
-  @Input() data: any;
+  @Input() data: any[];
   @Input() events: any;
   @ViewChild(Content)
   content: Content;
 
-  constructor() { }
+  constructor(public modalCtrl: ModalController) { 
+    console.log(this.data);
+    
+  }
 
   onEvent(event: string, item: any, e: any) {
     if (this.events[event]) {
@@ -34,5 +38,12 @@ export class ExpandableList {
 
   isGroupShown(group: any) {
     return group.show;
+  }
+
+  navegateTo(text: string) {
+    let modal = this.modalCtrl.create(ContructionsPage);
+
+        modal.present();
+        console.log('Navigating to page: ' + text);
   }
 }

@@ -16,6 +16,10 @@ import { TabsPageModule } from '../pages/tabsPage/tabsPage.module';
 import { UserInfoHeaderModule } from '../components/user-info-header/user-info-header.module';
 import { SecureStorage } from '@ionic-native/secure-storage';
 import { FingerprintAIO } from '@ionic-native/fingerprint-aio';
+import { ContructionsPageModule } from './../pages/contructions/contructions.module'
+import { SuccessPageModule } from '../pages/success/success.module';
+import { ProfilePage } from '../pages/profile/profile';
+import { DetailProfilePage } from '../pages/detail-profile/detail-profile';
 
 @NgModule({
     declarations: [
@@ -23,6 +27,8 @@ import { FingerprintAIO } from '@ionic-native/fingerprint-aio';
         HomePage,
         Login,
         InfoPage,
+        ProfilePage,
+        DetailProfilePage,
         RegisterHub
     ],
     imports: [
@@ -31,6 +37,8 @@ import { FingerprintAIO } from '@ionic-native/fingerprint-aio';
         RegisterFormModule,
         TabsPageModule,
         NgxQRCodeModule,
+        ContructionsPageModule,
+        SuccessPageModule,
         UserInfoHeaderModule
     ],
     bootstrap: [IonicApp],
@@ -39,6 +47,8 @@ import { FingerprintAIO } from '@ionic-native/fingerprint-aio';
         HomePage,
         Login,
         InfoPage,
+        ProfilePage,
+        DetailProfilePage,
         RegisterHub
     ],
     providers: [
