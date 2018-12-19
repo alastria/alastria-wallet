@@ -16,6 +16,10 @@ import { TabsPageModule } from '../pages/tabsPage/tabsPage.module';
 import { UserInfoHeaderModule } from '../components/user-info-header/user-info-header.module';
 import { SecureStorage } from '@ionic-native/secure-storage';
 import { FingerprintAIO } from '@ionic-native/fingerprint-aio';
+import { ContructionsPageModule } from './../pages/contructions/contructions.module'
+import { SuccessPageModule } from '../pages/success/success.module';
+import { ProfilePage } from '../pages/profile/profile';
+import { DetailProfilePage } from '../pages/detail-profile/detail-profile';
 import { AlastriaPublicKeyRegistryService } from '../services/alastriaPublicKeyRegistry.service';
 
 @NgModule({
@@ -24,6 +28,8 @@ import { AlastriaPublicKeyRegistryService } from '../services/alastriaPublicKeyR
         HomePage,
         Login,
         InfoPage,
+        ProfilePage,
+        DetailProfilePage,
         RegisterHub
     ],
     imports: [
@@ -32,6 +38,8 @@ import { AlastriaPublicKeyRegistryService } from '../services/alastriaPublicKeyR
         RegisterFormModule,
         TabsPageModule,
         NgxQRCodeModule,
+        ContructionsPageModule,
+        SuccessPageModule,
         UserInfoHeaderModule
     ],
     bootstrap: [IonicApp],
@@ -40,6 +48,8 @@ import { AlastriaPublicKeyRegistryService } from '../services/alastriaPublicKeyR
         HomePage,
         Login,
         InfoPage,
+        ProfilePage,
+        DetailProfilePage,
         RegisterHub
     ],
     providers: [

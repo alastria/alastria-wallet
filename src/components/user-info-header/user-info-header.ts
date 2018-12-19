@@ -1,5 +1,5 @@
-import { Component, ViewChild, Input } from '@angular/core';
-import { IonicPage, NavController, Content } from 'ionic-angular';
+import { Component } from '@angular/core';
+import { IonicPage, NavController } from 'ionic-angular';
 import { UserSettings } from './userSettings/user-settings';
 
 @IonicPage()
@@ -19,6 +19,7 @@ export class UserInfoHeader {
     constructor(public navController: NavController) {
         let user = sessionStorage.getItem("loginName");
         this.userName = user;
+        /* TODO: Quitar para poner la imagen correcta */
         this.userImagePath = "./assets/images/avatar/0.jpg";
     }
 

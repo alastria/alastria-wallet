@@ -948,3 +948,31 @@ $alert-ios-background: #fff;
 ion-icon:active{
     font-weight: bold !important;
 }
+
+.btnSecond.button-md {
+    /* Rectangle */
+  
+  left: 0%;
+  right: 0%;
+  top: 0%;
+  bottom: 0%;
+  background: #FDFDFD;
+  border: 1px solid #3A6D96;
+  box-sizing: border-box;
+  border-radius: 30px;
+  color: #3A6D96;
+  
+  }
+
+  ion-searchbar.searchbar-md .searchbar-input {
+    box-sizing: border-box;
+    border-radius: 30px;
+  }
+
+  .icon-star:before {
+      content: url('../assets/images/alastria/startFull.png') !important;
+  }
+
+  .icon-star-outline:before {
+    content: url('../assets/images/alastria/startEmpty.png') !important;
+  }

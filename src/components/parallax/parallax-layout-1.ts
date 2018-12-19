@@ -1,6 +1,5 @@
-import { Component, Input, ViewChild } from '@angular/core';
-import { IonicPage, Content } from 'ionic-angular';
-import { UserInfoHeader } from '../user-info-header/user-info-header';
+import { Component, Input } from '@angular/core';
+import { IonicPage } from 'ionic-angular';
 import { ScrollHideConfig } from './parallax.directive';
 
 @IonicPage()
@@ -17,7 +16,8 @@ export class ParallaxLayout1 {
     active: boolean;
     headerImage: any = "";
 
-    constructor() { }
+    constructor() {
+     }
 
     onEvent(event: string, item: any, e: any) {
         if (e) {

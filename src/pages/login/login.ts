@@ -1,7 +1,8 @@
 import { Component, Input } from '@angular/core';
-import { IonicPage, ModalController, ViewController, NavParams, Platform } from 'ionic-angular';
+import { IonicPage, ModalController, ViewController, NavParams } from 'ionic-angular';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner';
 import { FingerprintAIO, FingerprintOptions } from '@ionic-native/fingerprint-aio';
+import { ContructionsPage } from '../contructions/contructions';
 
 
 @IonicPage()
@@ -26,17 +27,7 @@ export class Login {
 
     constructor(public barcodeScanner: BarcodeScanner,
         public modalCtrl: ModalController,
-        private faio: FingerprintAIO,
-        private platform: Platform) {
-
-        /*      this.fingerprintOptions = {
-                  clientId: 'fingerprint-demo',
-                  clientSecret: 'password', //Only necessary for Android
-                  disableBackup: true, //Only for Android(optional)
-                  localizedFallbackTitle: 'Use Pin', //Only for iOS
-                  localizedReason: 'Please authenticate' //Only for iOS
-              }
-              */
+        private faio: FingerprintAIO) {
 
         this.user = '';
         this.pass = '';
@@ -104,6 +95,14 @@ export class Login {
         let modal = this.modalCtrl.create(InfoPage, { title: page });
         modal.present();
     }
+
+    navegateTo(text: string) {
+        let modal = this.modalCtrl.create(ContructionsPage);
+
+        modal.present();
+        console.log('Navigating to page: ' + text);
+    }
+
 }
 
 @Component({
@@ -125,7 +124,4 @@ export class InfoPage {
     dismiss() {
         this.viewCtrl.dismiss();
     }
-
 }
-
-

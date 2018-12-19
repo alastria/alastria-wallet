@@ -1,0 +1,29 @@
+<ion-content *ngIf="data" style="color: #325B8E;">
+    <div style="display: flex; flex-direction: column;">
+        <div style="display: flex;justify-content: flex-end;">
+            <a (click)="closeModal()"><img [src]="data.cerrar" /> </a>
+        </div>
+        <div style="display: flex;flex-direction: column;align-items: center;">
+            <div style="margin-bottom: 10%; margin-top: 10%">
+                <span style="margin-left: 20%; margin-right: 20%; margin-bottom: 10%; margin-top: 10%; text-align: center; font-size: 24px;">
+                    {{data.titleSuccess}}
+                </span>
+            </div>
+            <div *ngIf="data.page==='loading'" style="margin-left: 20%; margin-right: 20%; margin-bottom: 10%; margin-top: 10%; text-align: center">
+                    {{data.textSuccess}}
+            </div>
+            <div>
+                <img [src]="data.imgPrincipal">
+            </div>
+            <div style="margin-left: 20%; margin-right: 20%; margin-bottom: 10%; margin-top: 10%; text-align: center" *ngIf="data.page==='success'">
+                <span style="font-size: 18px" >
+                    {{data.textSuccess}}
+                </span>
+            </div>
+            <div>
+              <img [src]="data.imgSuccess" style="transform: scale(0.6);">
+            
+            </div>
+        </div>
+    </div>
+</ion-content>
