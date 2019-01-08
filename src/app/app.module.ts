@@ -21,6 +21,7 @@ import { SuccessPageModule } from '../pages/success/success.module';
 import { ProfilePage } from '../pages/profile/profile';
 import { DetailProfilePage } from '../pages/detail-profile/detail-profile';
 import { AlastriaPublicKeyRegistryService } from '../services/alastriaPublicKeyRegistry.service';
+import { SessionSecuredStorageService, IdentitySecuredStorageService } from '../services/securedStorage.service';
 
 @NgModule({
     declarations: [
@@ -64,6 +65,8 @@ import { AlastriaPublicKeyRegistryService } from '../services/alastriaPublicKeyR
         FingerprintAIO,
         SecureStorage,
         AlastriaPublicKeyRegistryService,
+        SessionSecuredStorageService,
+        IdentitySecuredStorageService,
         { provide: ErrorHandler, useClass: IonicErrorHandler }
     ]
 })

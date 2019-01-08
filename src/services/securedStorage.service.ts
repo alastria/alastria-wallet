@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core';
 import { SecureStorage, SecureStorageObject } from '@ionic-native/secure-storage';
 
 @Injectable()
-export class SecuredStorageService {
+export class IdentitySecuredStorageService {
 
     securedStorageObject: SecureStorageObject;
 
     constructor(
         private securedStorage: SecureStorage
     ) {
-        this.securedStorage.create('secureStorageName2')
+        this.securedStorage.create('identitySecureStorage')
             .then(
                 (secStoObj: SecureStorageObject) => {
                     this.securedStorageObject = secStoObj;
@@ -37,6 +37,53 @@ export class SecuredStorageService {
     async getJSON(key: string) {
         const jsonTmp = await this.securedStorageObject.get(key);
         return JSON.parse(jsonTmp);
+    }
+
+}
+
+@Injectable()
+export class SessionSecuredStorageService {
+
+    securedStorageObject: SecureStorageObject;
+    promiseState: Promise<any>;
+
+    constructor(
+        private securedStorage: SecureStorage
+    ) {
+        this.securedStorage.create('sessionSecureStorage').then(
+            (securedStorageObject) => {
+                this.securedStorageObject = securedStorageObject;
+            }
+        );
+    }
+
+    async isRegistered() {
+        return new Promise(
+            (next) => {
+
+            }
+        )
+        return this.securedStorageObject.get('username');
+    }
+
+    getUsername() {
+        return this.securedStorageObject.get('username');
+    }
+
+    async checkPassword(username: string, password: string) {
+        const usernameSto = await this.securedStorageObject.get('username');
+        const passwordSto = await this.securedStorageObject.get('password');
+
+        return username === usernameSto && password === passwordSto;
+    }
+
+    async register(username: string, password: any) {
+        const isRegistered = (await this.getUsername()) !== undefined;
+        if (isRegistered) {
+            throw new Error('User already registered');
+        }
+        this.securedStorageObject.set('username', username);
+        this.securedStorageObject.set('password', password);
     }
 
 }

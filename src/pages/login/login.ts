@@ -25,31 +25,13 @@ export class Login {
 
     fingerprintOptions: FingerprintOptions;
 
-    constructor(public barcodeScanner: BarcodeScanner,
-        public modalCtrl: ModalController,
-        private faio: FingerprintAIO) {
+    constructor(
+        public barcodeScanner: BarcodeScanner,
+        public modalCtrl: ModalController
+    ) {
 
         this.user = '';
         this.pass = '';
-    }
-
-    regFinger() {
-        this.faio.isAvailable().then(result => {
-            this.faio.show({
-                clientId: "AlastriaID",
-                clientSecret: "NddAHBODmhACXHITWJTU",
-                disableBackup: true,
-                localizedFallbackTitle: 'Touch ID for AlastriaID', //Only for iOS
-            }).then(result => {
-                this.onEvent("onLogin");
-            }).catch(err => {
-
-            });
-        }).catch(err => {
-            if (err === "cordova_not_available") {
-                this.onEvent("onLogin");
-            }
-        });
     }
 
     scanBarcode() {
