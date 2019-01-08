@@ -21,7 +21,7 @@ export class ProfilePage {
             addDate: '01/11/2018 13:40h',
             endDateT: 'Fecha fin de vigencia',
             endDate: '01/03/2021',
-            levelT: 'Nivel de aseguramineto',
+            levelT: 'Nivel de aseguramiento',
             level: 'Nivel 2',
             "iconsStars": [{
                 "iconActive": "icon-star",
@@ -102,6 +102,8 @@ export class ProfilePage {
     }
 
     detail(item: any) {
+        console.log('Curro --> ', item);
+        
         this.navCtrl.push(DetailProfilePage, { item });
     }
 

@@ -80,8 +80,9 @@ $palettes: (
       secondaryDark: #C7C7CC, //Used for item-divider, header-section,
       accent : #5ac8fa, //Used for button, badges, checkbox, wizard, radio, toggle, alert, wizard
       accentLight : #E8E9EA, //
-      accentDark: #EFEFF4 //Used for badge
-    ),
+      accentDark: #EFEFF4, //Used for badge
+      blueT: #325B8E
+      ),
     // Used for text colors in all screens
     textColors: (
       primary: #292F36, // Used for alert
@@ -137,11 +138,12 @@ $global-opacity: (
 $colors: (
   primary : theme-colors('textColors', 'accent'),
   secondary: theme-colors('textColors', 'secondaryBase'),
+  blueT: theme-colors('textColors', 'blueT'),
   accent: theme-colors('textColors', 'accent'),
   facebook: #3D599D,
   delateButton: #FF2D55,
   action: #3c8e2f,
-  delateButtonColorText: theme-colors('textColors', 'secondaryBase'),
+  delateButtonColorText: theme-colors('textColors', 'secondaryBase')
 );
 
 /* # Global Settings Color Login Page

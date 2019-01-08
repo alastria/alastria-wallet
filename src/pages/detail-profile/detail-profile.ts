@@ -1,13 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
-/**
- * Generated class for the DetailProfilePage page.
- *
- * See https://ionicframework.com/docs/components/#navigation for more info on
- * Ionic pages and navigation.
- */
-
 @IonicPage()
 @Component({
   selector: 'page-detail-profile',
@@ -15,7 +8,14 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class DetailProfilePage {
 
+    data: any;
+
   constructor(public navCtrl: NavController, public navParams: NavParams) {
+  }
+
+  ngOnInit(){
+    this.data = this.navParams.get('item');
+    console.log('Curro2 -->', this.data);
   }
 
   ionViewDidLoad() {

@@ -18,7 +18,8 @@
                 {{ item.value }}
             </p>
             <!-- Icon Rating Star -->
-            <ion-icon float-left *ngFor="let ico of item.iconsStars;let i = index" (click)="onStarClass(item.iconsStars, i, $event);">
+            <!-- (click)="onStarClass(item.iconsStars, i, $event);" -->
+            <ion-icon float-left *ngFor="let ico of item.iconsStars;let i = index" >
                 <i icon-small *ngIf="ico.isActive" class="icon {{ico.iconActive}}"></i>
                 <i icon-small *ngIf="!ico.isActive" class="icon {{ico.iconInactive}}"></i>
             </ion-icon>

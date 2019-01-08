@@ -34,7 +34,11 @@ import { AlastriaPublicKeyRegistryService } from '../services/alastriaPublicKeyR
     ],
     imports: [
         BrowserModule,
-        IonicModule.forRoot(MyApp),
+        IonicModule.forRoot(MyApp, {
+            backButtonText: 'Tu AlastriaID',
+            backButtonIcon: 'ios-arrow-back'
+            }
+        ),
         RegisterFormModule,
         TabsPageModule,
         NgxQRCodeModule,

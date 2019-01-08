@@ -15,7 +15,6 @@ export class AlastriaPublicKeyRegistryService {
     GAS_LIMIT = 30000000000;
 
     private web3Provider: null;
-    private contracts: {};
 
     constructor() {
         if (typeof window.web3 !== 'undefined') {

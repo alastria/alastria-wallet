@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ToastService } from '../../../services/toast-service';
 import { TabsService } from '../../../services/tabs-service';
 import { IonicPage } from 'ionic-angular/umd';
+import { ScrollHideConfig } from '../../../components/parallax/parallax.directive';
 
 @IonicPage({
     defaultHistory: ['TabsPage']
@@ -12,11 +13,11 @@ import { IonicPage } from 'ionic-angular/umd';
 })
 export class Index {
 
-    //@ViewChild('home') nav: NavController
-
     params: any = {};
     data: any = {};
     searchTerm: string = "Buscar";
+
+    headerScrollConfig: ScrollHideConfig = { cssProperty: 'margin-top', maxValue: 80 };
 
     constructor(private toastCtrl: ToastService) {
         console.log("[Debug] Index enter");
