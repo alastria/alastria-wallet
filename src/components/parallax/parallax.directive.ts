@@ -1,4 +1,4 @@
-import { Content, Button } from 'ionic-angular';
+import { Content } from 'ionic-angular';
 import { Directive, ElementRef, Input, Renderer2, SimpleChanges, AfterViewInit } from '@angular/core';
 
 

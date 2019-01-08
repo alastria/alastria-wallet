@@ -1,6 +1,5 @@
 import { Component, Input } from '@angular/core';
 import { IonicPage } from 'ionic-angular';
-import { ScrollHideConfig } from './parallax.directive';
 
 @IonicPage()
 @Component({
@@ -10,8 +9,6 @@ import { ScrollHideConfig } from './parallax.directive';
 export class ParallaxLayout1 {
     @Input() data: any;
     @Input() events: any;
-
-    headerScrollConfig: ScrollHideConfig = { cssProperty: 'margin-top', maxValue: 80 };
 
     active: boolean;
     headerImage: any = "";
