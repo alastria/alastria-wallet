@@ -78,7 +78,7 @@
             </ion-row>
         </ion-grid>
         <div>
-            <a class="fingerPrint" (click)="regFinger()" style="display: flex; align-items: center">
+            <a class="fingerPrint" (click)="onEvent('regFinger')" style="display: flex; align-items: center">
                 <img width="30px" height="40px" margin-right="5px" src="assets/images/logo/BiometricFinger.png" />
                 {{data.loginFinger}}
             </a>
