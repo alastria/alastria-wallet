@@ -1,9 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { IonicPage, ModalController, ViewController, NavParams } from 'ionic-angular';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner';
-import { FingerprintAIO, FingerprintOptions } from '@ionic-native/fingerprint-aio';
 import { ContructionsPage } from '../contructions/contructions';
-
 
 @IonicPage()
 @Component({
@@ -22,8 +20,6 @@ export class Login {
 
     private isUsernameValid: boolean = true;
     private isPasswordValid: boolean = true;
-
-    fingerprintOptions: FingerprintOptions;
 
     constructor(
         public barcodeScanner: BarcodeScanner,
