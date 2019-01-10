@@ -1000,3 +1000,39 @@ ion-icon:active{
     color: rgba(50, 91, 142, 0.63);
     text-align: center;
 }
+
+.term-condition-title {
+    color: $blueT;
+    padding-top: 4%;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+
+.term-condition-description {
+    font-size: 18px;
+    padding: 4%;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    line-height: 23px;
+}
+
+.term-condition-button {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+
+.btn-close {
+    margin: 1%;
+    background-image: url("../assets/images/alastria/ic_close.png");
+    width: 32px;
+    height: 32px;
+}
+
+.btn-close-padre {
+    display: flex;
+    justify-content: flex-end;
+}
