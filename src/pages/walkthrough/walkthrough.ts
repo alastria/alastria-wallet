@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { IonicPage, NavController, NavParams, Slides, ModalController } from 'ionic-angular';
 import { ContructionsPage } from '../contructions/contructions';
-import { TermsConditionsPage } from '../terms-conditions/terms-conditions';
+import { RegisterForm } from '../register/register-hub/register-form/register-form';
 
 @IonicPage()
 @Component({
@@ -50,11 +50,8 @@ export class WalkthroughPage {
     }
 
     navegateTo(text: string) {
-        console.log('-->', text);
-
-        if (text === 'page-terms-conditions') {
-            let modal = this.modalCtrl.create(TermsConditionsPage);
-            modal.present();
+        if (text === 'register-form') {
+            this.navCtrl.setRoot(RegisterForm);
         }
         else {
             let modal = this.modalCtrl.create(ContructionsPage);

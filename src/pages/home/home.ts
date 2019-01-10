@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { TabsPage } from '../tabsPage/tabsPage';
-import { RegisterHub } from '../register/register-hub/register-hub';
-
 import { SessionSecuredStorageService } from '../../services/securedStorage.service';
 import { FingerprintAIO } from '@ionic-native/fingerprint-aio';
+import { WalkthroughPage } from '../walkthrough/walkthrough';
 
 @Component({
     selector: 'page-home',
@@ -79,7 +78,7 @@ export class HomePage implements OnInit {
     }
 
     onRegister(params: any) {
-        this.navCtrl.setRoot(RegisterHub);
+        this.navCtrl.setRoot(WalkthroughPage);
     }
 
     setLoginParams() {

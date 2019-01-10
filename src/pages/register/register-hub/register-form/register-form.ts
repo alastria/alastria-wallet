@@ -1,6 +1,8 @@
 import { Component, Input } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, ModalController } from 'ionic-angular';
 import { HomePage } from '../../../home/home';
+import { TermsConditionsPage } from '../../../terms-conditions/terms-conditions';
+import { SessionSecuredStorageService } from '../../../../services/securedStorage.service';
 
 @Component({
     selector: 'register-form',
@@ -24,7 +26,7 @@ export class RegisterForm {
 
     private regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-    constructor(private navCtrl: NavController) {
+    constructor(private navCtrl: NavController, public modalCtrl: ModalController, public sessionSecuredStorageService: SessionSecuredStorageService) {
         this.data = {
             "toolbarTitle": "Registro",
             "logo": "assets/images/logo/logo.png",
@@ -50,7 +52,29 @@ export class RegisterForm {
 
         this.events = {
             onRegister: () => {
-                this.navCtrl.setRoot(HomePage);
+                let modal = this.modalCtrl.create(TermsConditionsPage);
+                console.log('curro --> ', modal);
+
+                modal.present();
+                modal.onDidDismiss((res) => {
+                    /* Guardo en el secureStorage */
+                    if (res.accept === 'true') {
+                        this.sessionSecuredStorageService.register(this.username, this.password)
+                            .then(
+                                (res) => {
+                                    console.log('Información guardada correctamente en el secureStorage');
+
+                                    /* Redirecciono a la pagina principal */
+                                    this.navCtrl.setRoot(HomePage);
+                                }
+                            )
+                            .catch(
+                                () => {
+                                    console.error('Error al guardar en el secureStorage');
+                                }
+                            );
+                    }
+                });
             },
             onSkip: () => {
                 this.navCtrl.setRoot(HomePage);

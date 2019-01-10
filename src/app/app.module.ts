@@ -23,7 +23,7 @@ import { DetailProfilePage } from '../pages/detail-profile/detail-profile';
 import { AlastriaPublicKeyRegistryService } from '../services/alastriaPublicKeyRegistry.service';
 import { SessionSecuredStorageService, IdentitySecuredStorageService } from '../services/securedStorage.service';
 import { WalkthroughPage } from '../pages/walkthrough/walkthrough';
-import { TermsConditionsPage } from '../pages/terms-conditions/terms-conditions';
+import { TermsConditionsPageModule } from '../pages/terms-conditions/terms-conditions.module';
 
 @NgModule({
     declarations: [
@@ -34,8 +34,7 @@ import { TermsConditionsPage } from '../pages/terms-conditions/terms-conditions'
         ProfilePage,
         DetailProfilePage,
         RegisterHub,
-        WalkthroughPage,
-        TermsConditionsPage
+        WalkthroughPage
     ],
     imports: [
         BrowserModule,
@@ -48,6 +47,7 @@ import { TermsConditionsPage } from '../pages/terms-conditions/terms-conditions'
         TabsPageModule,
         NgxQRCodeModule,
         ContructionsPageModule,
+        TermsConditionsPageModule,
         SuccessPageModule,
         UserInfoHeaderModule
     ],
@@ -60,8 +60,7 @@ import { TermsConditionsPage } from '../pages/terms-conditions/terms-conditions'
         ProfilePage,
         DetailProfilePage,
         RegisterHub,
-        WalkthroughPage,
-        TermsConditionsPage
+        WalkthroughPage
     ],
     providers: [
         StatusBar,

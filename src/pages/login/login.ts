@@ -3,7 +3,7 @@ import { IonicPage, ModalController, ViewController, NavParams, NavController } 
 import { BarcodeScanner } from '@ionic-native/barcode-scanner';
 import { ContructionsPage } from '../contructions/contructions';
 import { SessionSecuredStorageService } from '../../services/securedStorage.service';
-import { WalkthroughPage } from '../walkthrough/walkthrough';
+import { HomePage } from '../home/home';
 
 @IonicPage()
 @Component({
@@ -50,16 +50,16 @@ export class Login {
                 (result) => {
                     console.log('Curro--> ', result)
                     /* Comprobar si el usuario coincide */
+                    this.navCtrl.setRoot(HomePage);
                 }
             )
             .catch(
                 (error) => {
+                    /* TODO Cambiar esto para la version final */
                     if (error === "cordova_not_available") {
-                        /* TODO Cambiar esto para la version final */
-                        this.navCtrl.setRoot(WalkthroughPage);
+                        this.navCtrl.setRoot(HomePage);
                     }
-                    /* lo redirecciono a la pantalla de registro */
-                    this.navCtrl.setRoot(WalkthroughPage);
+
                     console.log(error)
                 }
             );
