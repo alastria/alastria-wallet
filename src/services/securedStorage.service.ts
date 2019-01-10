@@ -59,10 +59,13 @@ export class SessionSecuredStorageService {
 
     async isRegistered() {
         return new Promise(
-            (next) => {
+            (resolve, reject) => {
                 this.securedStorageObject.get('username').then(
                     (str) => {
-                        next(str);
+                        resolve(str);
+                    },
+                    (error) => {
+                        reject(error);
                     }
                 );
             }

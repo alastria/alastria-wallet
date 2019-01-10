@@ -146,6 +146,8 @@ $colors: (
   delateButtonColorText: theme-colors('textColors', 'secondaryBase')
 );
 
+$blueT: theme-colors('textColors', 'blueT');
+
 /* # Global Settings Color Login Page
 ================================================
 ================================================*/
@@ -978,3 +980,23 @@ ion-icon:active{
   .icon-star-outline:before {
     content: url('../assets/images/alastria/startEmpty.png') !important;
   }
+
+  
+.title-slides {
+    color: $blueT;
+    font-weight: bolder;
+}
+
+.description-slides {
+    font-size: 17px;
+}
+
+.slides-height{
+    height: 90%;
+    top: 0;
+}
+
+.slides-link {
+    color: rgba(50, 91, 142, 0.63);
+    text-align: center;
+}

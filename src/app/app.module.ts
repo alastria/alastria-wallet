@@ -22,6 +22,8 @@ import { ProfilePage } from '../pages/profile/profile';
 import { DetailProfilePage } from '../pages/detail-profile/detail-profile';
 import { AlastriaPublicKeyRegistryService } from '../services/alastriaPublicKeyRegistry.service';
 import { SessionSecuredStorageService, IdentitySecuredStorageService } from '../services/securedStorage.service';
+import { WalkthroughPage } from '../pages/walkthrough/walkthrough';
+import { TermsConditionsPage } from '../pages/terms-conditions/terms-conditions';
 
 @NgModule({
     declarations: [
@@ -31,14 +33,16 @@ import { SessionSecuredStorageService, IdentitySecuredStorageService } from '../
         InfoPage,
         ProfilePage,
         DetailProfilePage,
-        RegisterHub
+        RegisterHub,
+        WalkthroughPage,
+        TermsConditionsPage
     ],
     imports: [
         BrowserModule,
         IonicModule.forRoot(MyApp, {
             backButtonText: 'Tu AlastriaID',
             backButtonIcon: 'ios-arrow-back'
-            }
+        }
         ),
         RegisterFormModule,
         TabsPageModule,
@@ -55,7 +59,9 @@ import { SessionSecuredStorageService, IdentitySecuredStorageService } from '../
         InfoPage,
         ProfilePage,
         DetailProfilePage,
-        RegisterHub
+        RegisterHub,
+        WalkthroughPage,
+        TermsConditionsPage
     ],
     providers: [
         StatusBar,

@@ -1,7 +1,9 @@
 import { Component, Input } from '@angular/core';
-import { IonicPage, ModalController, ViewController, NavParams } from 'ionic-angular';
+import { IonicPage, ModalController, ViewController, NavParams, NavController } from 'ionic-angular';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner';
 import { ContructionsPage } from '../contructions/contructions';
+import { SessionSecuredStorageService } from '../../services/securedStorage.service';
+import { WalkthroughPage } from '../walkthrough/walkthrough';
 
 @IonicPage()
 @Component({
@@ -23,7 +25,9 @@ export class Login {
 
     constructor(
         public barcodeScanner: BarcodeScanner,
-        public modalCtrl: ModalController
+        public navCtrl: NavController,
+        public modalCtrl: ModalController,
+        public sessionSecuredStorageService: SessionSecuredStorageService
     ) {
 
         this.user = '';
@@ -39,6 +43,27 @@ export class Login {
             prompt: "Situe el código Qr en el interior del rectángulo.",
             formats: "QR_CODE"
         }
+
+        /* Comprobamos si el usuario esta registrado */
+        this.sessionSecuredStorageService.isRegistered()
+            .then(
+                (result) => {
+                    console.log('Curro--> ', result)
+                    /* Comprobar si el usuario coincide */
+                }
+            )
+            .catch(
+                (error) => {
+                    if (error === "cordova_not_available") {
+                        /* TODO Cambiar esto para la version final */
+                        this.navCtrl.setRoot(WalkthroughPage);
+                    }
+                    /* lo redirecciono a la pantalla de registro */
+                    this.navCtrl.setRoot(WalkthroughPage);
+                    console.log(error)
+                }
+            );
+
         this.barcodeScanner.scan(options).then(barcodeData => {
             this.onEvent("onLogin");
         }).catch(err => {
