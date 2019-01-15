@@ -4,8 +4,8 @@ import { DetailProfilePage } from '../detail-profile/detail-profile';
 
 @IonicPage()
 @Component({
-  selector: 'page-profile',
-  templateUrl: 'profile.html'
+    selector: 'page-profile',
+    templateUrl: 'profile.html'
 })
 export class ProfilePage {
 
@@ -27,15 +27,15 @@ export class ProfilePage {
                 "iconActive": "icon-star",
                 "iconInactive": "icon-star-outline",
                 "isActive": true
-              }, {
+            }, {
                 "iconActive": "icon-star",
                 "iconInactive": "icon-star-outline",
                 "isActive": true
-              }, {
+            }, {
                 "iconActive": "icon-star",
                 "iconInactive": "icon-star-outline",
                 "isActive": false
-              }
+            }
             ]
         },
         {
@@ -53,15 +53,15 @@ export class ProfilePage {
                 "iconActive": "icon-star",
                 "iconInactive": "icon-star-outline",
                 "isActive": true
-              }, {
+            }, {
                 "iconActive": "icon-star",
                 "iconInactive": "icon-star-outline",
                 "isActive": true
-              }, {
+            }, {
                 "iconActive": "icon-star",
                 "iconInactive": "icon-star-outline",
                 "isActive": true
-              }
+            }
             ]
         },
         {
@@ -79,15 +79,15 @@ export class ProfilePage {
                 "iconActive": "icon-star",
                 "iconInactive": "icon-star-outline",
                 "isActive": true
-              }, {
+            }, {
                 "iconActive": "icon-star",
                 "iconInactive": "icon-star-outline",
                 "isActive": true
-              }, {
+            }, {
                 "iconActive": "icon-star",
                 "iconInactive": "icon-star-outline",
                 "isActive": true
-              }
+            }
             ]
         }
     ];
@@ -102,9 +102,6 @@ export class ProfilePage {
     }
 
     detail(item: any) {
-        console.log('Curro --> ', item);
-        
         this.navCtrl.push(DetailProfilePage, { item });
     }
-
 }

@@ -101,8 +101,8 @@
       "cordova-plugin-fingerprint-aio": {}
     },
     "platforms": [
-      "android",
-      "browser"
+      "browser",
+      "android"
     ]
   }
 }
