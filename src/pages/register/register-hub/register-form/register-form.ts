@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { NavController, ModalController } from 'ionic-angular';
+import { NavController, ModalController, AlertController } from 'ionic-angular';
 import { HomePage } from '../../../home/home';
 import { TermsConditionsPage } from '../../../terms-conditions/terms-conditions';
 import { SessionSecuredStorageService } from '../../../../services/securedStorage.service';
@@ -26,7 +26,10 @@ export class RegisterForm {
 
     private regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-    constructor(private navCtrl: NavController, public modalCtrl: ModalController, public sessionSecuredStorageService: SessionSecuredStorageService) {
+    constructor(private navCtrl: NavController,
+        public modalCtrl: ModalController,
+        public sessionSecuredStorageService: SessionSecuredStorageService,
+        public alertCtrl: AlertController) {
         this.data = {
             "toolbarTitle": "Registro",
             "logo": "assets/images/logo/logo.png",
@@ -53,8 +56,6 @@ export class RegisterForm {
         this.events = {
             onRegister: () => {
                 let modal = this.modalCtrl.create(TermsConditionsPage);
-                console.log('curro --> ', modal);
-
                 modal.present();
                 modal.onDidDismiss((res) => {
                     /* Guardo en el secureStorage */
@@ -69,8 +70,9 @@ export class RegisterForm {
                                 }
                             )
                             .catch(
-                                () => {
-                                    console.error('Error al guardar en el secureStorage');
+                                (err) => {
+                                    console.error('Error al guardar en el secureStorage ', err);
+                                    this.showAlert('Usuario Registrado', 'El usuario ya estaba registrado');
                                 }
                             );
                     }
@@ -83,6 +85,15 @@ export class RegisterForm {
                 this.navCtrl.setRoot(HomePage);
             }
         }
+    }
+
+    showAlert(title: string, message: string) {
+        const alert = this.alertCtrl.create({
+            title: title,
+            subTitle: message,
+            buttons: ['OK']
+        });
+        alert.present();
     }
 
     onEvent = (event: string): void => {

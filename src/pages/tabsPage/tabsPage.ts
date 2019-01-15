@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { NavController, IonicPage } from 'ionic-angular';
 
 import { HomePage } from '../home/home';
+import { SessionSecuredStorageService } from '../../services/securedStorage.service';
 
 @IonicPage()
 @Component({
@@ -14,14 +15,19 @@ export class TabsPage {
     tabs: any = {};
     isLoged: Boolean;
 
-    constructor(public navCtrl: NavController) {
-        let user = sessionStorage.getItem("loginName");
-        if (!user) {
-            this.isLoged = false;
-            this.navCtrl.setRoot(HomePage);
-        } else {
-            this.isLoged = true;
-        }
+    constructor(public navCtrl: NavController, private sessionSecuredStorageService: SessionSecuredStorageService) {
+
+        this.sessionSecuredStorageService.isRegistered().then(
+            (result) => {
+                this.isLoged = true;
+            }
+        ).catch(
+            () => {
+                this.isLoged = false;
+                this.navCtrl.setRoot(HomePage);
+            }
+        )
+
         this.setTabsParams();
     }
 

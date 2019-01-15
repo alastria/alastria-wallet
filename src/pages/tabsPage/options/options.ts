@@ -41,7 +41,6 @@ export class Options {
                 button: true,
                 buttonLabel: "LogOut",
                 callback: () => {
-                    sessionStorage.removeItem("loginName");
                     this.goToRoot();
                 }
             }

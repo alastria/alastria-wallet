@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, ModalController, NavController } from 'ionic-angular';
+import { SessionSecuredStorageService } from '../../../services/securedStorage.service';
 
 @IonicPage()
 @Component({
@@ -14,10 +15,14 @@ export class UserSettings {
 
     constructor(
         public modalCtrl: ModalController,
-        private navCtrl: NavController
+        private navCtrl: NavController,
+        public sessionSecuredStorageService: SessionSecuredStorageService
     ) {
-        let user = sessionStorage.getItem("loginName");
-        this.userName = user;
+        this.sessionSecuredStorageService.getUsername().then(
+            (result) => {
+                this.userName = result;
+            }
+        );
         this.userImagePath = "./assets/images/avatar/0.jpg";
     }
 

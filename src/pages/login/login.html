@@ -32,7 +32,7 @@
 </ion-header>
 
 <!-- Themes Login + logo 1 -->
-<ion-content ion-fixed class="mainContent" style="z-index: 1;">
+<ion-content ion-fixed class="mainContent" style="z-index: 1;" *ngIf="data">
     <div style="display: flex; flex-direction: column; justify-content: space-between; min-height: 100%; align-items: center">
         <ion-grid *ngIf="data != null">
             <ion-row style="display: flex; flex-direction: column; align-items: center;">
@@ -45,13 +45,17 @@
                 <ion-list>
 
                     <!-- User -->
-                    <div style="display: flex; align-items: flex-end">
+                    <div style="display: flex; align-items: flex-end" *ngIf="!data.isRegistered; else login">
                         <img class="iconLogin" src="assets/images/logo/user.png" />
                         <ion-item style="background-color: transparent;">
                             <ion-label floating class="grey">{{data.labelUsername}}</ion-label>
                             <ion-input class="menu" type="text" [(ngModel)]="user"></ion-input>
                         </ion-item>
                     </div>
+                    <ng-template #login>
+                        <ion-label floating class="nameUser">Hola {{ data.userRegister }}, bienvenid@</ion-label>
+                    </ng-template>
+
 
                     <!-- Password -->
                     <div style="display: flex; align-items: flex-end">
@@ -66,7 +70,7 @@
 
                 <!-- Boton Login Alastria -->
                 <ion-col style="width: 100%">
-                    <button ion-button block class="btnLogin" (click)="scanBarcode()">{{data.loginalastria}}</button>
+                    <button ion-button block class="btnLogin" (click)="onEvent('onLogin')">{{data.loginalastria}}</button>
                 </ion-col>
                 <ion-col>
                     <div class="grey" style="padding-top: 5px">

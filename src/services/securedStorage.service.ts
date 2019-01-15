@@ -60,20 +60,48 @@ export class SessionSecuredStorageService {
     async isRegistered() {
         return new Promise(
             (resolve, reject) => {
-                this.securedStorageObject.get('username').then(
-                    (str) => {
-                        resolve(str);
-                    },
-                    (error) => {
-                        reject(error);
-                    }
-                );
+                if (!this.securedStorageObject) {
+                    this.securedStorage.create('sessionSecureStorage').then(
+                        (securedStorageObject) => {
+                            this.securedStorageObject = securedStorageObject;
+                            this.getUsername().then(
+                                (result) => {
+                                    if (result) {
+                                        resolve(result);
+                                    }
+                                    else {
+                                        reject('No esta registrado, hay que crear una cuenta nueva');
+                                    }
+                                }
+                            );
+                        }
+                    )
+                } else {
+                    this.getUsername().then(
+                        (result) => {
+                            if (result) {
+                                resolve(result);
+                            }
+                            else {
+                                reject('No esta registrado, hay que crear una cuenta nueva');
+                            }
+                        }
+                    );
+                }
             }
         )
     }
 
-    getUsername() {
-        return this.securedStorageObject.get('username');
+    getUsername(): Promise<any> {
+        return this.securedStorageObject.keys().then(
+            (str) => {
+                if (str.length > 0 && str.indexOf('username') > -1) {
+                    return this.securedStorageObject.get('username');
+                } else {
+                    return null;
+                }
+            }
+        );
     }
 
     async checkPassword(username: string, password: string) {
@@ -84,12 +112,14 @@ export class SessionSecuredStorageService {
     }
 
     async register(username: string, password: any) {
-        const isRegistered = (await this.getUsername()) !== undefined;
+        const isRegistered = (await this.getUsername()) !== null;
         if (isRegistered) {
             throw new Error('User already registered');
         }
-        this.securedStorageObject.set('username', username);
-        this.securedStorageObject.set('password', password);
+        else {
+            this.securedStorageObject.set('username', username);
+            /* TODO tengo que guardar esto asi?? */
+            this.securedStorageObject.set('password', password);
+        }
     }
-
 }

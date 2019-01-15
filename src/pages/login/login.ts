@@ -34,6 +34,7 @@ export class Login {
         this.pass = '';
     }
 
+    /*TODO: NO SE LLAMA NUNCA, cambiar de sitio */
     scanBarcode() {
         if (this.isCamera) {
 
@@ -48,7 +49,6 @@ export class Login {
         this.sessionSecuredStorageService.isRegistered()
             .then(
                 (result) => {
-                    console.log('Curro--> ', result)
                     /* Comprobar si el usuario coincide */
                     this.navCtrl.setRoot(HomePage);
                 }

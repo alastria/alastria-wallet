@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, AlertController } from 'ionic-angular';
 import { TabsPage } from '../tabsPage/tabsPage';
 import { SessionSecuredStorageService } from '../../services/securedStorage.service';
 import { FingerprintAIO } from '@ionic-native/fingerprint-aio';
@@ -19,15 +19,18 @@ export class HomePage implements OnInit {
     constructor(
         public navCtrl: NavController,
         private sessionSecuredStorageService: SessionSecuredStorageService,
-        private faio: FingerprintAIO
+        private faio: FingerprintAIO,
+        public alertCtrl: AlertController
     ) { }
 
     async ngOnInit(): Promise<void> {
         // Is session registered
         this.setLoginParams();
-        this.sessionSecuredStorageService.isRegistered().then(
-            () => {
+        return this.sessionSecuredStorageService.isRegistered().then(
+            (result) => {
                 this.isRegistered = true;
+                this.login.data.isRegistered = true;
+                this.login.data.userRegister = result;
                 this.regFinger().then(
                     () => {
                         this.isLoged = true;
@@ -38,9 +41,10 @@ export class HomePage implements OnInit {
                         this.isLoged = false;
                     }
                 )
-            },
-            err => {
-                console.error(err);
+            }
+        ).catch(
+            (error) => {
+                console.error('No esta registrado', error);
             }
         )
 
@@ -71,10 +75,46 @@ export class HomePage implements OnInit {
         // );
     }
 
+    showAlert(title: string, message: string) {
+        const alert = this.alertCtrl.create({
+            title: title,
+            subTitle: message,
+            buttons: ['OK']
+        });
+        alert.present();
+    }
+
     onLogin(params: any) {
-        this.isLoged = true;
-        sessionStorage.setItem("loginName", params.username);
-        this.navCtrl.setRoot(TabsPage);
+        if (this.isRegistered) {
+            this.sessionSecuredStorageService.getUsername().then(
+                (result) => {
+                    params.username = result;
+                    this.sessionSecuredStorageService.checkPassword(params.username, params.password).then(
+                        (res) => {
+                            if (res) {
+                                this.isLoged = true;
+                                this.navCtrl.setRoot(TabsPage);
+                            }
+                            else {
+                                this.showAlert('Credenciales erroneas', 'Las credenciales introducidas no son correctas');
+                            }
+                        }
+                    ).catch(
+                        (err) => {
+                            this.showAlert('Error al comprobar credenciales', 'Ha habido un error al comprobar las credenciales');
+                        }
+                    );
+                }
+            ).catch(
+                (error) => {
+                    this.showAlert('Usuario no registrado', 'Tienes que crear previamente una cuenta, para poder logarte en la aplicación');
+                }
+            );
+        }
+        // no esta registrado
+        else {
+            this.showAlert('Usuario no registrado', 'Tienes que crear previamente una cuenta, para poder logarte en la aplicación');
+        }
     }
 
     onRegister(params: any) {
