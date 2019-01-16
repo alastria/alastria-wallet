@@ -1,1 +1,17 @@
 /* You can add global styles to this file, and also import other style files */
+body {
+    background: url("assets/img/backgroundImage.jpg");
+}
+
+.help-read-qr {
+    padding: 10%;
+    font-size: 18px;
+}
+
+.help-read-qr-title {
+    font-size: 24px;   
+}
+
+.jumbotron {
+    background-color: rgba(233,236,239, 0.8); //semi-transparent red
+}
