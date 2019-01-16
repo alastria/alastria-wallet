@@ -35,7 +35,7 @@ export class Index {
     getList() {
         this.params.data = [
             {
-                "backgroundImage": "assets/images/alastria/datosBasicos.png",
+                "backgroundImage": "assets/images/alastria/basicos.png",
                 "title": "Datos básicos",
                 "description": "Tus datos más valiosos bajo tu control: tu dirección, tu fecha de nacimiento, tu email...",
                 "link": "page-contructions"
