@@ -31,16 +31,6 @@ export class HomePage implements OnInit {
                 this.isRegistered = true;
                 this.login.data.isRegistered = true;
                 this.login.data.userRegister = result;
-                this.regFinger().then(
-                    () => {
-                        this.isLoged = true;
-                        this.navCtrl.setRoot(TabsPage);
-                    }
-                ).catch(
-                    () => {
-                        this.isLoged = false;
-                    }
-                )
             }
         ).catch(
             (error) => {
@@ -49,30 +39,30 @@ export class HomePage implements OnInit {
         )
 
         // Test
-        // this.alastriaPublicKeyRegistry.getAccountInfo().then(
-        //     async (succ: any) => {
-        //         console.log('Test ok!', succ);
-        //         // const publicKeyInit = 'Hola currito, soy una clave publica!';
-        //         const publicKeyInit = keypair();
-        //         console.log(publicKeyInit);
+        /* this.alastriaPublicKeyRegistry.getAccountInfo().then(
+            async (succ: any) => {
+                console.log('Test ok!', succ);
+                // const publicKeyInit = 'Hola currito, soy una clave publica!';
+                const publicKeyInit = keypair();
+                console.log(publicKeyInit);
 
-        //         let status = await this.alastriaPublicKeyRegistry.registryStatus(succ.fromAccount);
-        //         const publicKey = this.alastriaPublicKeyRegistry.toUtf8(status)
-        //         console.log('Status: ', publicKey);
+                let status = await this.alastriaPublicKeyRegistry.registryStatus(succ.fromAccount);
+                const publicKey = this.alastriaPublicKeyRegistry.toUtf8(status)
+                console.log('Status: ', publicKey);
 
-        //         if (!this.alastriaPublicKeyRegistry.isStatusDefined(status)) {
-        //             let result = await this.alastriaPublicKeyRegistry.registrySet(publicKeyInit.public, succ.fromAccount);
-        //             console.log('Status: ', result);
-        //         } else {
-        //             let statusObj = await this.alastriaPublicKeyRegistry.registryStatusObject(succ.fromAccount, publicKey);
-        //             console.log('Status obj: ', statusObj);
-        //         }
+                if (!this.alastriaPublicKeyRegistry.isStatusDefined(status)) {
+                    let result = await this.alastriaPublicKeyRegistry.registrySet(publicKeyInit.public, succ.fromAccount);
+                    console.log('Status: ', result);
+                } else {
+                    let statusObj = await this.alastriaPublicKeyRegistry.registryStatusObject(succ.fromAccount, publicKey);
+                    console.log('Status obj: ', statusObj);
+                }
 
-        //     },
-        //     err => {
-        //         console.error('Test error!', err);
-        //     }
-        // );
+            },
+            err => {
+                console.error('Test error!', err);
+            }
+        ); */
     }
 
     showAlert(title: string, message: string) {
@@ -160,6 +150,10 @@ export class HomePage implements OnInit {
             },
             onFacebook: function (params) {
 
+            },
+
+            regFinger: function (params) {
+                that.regFinger();
             }
         };
     }
@@ -175,7 +169,10 @@ export class HomePage implements OnInit {
                         localizedFallbackTitle: 'Touch ID for AlastriaID', //Only for iOS
                     }).then(result => {
                         next('Ok!');
+                        this.isLoged = true;
+                        this.navCtrl.setRoot(TabsPage);
                     }).catch(err => {
+                        this.isLoged = false;
                         reject('Error in fingerprint');
                     });
                 }).catch(err => {

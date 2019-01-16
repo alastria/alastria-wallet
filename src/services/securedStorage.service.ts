@@ -100,6 +100,10 @@ export class SessionSecuredStorageService {
                 } else {
                     return null;
                 }
+            },
+        ).catch(
+            (error) => {
+                console.log('Falla al comprobar las keys', error);
             }
         );
     }
@@ -111,15 +115,37 @@ export class SessionSecuredStorageService {
         return username === usernameSto && password === passwordSto;
     }
 
-    async register(username: string, password: any) {
-        const isRegistered = (await this.getUsername()) !== null;
-        if (isRegistered) {
-            throw new Error('User already registered');
-        }
-        else {
-            this.securedStorageObject.set('username', username);
-            /* TODO tengo que guardar esto asi?? */
-            this.securedStorageObject.set('password', password);
-        }
+    register(username: string, password: any): Promise<any> {
+        return new Promise(
+            (resolve, reject) => {
+                this.getUsername().then(
+                    (res) => {
+                        const isRegistered = res !== null;
+                        if (isRegistered) {
+                            reject('El usuario ya esta registrado');
+                        }
+                        else {
+                            this.securedStorageObject.set('username', username).then(
+                                (result) => {
+                                    this.securedStorageObject.set('password', password).then(
+                                        (result) => {
+                                            resolve();
+                                        }
+                                    ).catch(
+                                        (error) => {
+                                            reject();
+                                        }
+                                    );
+                                }
+                            ).catch(
+                                (error) => {
+                                    reject();
+                                }
+                            );
+                        }
+                    }
+                );
+            }
+        )
     }
 }

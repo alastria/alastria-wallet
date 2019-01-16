@@ -62,7 +62,7 @@ export class RegisterForm {
                     if (res.accept === 'true') {
                         this.sessionSecuredStorageService.register(this.username, this.password)
                             .then(
-                                (res) => {
+                                () => {
                                     console.log('Información guardada correctamente en el secureStorage');
 
                                     /* Redirecciono a la pagina principal */
