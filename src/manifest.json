@@ -6,7 +6,7 @@
     "icons": [
         {
             "src": "assets/images/logo/logoIco.png",
-            "sizes": "48x48",
+            "sizes": "180x180",
             "type": "image/png"
         }
     ],
