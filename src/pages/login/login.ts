@@ -1,25 +1,40 @@
 import { Component, Input } from '@angular/core';
-import { IonicPage } from 'ionic-angular';
+import { IonicPage, ModalController, ViewController, NavParams, NavController } from 'ionic-angular';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner';
+import { ContructionsPage } from '../contructions/contructions';
+import { SessionSecuredStorageService } from '../../services/securedStorage.service';
+import { HomePage } from '../home/home';
 
 @IonicPage()
 @Component({
     selector: 'login',
-    templateUrl: 'login.html'
+    templateUrl: 'login.html',
+    styleUrls: ['/login.scss']
 })
 export class Login {
     @Input() data: any;
     @Input() events: any;
+
+    user: string;
+    pass: string;
 
     private isCamera: boolean = false;
 
     private isUsernameValid: boolean = true;
     private isPasswordValid: boolean = true;
 
-    constructor(public barcodeScanner: BarcodeScanner) {
+    constructor(
+        public barcodeScanner: BarcodeScanner,
+        public navCtrl: NavController,
+        public modalCtrl: ModalController,
+        public sessionSecuredStorageService: SessionSecuredStorageService
+    ) {
 
+        this.user = '';
+        this.pass = '';
     }
 
+    /*TODO: NO SE LLAMA NUNCA, cambiar de sitio */
     scanBarcode() {
         if (this.isCamera) {
 
@@ -29,13 +44,30 @@ export class Login {
             prompt: "Situe el código Qr en el interior del rectángulo.",
             formats: "QR_CODE"
         }
+
+        /* Comprobamos si el usuario esta registrado */
+        this.sessionSecuredStorageService.isRegistered()
+            .then(
+                (result) => {
+                    /* Comprobar si el usuario coincide */
+                    this.navCtrl.setRoot(HomePage);
+                }
+            )
+            .catch(
+                (error) => {
+                    /* TODO Cambiar esto para la version final */
+                    if (error === "cordova_not_available") {
+                        this.navCtrl.setRoot(HomePage);
+                    }
+
+                    console.log(error)
+                }
+            );
+
         this.barcodeScanner.scan(options).then(barcodeData => {
-            console.log('Barcode data', barcodeData.text);
-            alert("Barcode data, " + barcodeData.text);
             this.onEvent("onLogin");
         }).catch(err => {
-            console.log('Error', err);
-            if(err==="cordova_not_available"){
+            if (err === "cordova_not_available") {
                 this.onEvent("onLogin");
             }
         });
@@ -49,8 +81,8 @@ export class Login {
         if (this.events[event]) {
 
             this.events[event]({
-                'username': "demo",
-                'password': "demo"
+                'username': this.user,
+                'password': this.pass
             });
         }
     }
@@ -59,13 +91,40 @@ export class Login {
         this.isUsernameValid = true;
         this.isPasswordValid = true;
 
-        // if (!this.username ||this.username.length == 0) {
-        //     this.isUsernameValid = false;
-        // }
-
-        // if (!this.password || this.password.length == 0) {
-        //     this.isPasswordValid = false;
-        // }
         return this.isPasswordValid && this.isUsernameValid;
+    }
+
+    openPage(page: string) {
+        let modal = this.modalCtrl.create(InfoPage, { title: page });
+        modal.present();
+    }
+
+    navegateTo(text: string) {
+        let modal = this.modalCtrl.create(ContructionsPage);
+
+        modal.present();
+        console.log('Navigating to page: ' + text);
+    }
+
+}
+
+@Component({
+    selector: 'info',
+    templateUrl: 'info.html',
+    styleUrls: ['/info.scss']
+})
+export class InfoPage {
+
+    title: string;
+
+    constructor(
+        public viewCtrl: ViewController,
+        params: NavParams
+    ) {
+        this.title = params.get('title');
+    }
+
+    dismiss() {
+        this.viewCtrl.dismiss();
     }
 }

@@ -1,0 +1,40 @@
+<div class="container">
+    <div>
+        <img src="assets/img/cinesa-logo1.png">
+    </div>
+
+    <form>
+        <div class="jumbotron">
+            <div class="form-group row">
+
+                <div *ngIf="!logueado" style="width:100%;">
+                    <!-- Login -->
+                    <label class="col-2 col-form-label">Nombre</label>
+                    <input class="form-control" type="text" placeholder="Nombre" name="nombre" required minlength="5"
+                        [(ngModel)]="nombre">
+
+                    <!-- Pass -->
+                    <label class="col-2 col-form-label">Contraseña</label>
+                    <input class="form-control" type="text" placeholder="password" name="password" required minlength="5"
+                        [(ngModel)]="password">
+                </div>
+                <!-- Botones -->
+                <div class="mt-5">
+
+                    <button *ngIf="!logueado" type="button" class="btn btn-outline-primary mr-5" (click)="login()">
+                        Iniciar Sesión
+                    </button>
+                    <button *ngIf="logueado" type="button" class="btn btn-outline-primary mr-5" (click)="logueado = !logueado">
+                        Cerrar Sesión
+                    </button>
+
+                    <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target=".bd-example-modal-xl">
+                        Login Alastria </button>
+                    <div #modal>
+                        <app-modals></app-modals>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

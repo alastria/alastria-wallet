@@ -42,8 +42,8 @@
 /* # Global Font Family Section
 ================================================
 ================================================*/
-$font-family-md-base: 'San Francisco';
-$font-family-ios-base: 'San Francisco';
+$font-family-md-base: 'Roboto';
+$font-family-ios-base: 'Roboto';
 
 /* # Global Font Size Section
 ================================================
@@ -80,8 +80,9 @@ $palettes: (
       secondaryDark: #C7C7CC, //Used for item-divider, header-section,
       accent : #5ac8fa, //Used for button, badges, checkbox, wizard, radio, toggle, alert, wizard
       accentLight : #E8E9EA, //
-      accentDark: #EFEFF4 //Used for badge
-    ),
+      accentDark: #EFEFF4, //Used for badge
+      blueT: #325B8E
+      ),
     // Used for text colors in all screens
     textColors: (
       primary: #292F36, // Used for alert
@@ -90,7 +91,8 @@ $palettes: (
       secondaryBase: #ffffff, // Used for button, badge, parallax-title, parallax-subtitle, gallery-title, gallery-subtitle, checkbox, search-bar-title
       accentLight: #C7C7CC, //Used for icon, span-large
       accent : #5ac8fa, // Used for icon, span-medium, button, login-title, badge, wizard-title, wizard-subtitle, toolbar, alert
-      accentDark: #000000 // Used for header-title, item-title, subitem-title, login-subtitle, card-title, tabs, maps-title, maps-description-title
+      accentDark: #000000,
+      blueT: #325B8E  // Used for header-title, item-title, subitem-title, login-subtitle, card-title, tabs, maps-title, maps-description-title
     ),
     // Used for blend modes
     blendModes: (
@@ -136,12 +138,15 @@ $global-opacity: (
 $colors: (
   primary : theme-colors('textColors', 'accent'),
   secondary: theme-colors('textColors', 'secondaryBase'),
+  blueT: theme-colors('textColors', 'blueT'),
   accent: theme-colors('textColors', 'accent'),
   facebook: #3D599D,
   delateButton: #FF2D55,
   action: #3c8e2f,
-  delateButtonColorText: theme-colors('textColors', 'secondaryBase'),
+  delateButtonColorText: theme-colors('textColors', 'secondaryBase')
 );
+
+$blueT: theme-colors('textColors', 'blueT');
 
 /* # Global Settings Color Login Page
 ================================================
@@ -754,18 +759,18 @@ $text-input-ios-highlight-color-valid: theme-colors('textColors', 'secondary') !
 ================================================
 ================================================*/
 // Settings for Android
-$tabs-background: theme-colors('mainColors', 'accent');
-$tabs-tab-color-active: theme-colors('textColors', 'accentDark');
-$tabs-md-tab-icon-color-active: theme-colors('textColors', 'secondaryBase');
-$tabs-md-tab-text-color-active: theme-colors('textColors', 'secondaryBase');
-$tabs-md-tab-icon-color: theme-colors('textColors', 'secondaryBase');
-$tabs-md-tab-text-color: theme-colors('textColors', 'secondaryBase');
+$tabs-background: theme-colors('mainColors', 'primary');
+$tabs-tab-color-active: theme-colors('textColors', 'blueT');
+$tabs-md-tab-icon-color-active: theme-colors('textColors', 'blueT');
+$tabs-md-tab-text-color-active: theme-colors('textColors', 'blueT');
+$tabs-md-tab-icon-color: theme-colors('textColors', 'blueT');
+$tabs-md-tab-text-color: theme-colors('textColors', 'blueT');
 
 // Settings for Ios
-$tabs-ios-tab-icon-color-active: theme-colors('textColors', 'secondaryBase');
-$tabs-ios-tab-text-color-active: theme-colors('textColors', 'secondaryBase');
-$tabs-ios-tab-icon-color: theme-colors('textColors', 'secondaryBase');
-$tabs-ios-tab-text-color: theme-colors('textColors', 'secondaryBase');
+$tabs-ios-tab-icon-color-active: theme-colors('textColors', 'blueT');
+$tabs-ios-tab-text-color-active: theme-colors('textColors', 'blueT');
+$tabs-ios-tab-icon-color: theme-colors('textColors', 'blueT');
+$tabs-ios-tab-text-color: theme-colors('textColors', 'blueT');
 
 
 /* # Settings Search Bar Section
@@ -942,4 +947,94 @@ $alert-ios-background: #fff;
 
 [no-padding] {
     padding: 0 !important;
+}
+
+ion-icon:active{
+    font-weight: bold !important;
+}
+
+.btnSecond.button-md {
+    /* Rectangle */
+  
+  left: 0%;
+  right: 0%;
+  top: 0%;
+  bottom: 0%;
+  background: #FDFDFD;
+  border: 1px solid #3A6D96;
+  box-sizing: border-box;
+  border-radius: 30px;
+  color: #3A6D96;
+  
+  }
+
+  ion-searchbar.searchbar-md .searchbar-input {
+    box-sizing: border-box;
+    border-radius: 30px;
+  }
+
+  .icon-star:before {
+      content: url('../assets/images/alastria/startFull.png') !important;
+  }
+
+  .icon-star-outline:before {
+    content: url('../assets/images/alastria/startEmpty.png') !important;
+  }
+
+  
+.title-slides {
+    color: $blueT;
+    font-weight: bolder;
+    padding: 2%;
+}
+
+.description-slides {
+    font-size: 17px;
+    padding: 2%;
+}
+
+.slides-height{
+    height: 90%;
+    top: 0;
+}
+
+.slides-link {
+    color: rgba(50, 91, 142, 0.63);
+    text-align: center;
+}
+
+.term-condition-title {
+    color: $blueT;
+    padding-top: 4%;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+
+.term-condition-description {
+    font-size: 18px;
+    padding: 4%;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    line-height: 23px;
+}
+
+.term-condition-button {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+
+.btn-close {
+    margin: 1%;
+    background-image: url("../assets/images/alastria/ic_close.png");
+    width: 32px;
+    height: 32px;
+}
+
+.btn-close-padre {
+    display: flex;
+    justify-content: flex-end;
 }

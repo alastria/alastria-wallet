@@ -3,7 +3,7 @@
 
 parallax-layout-1 {
   // Settings Animation
-  @include settingAnimationHeader; // Settings Animation Text Color
+/*   @include settingAnimationHeader; // Settings Animation Text Color
   @-webkit-keyframes color-change {
     0% {
       color: theme-colors('mainColors', 'primary');
@@ -11,9 +11,9 @@ parallax-layout-1 {
     100% {
       color: theme-colors('textColors', 'accent') !important;
     }
-  }
+  } */
   
-  .toolbar-ios {
+/*   .toolbar-ios {
     min-height: 64px;
   }
   .bar-button-default-ios,
@@ -22,8 +22,8 @@ parallax-layout-1 {
   }
   .content-ios .scroll-content {
     top: -64px !important;
-  }
-  .active .back-button,
+  } */
+ /*  .active .back-button,
   .active .toolbar-title {
     color: theme-colors('textColors', 'accent') !important;
     animation-name: color-change;
@@ -32,29 +32,25 @@ parallax-layout-1 {
   .back-button,
   .toolbar-title {
     color: theme-colors('textColors', 'secondaryBase') !important;
-  }
-  .scroll-content {
+  } */
+/*   .scroll-content {
     top: -56px !important;
-  }
+  } */
 
   
   // Parallax Big Image
   [background-size] {
-    height: 150px;
     position: relative;
-    [parallax-img] {
+   /*  [parallax-img] {
       height: 30px;
     } // Parallax Header Top
     [parallax-header] {
       z-index: 9999;
-      position: absolute;
-      bottom: 16px;
-      left: 16px;
-      right: 16px;
+
     }
     [parallax-subtitle] {
       color: color($parallaxPage, parallax-subtitle-basic);
-    }
+    } */
   } // Settings Badge
   ion-badge {
     position: absolute;

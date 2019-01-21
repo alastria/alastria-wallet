@@ -1,6 +1,8 @@
 import { Component, Input } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, ModalController, AlertController } from 'ionic-angular';
 import { HomePage } from '../../../home/home';
+import { TermsConditionsPage } from '../../../terms-conditions/terms-conditions';
+import { SessionSecuredStorageService } from '../../../../services/securedStorage.service';
 
 @Component({
     selector: 'register-form',
@@ -24,7 +26,10 @@ export class RegisterForm {
 
     private regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-    constructor(private navCtrl: NavController) {
+    constructor(private navCtrl: NavController,
+        public modalCtrl: ModalController,
+        public sessionSecuredStorageService: SessionSecuredStorageService,
+        public alertCtrl: AlertController) {
         this.data = {
             "toolbarTitle": "Registro",
             "logo": "assets/images/logo/logo.png",
@@ -50,7 +55,28 @@ export class RegisterForm {
 
         this.events = {
             onRegister: () => {
-                this.navCtrl.setRoot(HomePage);
+                let modal = this.modalCtrl.create(TermsConditionsPage);
+                modal.present();
+                modal.onDidDismiss((res) => {
+                    /* Guardo en el secureStorage */
+                    if (res.accept === 'true') {
+                        this.sessionSecuredStorageService.register(this.username, this.password)
+                            .then(
+                                () => {
+                                    console.log('Información guardada correctamente en el secureStorage');
+
+                                    /* Redirecciono a la pagina principal */
+                                    this.navCtrl.setRoot(HomePage);
+                                }
+                            )
+                            .catch(
+                                (err) => {
+                                    console.error('Error al guardar en el secureStorage ', err);
+                                    this.showAlert('Usuario Registrado', 'El usuario ya estaba registrado');
+                                }
+                            );
+                    }
+                });
             },
             onSkip: () => {
                 this.navCtrl.setRoot(HomePage);
@@ -59,6 +85,15 @@ export class RegisterForm {
                 this.navCtrl.setRoot(HomePage);
             }
         }
+    }
+
+    showAlert(title: string, message: string) {
+        const alert = this.alertCtrl.create({
+            title: title,
+            subTitle: message,
+            buttons: ['OK']
+        });
+        alert.present();
     }
 
     onEvent = (event: string): void => {
