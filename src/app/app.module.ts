@@ -24,6 +24,7 @@ import { AlastriaPublicKeyRegistryService } from '../services/alastriaPublicKeyR
 import { SessionSecuredStorageService, IdentitySecuredStorageService } from '../services/securedStorage.service';
 import { WalkthroughPage } from '../pages/walkthrough/walkthrough';
 import { TermsConditionsPageModule } from '../pages/terms-conditions/terms-conditions.module';
+import { Activities } from '../services/activities/activities.service';
 
 @NgModule({
     declarations: [
@@ -72,6 +73,7 @@ import { TermsConditionsPageModule } from '../pages/terms-conditions/terms-condi
         AlastriaPublicKeyRegistryService,
         SessionSecuredStorageService,
         IdentitySecuredStorageService,
+        Activities,
         { provide: ErrorHandler, useClass: IonicErrorHandler }
     ]
 })
