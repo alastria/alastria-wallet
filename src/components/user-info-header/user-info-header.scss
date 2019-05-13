@@ -82,6 +82,10 @@
   padding:0;
 }
 
+#userInfoHeader.compact {
+  height: 70px;
+}
+
 #userInfoHeader.compact .outterOval {
   height: 0px;
   z-index: 9999;

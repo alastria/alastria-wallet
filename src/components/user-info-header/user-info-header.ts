@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { IonicPage, NavController } from 'ionic-angular';
 import { UserSettings } from './userSettings/user-settings';
 import { ProfilePage } from '../../pages/profile/profile';
@@ -15,8 +15,8 @@ export class UserInfoHeader {
     public userName: string;
     public userImagePath: string;
 
-    compact = false;
-    fixed = false;
+    @Input() compact: boolean; //  If is true then rectangle
+    @Input() fixed: boolean;
 
     constructor(public navController: NavController,
         public sessionSecuredStorageService: SessionSecuredStorageService) {
