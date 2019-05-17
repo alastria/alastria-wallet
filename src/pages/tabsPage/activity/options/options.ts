@@ -23,21 +23,21 @@ export class OptionsComponent {
   /**
    * Function that emit event when click in checkbox 'todos'
   */
-  private clickSelectAll(): void {
+  public clickSelectAll(): void {
     this.handleSelectAll.emit(this.isSelectAll);
   }
 
   /**
    * Function that emit event when click in delete icon
   */
-  private deleteActivities(): void {
+  public deleteActivities(): void {
     this.handleDeleteActivities.emit();
   }
 
   /**
    * Function that emit event when click in backup icon
   */
-  private backupActivities(): void {
+  public backupActivities(): void {
     this.handleBackupActivities.emit();
   }
 }

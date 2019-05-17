@@ -3,6 +3,7 @@ import { NavController, ModalController, AlertController } from 'ionic-angular';
 import { HomePage } from '../../../home/home';
 import { TermsConditionsPage } from '../../../terms-conditions/terms-conditions';
 import { SessionSecuredStorageService } from '../../../../services/securedStorage.service';
+import { IdentitySecuredStorageService } from '../../../../services/securedStorage.service';
 
 @Component({
     selector: 'register-form',
@@ -29,6 +30,7 @@ export class RegisterForm {
     constructor(private navCtrl: NavController,
         public modalCtrl: ModalController,
         public sessionSecuredStorageService: SessionSecuredStorageService,
+        public identitySecuredStorageService: IdentitySecuredStorageService,
         public alertCtrl: AlertController) {
         this.data = {
             "toolbarTitle": "Registro",
@@ -64,7 +66,10 @@ export class RegisterForm {
                             .then(
                                 () => {
                                     console.log('Información guardada correctamente en el secureStorage');
-
+                                    this.identitySecuredStorageService.getKeys().then((result) => {
+                                        console.log("holo"+ result);
+                                    });
+                                    
                                     /* Redirecciono a la pagina principal */
                                     this.navCtrl.setRoot(HomePage);
                                 }

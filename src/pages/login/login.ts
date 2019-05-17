@@ -14,6 +14,7 @@ import { HomePage } from '../home/home';
 export class Login {
     @Input() data: any;
     @Input() events: any;
+    //export PATH=$PATH:/home/agomez/.gradle/wrapper/dists/gradle-5.1.1-all/97z1ksx6lirer3kbvdnh7jtjg/gradle-5.1.1/bin
 
     user: string;
     pass: string;

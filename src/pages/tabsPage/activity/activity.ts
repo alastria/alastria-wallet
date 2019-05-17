@@ -1,3 +1,4 @@
+import { ModalController } from 'ionic-angular';
 /** dependencies */
 import { Component, ViewChild } from '@angular/core';
 import { IonicPage, AlertController } from 'ionic-angular';
@@ -26,7 +27,8 @@ export class Activity {
 
   constructor(private toastCtrl: ToastService,
               private activitiesService: Activities,
-              public alertCtrl: AlertController) {
+              public alertCtrl: AlertController,
+              public modalCtrl: ModalController) {
     this.getActivities();
   }
 
