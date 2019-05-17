@@ -1,3 +1,5 @@
+import { IdentityDataListModule } from './../components/identity-data-list/identity-data-list.module';
+import { Activities } from './../services/activities/activities.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
@@ -23,8 +25,10 @@ import { DetailProfilePage } from '../pages/detail-profile/detail-profile';
 import { AlastriaPublicKeyRegistryService } from '../services/alastriaPublicKeyRegistry.service';
 import { SessionSecuredStorageService, IdentitySecuredStorageService } from '../services/securedStorage.service';
 import { WalkthroughPage } from '../pages/walkthrough/walkthrough';
+import { ConfirmLogin } from '../pages/confirmLogin/confirmLogin';
 import { TermsConditionsPageModule } from '../pages/terms-conditions/terms-conditions.module';
-import { Activities } from '../services/activities/activities.service';
+import { ConfirmAccessComponent } from '../pages/confirm-access/confirm-access';
+import { HttpClientModule } from "@angular/common/http"
 
 @NgModule({
     declarations: [
@@ -35,7 +39,10 @@ import { Activities } from '../services/activities/activities.service';
         ProfilePage,
         DetailProfilePage,
         RegisterHub,
-        WalkthroughPage
+        WalkthroughPage,
+        ConfirmLogin,
+        WalkthroughPage,
+        ConfirmAccessComponent
     ],
     imports: [
         BrowserModule,
@@ -50,7 +57,10 @@ import { Activities } from '../services/activities/activities.service';
         ContructionsPageModule,
         TermsConditionsPageModule,
         SuccessPageModule,
-        UserInfoHeaderModule
+        UserInfoHeaderModule,
+        IdentityDataListModule,
+        UserInfoHeaderModule,
+        HttpClientModule
     ],
     bootstrap: [IonicApp],
     entryComponents: [
@@ -61,7 +71,10 @@ import { Activities } from '../services/activities/activities.service';
         ProfilePage,
         DetailProfilePage,
         RegisterHub,
-        WalkthroughPage
+        WalkthroughPage,
+        ConfirmAccessComponent,
+        WalkthroughPage,
+        ConfirmLogin
     ],
     providers: [
         StatusBar,

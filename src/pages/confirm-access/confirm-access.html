@@ -1,0 +1,20 @@
+<ion-header>
+    <ion-toolbar>
+        <ion-buttons end>
+            <a (click)="dismiss()">
+                <img src="assets/images/alastria/ic_close.png" class="cross">
+            </a>
+        </ion-buttons>
+    </ion-toolbar>
+    <ion-row text-center>
+        <h2 class="description"> {{issName | uppercase}} ha <strong>solicitado acceso</strong> a {{dataNumberAccess}} de tu identidad</h2>
+    </ion-row>
+</ion-header>
+<ion-content class="tutorial-page">
+    <identity-data-list isSelectable="true" (handleIdentitySelect)="handleIdentitySelect($event)"></identity-data-list>
+    <ion-footer>
+      <ion-row justify-content-center>
+          <button ion-button class="btnConfirm" style="width: 80%" (click)="sendAuthentication()">ACEPTAR</button>
+      </ion-row>
+    </ion-footer>
+</ion-content>

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SecureStorage, SecureStorageObject } from '@ionic-native/secure-storage';
+import { Platform } from 'ionic-angular';
 
 @Injectable()
 export class IdentitySecuredStorageService {
@@ -7,18 +8,35 @@ export class IdentitySecuredStorageService {
     securedStorageObject: SecureStorageObject;
 
     constructor(
-        private securedStorage: SecureStorage
+        private securedStorage: SecureStorage,
+        private platform: Platform
     ) {
+        this.platform.ready().then(() => {
+            this.initSecureStorage();
+        });
+    }
+    
+    private initSecureStorage(){
         this.securedStorage.create('identitySecureStorage')
-            .then(
-                (secStoObj: SecureStorageObject) => {
-                    this.securedStorageObject = secStoObj;
-                }
-            );
+        .then(
+            (secStoObj: SecureStorageObject) => {
+                this.securedStorageObject = secStoObj;
+                console.log("IdentitySecureStorage ready");
+            }
+            
+        );
     }
 
     async getKeys() {
         return this.securedStorageObject.keys();
+    }
+
+    async hasKey(key: string) {
+        let keyExists =  false;
+        this.securedStorageObject.keys().then((result => {
+            keyExists = result.some((k) => {return k === key});
+        }));
+        return keyExists;
     }
 
     async set(key: string, value: string) {
@@ -48,8 +66,16 @@ export class SessionSecuredStorageService {
     promiseState: Promise<any>;
 
     constructor(
-        private securedStorage: SecureStorage
+        private securedStorage: SecureStorage,
+        private platform: Platform
     ) {
+        this.platform.ready().then(() => {
+            this.initSecureStorage();
+            console.log("SessionSecureStorage ready");
+        });
+    }
+
+    private initSecureStorage(){
         this.securedStorage.create('sessionSecureStorage').then(
             (securedStorageObject) => {
                 this.securedStorageObject = securedStorageObject;

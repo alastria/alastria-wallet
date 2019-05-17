@@ -7,10 +7,10 @@ export class ToastService {
 
   constructor(private toastCtrl: ToastController) {}
 
-  presentToast(message: string) {
+  presentToast(message: string, milis = 1000) {
     let toastItem = AppSettings.TOAST;
     toastItem["message"] = message;
-    let toast = this.toastCtrl.create(toastItem);
+    let toast = this.toastCtrl.create({message: message, duration: milis});
     toast.present();
   }
 }
