@@ -7,6 +7,7 @@ import { AlertController, NavController, PopoverController, ModalController } fr
 import { ConfirmLogin } from '../../confirmLogin/confirmLogin';
 import { Index } from '../index';
 import { TokenService } from '../../../services/token-service';
+import { ConfirmAccess } from '../../confirm-access/confirm-access';
 
 @IonicPage()
 @Component({
@@ -62,8 +63,13 @@ export class Camera {
     });
   }
 
-  private showAlert(iss: string, issName: string, cbu: string, as: string | object ) {
+  private showConfirmLogin(iss: string, issName: string, cbu: string, as: string | object ) {
     const alert = this.modalCtrl.create(ConfirmLogin, {"iss": iss, "issName": issName, "cbu": cbu, "as": as});
+    alert.present();
+  }
+
+  private showConfirmAcces(issName: string, cbu: string, credentials: Array<any>, iat: number, exp: number) {
+    const alert = this.modalCtrl.create(ConfirmAccess, {"issName": issName, "cbu": cbu,"dataNumberAccess": credentials.length, "credentials": credentials, "iat": iat, "exp": exp});
     alert.present();
   }
 
@@ -72,7 +78,7 @@ export class Camera {
 
     if (verifiedToken){
       alastriaSession = this.tokenSrv.getSessionToken(verifiedToken);
-      this.showAlert(verifiedToken["iss"], "SERVICE PROVIDER", verifiedToken["cbu"], alastriaSession);
+      this.showConfirmLogin(verifiedToken["iss"], "SERVICE PROVIDER", verifiedToken["cbu"], alastriaSession);
     
     }else{
       this.toastCtrl.presentToast("Error: Contacte con el service provider", 1000);
@@ -84,7 +90,7 @@ export class Camera {
 
     if (verifiedToken){
       alastriaSession = this.tokenSrv.getSessionToken(verifiedToken);
-      this.showAlert(verifiedToken["iss"], "SERVICE PROVIDER", verifiedToken["cbu"], alastriaSession);
+      this.showConfirmAcces("SERVICE PROVIDER", verifiedToken["cbu"], verifiedToken["credentials"], verifiedToken["iat"], verifiedToken["exp"]);
     
     }else{
       this.toastCtrl.presentToast("Error: Contacte con el service provider", 1000);
