@@ -46,12 +46,12 @@ export class ConfirmLogin {
             "token": sign(this.as,secret)
         };
         this.cbu = "http://10.100.30.42:3000/cbu";
-        /* this.showLoading();
-        this.viewCtrl.dismiss(); */
-        this.http.post(this.cbu, signedJWT).subscribe((data) => {
+        this.showLoading();
+        this.viewCtrl.dismiss();
+        /* this.http.post(this.cbu, signedJWT).subscribe((data) => {
             this.showLoading();
             this.viewCtrl.dismiss();
-        });
+        }); */
     }
 
     public showLoading() {

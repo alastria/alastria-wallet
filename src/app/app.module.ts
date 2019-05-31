@@ -22,13 +22,14 @@ import { ContructionsPageModule } from './../pages/contructions/contructions.mod
 import { SuccessPageModule } from '../pages/success/success.module';
 import { ProfilePage } from '../pages/profile/profile';
 import { DetailProfilePage } from '../pages/detail-profile/detail-profile';
-import { AlastriaPublicKeyRegistryService } from '../services/alastriaPublicKeyRegistry.service';
 import { SessionSecuredStorageService, IdentitySecuredStorageService } from '../services/securedStorage.service';
 import { WalkthroughPage } from '../pages/walkthrough/walkthrough';
 import { ConfirmLogin } from '../pages/confirmLogin/confirmLogin';
 import { TermsConditionsPageModule } from '../pages/terms-conditions/terms-conditions.module';
-import { ConfirmAccessComponent } from '../pages/confirm-access/confirm-access';
+import { ConfirmAccess } from '../pages/confirm-access/confirm-access';
 import { HttpClientModule } from "@angular/common/http"
+import { TokenService } from '../services/token-service';
+import { ToastService } from '../services/toast-service';
 
 @NgModule({
     declarations: [
@@ -42,7 +43,7 @@ import { HttpClientModule } from "@angular/common/http"
         WalkthroughPage,
         ConfirmLogin,
         WalkthroughPage,
-        ConfirmAccessComponent
+        ConfirmAccess
     ],
     imports: [
         BrowserModule,
@@ -72,7 +73,7 @@ import { HttpClientModule } from "@angular/common/http"
         DetailProfilePage,
         RegisterHub,
         WalkthroughPage,
-        ConfirmAccessComponent,
+        ConfirmAccess,
         WalkthroughPage,
         ConfirmLogin
     ],
@@ -83,11 +84,12 @@ import { HttpClientModule } from "@angular/common/http"
         BarcodeScanner,
         FingerprintAIO,
         SecureStorage,
-        AlastriaPublicKeyRegistryService,
         SessionSecuredStorageService,
         IdentitySecuredStorageService,
         Activities,
-        { provide: ErrorHandler, useClass: IonicErrorHandler }
+        { provide: ErrorHandler, useClass: IonicErrorHandler },
+        ToastService,
+        TokenService
     ]
 })
 export class AppModule { }
