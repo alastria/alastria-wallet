@@ -1,29 +1,35 @@
-.checkbox-item {
-    margin-left: 0px;
-    margin-right: 10px;
-}
+identity-data-list {
+    .checkbox-item {
+        margin-left: 0px;
+        margin-right: 10px;
+    }
 
-.checkbox-md .checkbox-checked {
-    border-color: #327EFF !important;
-    background-color: #327EFF !important;
-}
+    .checkbox-md .checkbox-checked {
+        border-color: #327EFF !important;
+        background-color: #327EFF !important;
+    }
 
-.checkbox-md .checkbox-icon {
-    border-width: 2px !important;
-    border-color: #327EFF ;
-    background-color: #ffffff ;
-}
+    .checkbox-md .checkbox-icon {
+        border-width: 2px !important;
+        border-color: #327EFF ;
+        background-color: #ffffff ;
+    }
 
-.description-position {
-    margin-left: 30px !important;
-    bottom: 5px;
-    position: relative;
-}
+    .description-position {
+        margin-left: 30px !important;
+        bottom: 5px;
+        position: relative;
+    }
 
-.star-position {
-    margin-left: 25px !important;
-}
+    .star-position {
+        margin-left: 25px !important;
+    }
 
-.card-title-md {
-    font-size: 0;
-} 
+    .card-title-md {
+        font-size: 0;
+    }
+
+    .scroll-content {
+        height: 85%;
+    }
+}
