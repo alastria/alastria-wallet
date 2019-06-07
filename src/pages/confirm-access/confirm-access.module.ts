@@ -1,11 +1,11 @@
 import { IonicPageModule } from 'ionic-angular';
 import { NgModule } from '@angular/core';
-import { ConfirmAccessComponent } from './confirm-access';
+import { ConfirmAccess } from './confirm-access';
 @NgModule({
-	declarations: [ConfirmAccessComponent],
+	declarations: [ConfirmAccess],
 	imports: [
-		IonicPageModule.forChild(ConfirmAccessComponent),
+		IonicPageModule.forChild(ConfirmAccess),
 	],
-	exports: [ConfirmAccessComponent]
+	exports: [ConfirmAccess]
 })
 export class ConfirmAccessModule {}
