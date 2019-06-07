@@ -38,6 +38,7 @@ export class TokenService {
       cbu = verifiedToken["cbu"];
 
       alastriaSession = {
+        "@context": "https://w3id.org/did/v1",
         "iss": "did:ala:quor:telsius:0x123ABC",
         "pku": this.SECRET,
         "iat": currDate,
