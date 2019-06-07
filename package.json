@@ -7,6 +7,7 @@
   "scripts": {
     "start:browser": "ionic cordova plugin add cordova-plugin-secure-storage && ionic cordova run browser --livereload-url",
     "start:android": "ionic cordova run android",
+    "start:android:device": "ionic cordova run android --device",
     "clean": "ionic-app-scripts clean",
     "build": "ionic-app-scripts build",
     "ionic:build": "ionic-app-scripts build",
