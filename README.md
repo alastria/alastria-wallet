@@ -35,17 +35,6 @@ $ yarn start:android
 $ yarn start:android:device
 ```
 
-## Test backend
-
-Inside the folder "testBackend" there is a node simple project to test the dev app. To install go inside this foldel and run:
-```
-npm install
-```
-To start the server run:
-```
-npm start
-```
-
 ## Contributing
 Pull requests are welcome!.
 
