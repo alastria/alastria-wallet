@@ -1,28 +1,28 @@
 <!-- Lista de elementos -->
-<ion-card *ngFor="let item of identityData" style="padding-bottom: 10px;">
-  <ion-card-content>
-        <ion-card-title>
-            <ion-checkbox *ngIf="isSelectable" class="checkbox-item" (ionChange)="changeIdentitySelect($event, item.id)"></ion-checkbox>
-            <strong style="font-size: 15px"> {{ item.titleP }} </strong> 
-            <span style="font-size: 13px"> - {{ item.place }} </span>
-        </ion-card-title>
-        <p [class.description-position]="isSelectable">
-            {{ item.value }}
-        </p>
-        <!-- Icon Rating Star -->
-        <!-- (click)="onStarClass(item.iconsStars, i, $event);" -->
-        <div [class.star-position]="isSelectable" [class.star-notSelectable]="!isSelectable">
-            <ion-icon float-left *ngFor="let ico of item.iconsStars;let i = index" >
-                <i icon-small *ngIf="ico.isActive" class="icon {{ico.iconActive}}"></i>
-                <i icon-small *ngIf="!ico.isActive" class="icon {{ico.iconInactive}}"></i>
-            </ion-icon>
-        </div>
+<ion-content>
+    <ion-card *ngFor="let item of identityData" style="padding-bottom: 10px;">
+    <ion-card-content>
+            <ion-card-title>
+                <ion-checkbox *ngIf="isSelectable" class="checkbox-item" (ionChange)="changeIdentitySelect($event, item.id)"></ion-checkbox>
+                <strong style="font-size: 15px"> {{ item.titleP }} </strong> 
+                <span style="font-size: 13px"> - {{ item.place }} </span>
+            </ion-card-title>
+            <p [class.description-position]="isSelectable">
+                {{ item.value }}
+            </p>
+            <div [class.star-position]="isSelectable" [class.star-notSelectable]="!isSelectable">
+                <ion-icon float-left *ngFor="let ico of item.iconsStars;let i = index" >
+                    <i icon-small *ngIf="ico.isActive" class="icon {{ico.iconActive}}"></i>
+                    <i icon-small *ngIf="!ico.isActive" class="icon {{ico.iconInactive}}"></i>
+                </ion-icon>
+            </div>
 
-        <!-- Reviews Star -->
-        <div  style="margin-top: 5px;"><span span-small > {{ item.level }}, {{ item.endDate }}</span></div>
-        
-        <div float-right>
-            <img src="assets/images/alastria/more.png" (click)="detail(item)"/>
-        </div>
-    </ion-card-content>
-</ion-card>
+            <!-- Reviews Star -->
+            <div  style="margin-top: 5px;"><span span-small > {{ item.level }}, {{ item.endDate }}</span></div>
+            
+            <div float-right>
+                <img src="assets/images/alastria/more.png" (click)="detail(item)"/>
+            </div>
+        </ion-card-content>
+    </ion-card>
+</ion-content>

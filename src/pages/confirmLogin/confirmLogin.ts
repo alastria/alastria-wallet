@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, ModalController, ViewController } from 'ionic-angular';
-import { HttpClient } from "@angular/common/http"
+import { HttpClient, HttpHeaders } from "@angular/common/http"
 import { sign } from 'jsonwebtoken';
 import { SuccessPage } from '../success/success';
 import { TabsPage } from '../tabsPage/tabsPage';
@@ -45,10 +45,14 @@ export class ConfirmLogin {
         let signedJWT = {
             "token": sign(this.as,secret)
         };
-        this.cbu = "http://10.100.30.42:3000/cbu";
-        /* this.showLoading();
+        /* this.cbu = "http://10.100.30.42:3000/cbu";
+        this.showLoading();
         this.viewCtrl.dismiss(); */
-        this.http.post(this.cbu, signedJWT).subscribe((data) => {
+        console.log("sending token");
+        
+        let head = new HttpHeaders();
+        head.set("Content-Type", "application/json");
+        this.http.post(this.cbu, this.as, {headers: head}).subscribe((data) => {
             this.showLoading();
             this.viewCtrl.dismiss();
         });
