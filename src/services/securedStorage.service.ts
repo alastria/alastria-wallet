@@ -15,16 +15,16 @@ export class IdentitySecuredStorageService {
             this.initSecureStorage();
         });
     }
-    
-    private initSecureStorage(){
+
+    private initSecureStorage() {
         this.securedStorage.create('identitySecureStorage')
-        .then(
-            (secStoObj: SecureStorageObject) => {
-                this.securedStorageObject = secStoObj;
-                console.log("IdentitySecureStorage ready");
-            }
-            
-        );
+            .then(
+                (secStoObj: SecureStorageObject) => {
+                    this.securedStorageObject = secStoObj;
+                    console.log("IdentitySecureStorage ready");
+                }
+
+            );
     }
 
     async getKeys() {
@@ -32,11 +32,13 @@ export class IdentitySecuredStorageService {
     }
 
     async hasKey(key: string) {
-        let keyExists =  false;
-        this.securedStorageObject.keys().then((result => {
-            keyExists = result.some((k) => {return k === key});
-        }));
-        return keyExists;
+        let keyExists = false;
+        return this.securedStorageObject.keys()
+            .then(result => {
+                keyExists = result.some(k => { return k === key });
+                console.log(keyExists);
+                return keyExists;
+            });
     }
 
     async set(key: string, value: string) {
@@ -57,6 +59,88 @@ export class IdentitySecuredStorageService {
         return JSON.parse(jsonTmp);
     }
 
+    async matchAndGetJSON(key: string) {
+        let regex = new RegExp(key);
+        let allKeys;
+        let matchingKeys = new Array<string>();
+
+        return this.getKeys()
+            .then(result => {
+                allKeys = result;
+
+                for (let i = 0; i < allKeys.length; i++) {
+                    if (regex.test(allKeys[i])) {
+                        matchingKeys.push(allKeys[i]);
+                    }
+                }
+                let jsonTmp = [];
+
+                for (let z = 0; z < matchingKeys.length; z++) {
+                    jsonTmp.push(this.securedStorageObject.get(matchingKeys[z]));
+                }
+
+                return Promise.all(jsonTmp);
+            });
+    }
+
+    async matchPartiallyAndGetJSON(key: string) {
+        let allKeys;
+        let matchingKeys = new Array<string>();
+        let jsonTmp = [];
+
+        let words = key.split(" ");
+
+        return this.getKeys()
+            .then(result => {
+                allKeys = result;
+
+                for (let z = 0; z < 2; z++) {
+                    let regex;
+                    switch (z) {
+                        case 0:
+                            regex = new RegExp(key);
+                            break;
+                        case 1:
+                            regex = new RegExp(words[words.length - 1]);
+                            break;
+                    }
+
+                    let indexToSplice = new Array<Number>();
+                    let count = 0;
+                    for (let i = 0; i < allKeys.length; i++) {
+                        if (regex.test(allKeys[i])) {
+                            matchingKeys.push(allKeys[i]);
+                            indexToSplice.push(i - count);
+                            count++;
+                        }
+                    }
+                    for (let i = 0; i < indexToSplice.length; i++) {
+                        allKeys.splice(indexToSplice[i], 1);
+                    }
+
+                }
+                for (let z = 0; z < words.length; z++) {
+                    let regex;
+                    if (words[z].length > 3) {
+                        regex = new RegExp(words[z]);
+
+                        for (let i = 0; i < allKeys.length; i++) {
+                            if (regex.test(allKeys[i])) {
+                                matchingKeys.push(allKeys[i]);
+                            }
+                        }
+                    }
+
+                }
+                console.log(matchingKeys);
+
+                for (let z = 0; z < matchingKeys.length; z++) {
+                    jsonTmp.push(this.securedStorageObject.get(matchingKeys[z]));
+                }
+
+                return Promise.all(jsonTmp);
+            })
+    }
 }
 
 @Injectable()
@@ -75,7 +159,7 @@ export class SessionSecuredStorageService {
         });
     }
 
-    private initSecureStorage(){
+    private initSecureStorage() {
         this.securedStorage.create('sessionSecureStorage').then(
             (securedStorageObject) => {
                 this.securedStorageObject = securedStorageObject;

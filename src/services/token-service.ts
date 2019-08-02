@@ -6,8 +6,10 @@ export class TokenService {
 
   private readonly ATR_CREDENTIAL = "credential";
   private readonly ATR_CREDENTIALS = "credentials";
-  private readonly TYPE_CREDENTIAL_REQ = "credentialRequest";
+  private readonly ATR_DATA = "data";
+  private readonly TYPE_CREDENTIAL_OFFER = "credentialOffer";
   private readonly TYPE_AUTH = "authentication";
+  private readonly TYPE_CREDENTIAL_REQ = "credentialRequest";
   private readonly SECRET = "your-256-bit-secret";
 
   constructor() {
@@ -17,7 +19,9 @@ export class TokenService {
   public getTokenType(token: string | object): string{
     let tokenType: string;
     if(token[this.ATR_CREDENTIAL] || token[this.ATR_CREDENTIALS]){
-      tokenType = this.TYPE_CREDENTIAL_REQ
+      tokenType = this.TYPE_CREDENTIAL_OFFER
+    }else if (token[this.ATR_DATA]){
+      tokenType = this.TYPE_CREDENTIAL_REQ;
     }else{
       tokenType = this.TYPE_AUTH;
     }

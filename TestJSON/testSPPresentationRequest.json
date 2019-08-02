@@ -1,0 +1,29 @@
+{
+    "@context": "https://w3id.org/credentials/v1",
+    "jti": "https://www.metrovacesa.com/alastria/credentials/3732",
+    "iss": "did:alastria:quorum:testnet1:QmeeasCZ9jLbX...ueBJ7d7csxhb",
+    "sub": "did:alastria:quorum:testnet1:QmeeasCZ9jLbX...ueBJ7d7csxhb",
+    "iat": 1525465044,
+    "exp": 2030735444,
+    "nbf": 1525465044,
+    "data": [
+        {
+            "@context": "JWT",
+            "levelOfAssurance": 2,
+            "field_name": "Carnet de Estudiante",
+            "required": true
+        },
+        {
+            "@context": "JWT",
+            "levelOfAssurance": 1,
+            "field_name": "Email",
+            "required": true
+        },
+        {
+            "@context": "JWT",
+            "levelOfAssurance": 3,
+            "field_name": "DNI",
+            "required": false
+        }
+    ]
+}
