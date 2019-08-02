@@ -23,59 +23,80 @@ export interface mockCredential {
 })
 
 export class IdentityDataListComponent {
-  @Input() 
+  @Input()
   public isSelectable = false;
 
-  @Output() 
-  public handleIdentitySelect= new EventEmitter();
+  @Output()
+  public handleIdentitySelect = new EventEmitter();
 
   public identityData = new Array<mockCredential>();
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
     let credentials = this.navParams.get("credentials");
-    let iat = new Date(this.navParams.get("iat")* 1000);
-    let exp = new Date(this.navParams.get("exp")* 1000);
-    let iatString = iat.getDay()+"/"+(iat.getMonth()+1)+"/"+iat.getFullYear();
-    let expString = exp.getDay()+"/"+(exp.getMonth()+1)+"/"+exp.getFullYear();
+    let isCredentialRequest = this.navParams.get("isCredentialRequest");
 
-    
-    for(let i = 0; i < credentials.length; i++){
+    let iat = new Date(this.navParams.get("iat") * 1000);
+    let exp = new Date(this.navParams.get("exp") * 1000);
+    let iatString = iat.getDay() + "/" + (iat.getMonth() + 1) + "/" + iat.getFullYear();
+    let expString = exp.getDay() + "/" + (exp.getMonth() + 1) + "/" + exp.getFullYear();
+
+
+    for (let i = 0; i < credentials.length; i++) {
       let propNames = Object.getOwnPropertyNames(credentials[i]);
 
       let level = credentials[i].levelOfAssurance;
 
       let stars = [{
-            "iconActive": "icon-star",
-            "iconInactive": "icon-star-outline",
-            "isActive": true
-        }, {
-            "iconActive": "icon-star",
-            "iconInactive": "icon-star-outline",
-            "isActive": true
-        }, {
-            "iconActive": "icon-star",
-            "iconInactive": "icon-star-outline",
-            "isActive": true
-        }];
+        "iconActive": "icon-star",
+        "iconInactive": "icon-star-outline",
+        "isActive": true
+      }, {
+        "iconActive": "icon-star",
+        "iconInactive": "icon-star-outline",
+        "isActive": true
+      }, {
+        "iconActive": "icon-star",
+        "iconInactive": "icon-star-outline",
+        "isActive": true
+      }];
 
-      for(let z = 0; z < stars.length; z++){
-        stars[z].isActive = ((z+1 <= level) ? true : false);
+      for (let z = 0; z < stars.length; z++) {
+        stars[z].isActive = ((z + 1 <= level) ? true : false);
       }
 
-      let obj: mockCredential = {
-        id: i+1,
-        titleP: propNames[2].toUpperCase(),
-        emitter: "Emisor del testimonio",
-        valueT: "Valor",
-        value: credentials[i][propNames[2].toString()],
-        place: "Emisor de credencial",
-        addDateT: "Fecha incorporación del testimonio",
-        addDate: iatString,
-        endDateT: "Fecha fin de vigencia",
-        endDate: expString,
-        level: "Nivel " + level,
-        iconsStars: stars
-      };
+      let obj: mockCredential;
+
+      if (isCredentialRequest){
+        obj = {
+          id: i + 1,
+          titleP: credentials[i][propNames[2].toString()],
+          emitter: "Emisor del testimonio",
+          valueT: "Valor",
+          value: credentials[i][propNames[2].toString()],
+          place: "Emisor de credencial",
+          addDateT: "Fecha incorporación del testimonio",
+          addDate: iatString,
+          endDateT: "Fecha fin de vigencia",
+          endDate: expString,
+          level: "Nivel " + level,
+          iconsStars: stars
+        };
+      }else{
+        obj = {
+          id: i + 1,
+          titleP: propNames[2].toUpperCase(),
+          emitter: "Emisor del testimonio",
+          valueT: "Valor",
+          value: credentials[i][propNames[2].toString()],
+          place: "Emisor de credencial",
+          addDateT: "Fecha incorporación del testimonio",
+          addDate: iatString,
+          endDateT: "Fecha fin de vigencia",
+          endDate: expString,
+          level: "Nivel " + level,
+          iconsStars: stars
+        };
+      }
       this.identityData.push(obj);
     }
   }
@@ -83,7 +104,7 @@ export class IdentityDataListComponent {
   public detail(item: any): void {
     this.navCtrl.push(DetailProfilePage, { item });
   }
-  
+
   public changeIdentitySelect(event: any, id: number): void {
     const result: any = {
       id,

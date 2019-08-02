@@ -14,14 +14,17 @@ import { ConfirmAccess } from '../../confirm-access/confirm-access';
   templateUrl: 'camera.html',
   providers: [TabsService, ToastService]
 })
+
 export class Camera {
 
   qrCode: string;
   data: any = {};
-  cameraEnabled: boolean = true;
+  cameraEnabled = true;
   file: File;
 
-  constructor(private toastCtrl: ToastService, 
+
+
+  constructor(private toastCtrl: ToastService,
     public barcodeScanner: BarcodeScanner,
     public alertCtrl: AlertController,
     public navCtrl: NavController,
@@ -47,14 +50,7 @@ export class Camera {
 
       let tokenType = this.tokenSrv.getTokenType(verifiedJWT);
 
-      switch (tokenType){
-        case "authentication":
-            this.authProtocol(verifiedJWT, secret);
-            break;
-        case "credentialRequest":
-            this.credentialProtocol(verifiedJWT, secret);
-            break;
-      }
+      this.launchProtocol(tokenType, verifiedJWT, secret);
     }).catch(err => {
       console.log('Error', err);
       this.qrCode = "hola";
@@ -63,37 +59,41 @@ export class Camera {
     });
   }
 
-  private showConfirmLogin(iss: string, issName: string, cbu: string, as: string | object ) {
-    const alert = this.modalCtrl.create(ConfirmLogin, {"iss": iss, "issName": issName, "cbu": cbu, "as": as});
+  private showConfirmLogin(iss: string, issName: string, cbu: string, as: string | object) {
+    const alert = this.modalCtrl.create(ConfirmLogin, { "iss": iss, "issName": issName, "cbu": cbu, "as": as });
     alert.present();
   }
 
-  private showConfirmAcces(issName: string, cbu: string, credentials: Array<any>, iat: number, exp: number) {
-    const alert = this.modalCtrl.create(ConfirmAccess, {"issName": issName, "cbu": cbu,"dataNumberAccess": credentials.length, "credentials": credentials, "iat": iat, "exp": exp});
+  private showConfirmAcces(issName: string, cbu: string, credentials: Array<any>, iat: number, exp: number, isCredentialRequest = false) {
+    const alert = this.modalCtrl.create(ConfirmAccess, { "issName": issName, "cbu": cbu, "dataNumberAccess": credentials.length, "credentials": credentials, "iat": iat, "exp": exp, "isCredentialRequest": isCredentialRequest });
     alert.present();
   }
 
-  private authProtocol(verifiedToken: string|object, secret: string) {
+  private launchProtocol(protocolType: ProtocolTypes | String, verifiedToken: string | object, secret: string) {
     let alastriaSession;
 
-    if (verifiedToken){
+    if (verifiedToken) {
       alastriaSession = this.tokenSrv.getSessionToken(verifiedToken);
-      this.showConfirmLogin(verifiedToken["iss"], "SERVICE PROVIDER", verifiedToken["cbu"], alastriaSession);
-    
-    }else{
+
+      switch (protocolType) {
+        case ProtocolTypes.authentication:
+          this.showConfirmLogin(verifiedToken["iss"], "SERVICE PROVIDER", verifiedToken["cbu"], alastriaSession);
+          break;
+        case ProtocolTypes.credentialOffer:
+          this.showConfirmAcces("SERVICE PROVIDER", verifiedToken["cbu"], verifiedToken["credentials"], verifiedToken["iat"], verifiedToken["exp"]);
+          break;
+        case ProtocolTypes.credentialRequest:
+          this.showConfirmAcces("SERVICE PROVIDER", verifiedToken["cbu"], verifiedToken["data"], verifiedToken["iat"], verifiedToken["exp"], true);
+          break;
+      }
+    } else {
       this.toastCtrl.presentToast("Error: Contacte con el service provider", 1000);
     }
   }
+}
 
-  private credentialProtocol(verifiedToken: string|object, secret: string) {
-    let alastriaSession;
-
-    if (verifiedToken){
-      alastriaSession = this.tokenSrv.getSessionToken(verifiedToken);
-      this.showConfirmAcces("SERVICE PROVIDER", verifiedToken["cbu"], verifiedToken["credentials"], verifiedToken["iat"], verifiedToken["exp"]);
-    
-    }else{
-      this.toastCtrl.presentToast("Error: Contacte con el service provider", 1000);
-    }
-  }
+export enum ProtocolTypes {
+  authentication = "authentication",
+  credentialOffer = "credentialOffer",
+  credentialRequest = "credentialRequest"
 }
