@@ -8,7 +8,6 @@ import { ConfirmLogin } from '../../confirmLogin/confirmLogin';
 import { Index } from '../index';
 import { TokenService } from '../../../services/token-service';
 import { ConfirmAccess } from '../../confirm-access/confirm-access';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @IonicPage()
 @Component({
@@ -66,8 +65,8 @@ export class Camera {
     alert.present();
   }
 
-  private showConfirmAcces(issName: string, cbu: string, credentials: Array<any>, iat: number, exp: number, isCredentialRequest = false) {
-    const alert = this.modalCtrl.create(ConfirmAccess, { "issName": issName, "cbu": cbu, "dataNumberAccess": credentials.length, "credentials": credentials, "iat": iat, "exp": exp, "isCredentialRequest": isCredentialRequest });
+  private showConfirmAcces(issName: string, cbu: string, credentials: Array<any>, iat: number, exp: number, isPresentationRequest = false) {
+    const alert = this.modalCtrl.create(ConfirmAccess, { "issName": issName, "cbu": cbu, "dataNumberAccess": credentials.length, "credentials": credentials, "iat": iat, "exp": exp, "isPresentationRequest": isPresentationRequest });
     alert.present();
   }
 
@@ -84,7 +83,7 @@ export class Camera {
         case ProtocolTypes.credentialOffer:
           this.showConfirmAcces("SERVICE PROVIDER", verifiedToken["cbu"], verifiedToken["credentials"], verifiedToken["iat"], verifiedToken["exp"]);
           break;
-        case ProtocolTypes.credentialRequest:
+        case ProtocolTypes.presentationRequest:
           this.showConfirmAcces("SERVICE PROVIDER", verifiedToken["cbu"], verifiedToken["data"], verifiedToken["iat"], verifiedToken["exp"], true);
           break;
       }
@@ -97,5 +96,5 @@ export class Camera {
 export enum ProtocolTypes {
   authentication = "authentication",
   credentialOffer = "credentialOffer",
-  credentialRequest = "credentialRequest"
+  presentationRequest = "presentationRequest"
 }

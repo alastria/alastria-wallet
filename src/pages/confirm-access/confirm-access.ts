@@ -12,7 +12,7 @@ import { LoadingService } from '../../services/loading-service';
 export class ConfirmAccess {
 
     public dataNumberAccess: number;
-    public isCredentialRequest: boolean;
+    public isPresentationRequest: boolean;
     public issName: string;
     private identitySelected: Array<number> = [];
     private credentials: Array<any>;
@@ -28,7 +28,7 @@ export class ConfirmAccess {
         this.dataNumberAccess = this.navParams.get("dataNumberAccess");
         this.issName = this.navParams.get("issName");
         this.credentials = this.navParams.get("credentials");
-        this.isCredentialRequest = this.navParams.get("isCredentialRequest");
+        this.isPresentationRequest = this.navParams.get("isPresentationRequest");
     }
 
     onStarClass(items: any, index: number, e: any) {
@@ -38,7 +38,7 @@ export class ConfirmAccess {
     }
 
     public manageCredentials() {
-        if (this.isCredentialRequest) {
+        if (this.isPresentationRequest) {
             this.sendPresentation();
         } else {
             this.saveCredentials();
@@ -47,12 +47,12 @@ export class ConfirmAccess {
 
     private sendPresentation() {
         let securedCredentials;
-        let credentialPromises = [];
 
-        for (let i = 0; i < this.identitySelected.length; i++) {
-            let index = this.identitySelected[i] - 1;
-            credentialPromises.push(this.securedStrg.getJSON(this.credentials[index]["field_name"]));
-        }
+        let credentialPromises = this.identitySelected.map((element) => {
+            let index = element - 1;
+            return this.securedStrg.getJSON(this.credentials[index]["field_name"]);
+        });
+
         Promise.all(credentialPromises)
             .then((result) => {
                 console.log(result);

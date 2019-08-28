@@ -33,7 +33,7 @@ export class IdentityDataListComponent {
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
     let credentials = this.navParams.get("credentials");
-    let isCredentialRequest = this.navParams.get("isCredentialRequest");
+    let isPresentationRequest = this.navParams.get("isPresentationRequest");
 
     let iat = new Date(this.navParams.get("iat") * 1000);
     let exp = new Date(this.navParams.get("exp") * 1000);
@@ -66,7 +66,7 @@ export class IdentityDataListComponent {
 
       let obj: mockCredential;
 
-      if (isCredentialRequest){
+      if (isPresentationRequest){
         obj = {
           id: i + 1,
           titleP: credentials[i][propNames[2].toString()],
