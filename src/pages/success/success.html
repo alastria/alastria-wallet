@@ -1,6 +1,6 @@
 <ion-content class="tutorial-page">
     <ion-toolbar>
-        <ion-buttons end>
+        <ion-buttons *ngIf="data.page==='success'" end>
             <a (click)="closeModal()">
                 <img src="assets/images/alastria/ic_close.png" class="cross">
             </a>

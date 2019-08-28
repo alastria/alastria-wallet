@@ -8,6 +8,7 @@ import { ConfirmLogin } from '../../confirmLogin/confirmLogin';
 import { Index } from '../index';
 import { TokenService } from '../../../services/token-service';
 import { ConfirmAccess } from '../../confirm-access/confirm-access';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @IonicPage()
 @Component({
@@ -17,7 +18,8 @@ import { ConfirmAccess } from '../../confirm-access/confirm-access';
 
 export class Camera {
 
-  qrCode: string;
+  private readonly QR_CODE = "QR_CODE";
+
   data: any = {};
   cameraEnabled = true;
   file: File;
@@ -39,8 +41,9 @@ export class Camera {
 
     let options = {
       prompt: "Situe el código Qr en el interior del rectángulo.",
-      formats: "QR_CODE"
+      formats: this.QR_CODE
     }
+    
     this.barcodeScanner.scan(options).then(barcodeData => {
       console.log('QR data', barcodeData.text);
       let alastriaToken = barcodeData.text;
@@ -53,7 +56,6 @@ export class Camera {
       this.launchProtocol(tokenType, verifiedJWT, secret);
     }).catch(err => {
       console.log('Error', err);
-      this.qrCode = "hola";
       this.toastCtrl.presentToast("Error: Contacte con el service provider", 3000);
       this.navCtrl.setRoot(Index);
     });
