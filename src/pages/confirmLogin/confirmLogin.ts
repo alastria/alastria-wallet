@@ -45,9 +45,6 @@ export class ConfirmLogin {
         let signedJWT = {
             "token": sign(this.as,secret)
         };
-        /* this.cbu = "http://10.100.30.42:3000/cbu";
-        this.showLoading();
-        this.viewCtrl.dismiss(); */
         console.log("sending token");
         
         let head = new HttpHeaders();

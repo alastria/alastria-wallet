@@ -13,11 +13,11 @@ export class SuccessPage {
     data = {};
 
     constructor(
-        public navCtrl: NavController, 
+        public navCtrl: NavController,
         public navParams: NavParams,
         public modalCtrl: ModalController,
         public viewCtrl: ViewController
-        ) {
+    ) {
         this.data = {
             'cerrar': "assets/images/alastria/ic_close.png",
             'titleSuccess': this.navParams.get('titleSuccess'),
@@ -33,29 +33,7 @@ export class SuccessPage {
         console.log('ionViewDidLoad SuccessPage');
     }
 
-    closeModal() {
-        if(this.data["callback"] !== "success"){
-            this.navCtrl.setRoot(TabsPage);
-        }else{
-            this.showSuccess();
-            this.viewCtrl.dismiss();
-        }
-    }
-
-    public showSuccess() {
-        let titleSuccess = '¡Hecho!';
-        let textSuccess = 'Recuerda que puedes ver todos tus movimientos de AlastriaID en la opción de <strong>"Actividad"</strong>';
-        let imgPrincipal = 'assets/images/alastria/success.png';
-        let imgSuccess = 'assets/images/tabIcon/act.png';
-        let page = "success";
-
-        let modal = this.modalCtrl.create(SuccessPage, { 
-            titleSuccess: titleSuccess, 
-            textSuccess: textSuccess, 
-            imgPrincipal: imgPrincipal, 
-            imgSuccess: imgSuccess, 
-            page: page, 
-            callback: "" });
-        modal.present();
+    public closeModal() {
+        this.navCtrl.setRoot(TabsPage);
     }
 }
