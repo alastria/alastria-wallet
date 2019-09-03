@@ -14,6 +14,10 @@ export class ConfirmAccess {
     public dataNumberAccess: number;
     public isPresentationRequest: boolean;
     public issName: string;
+
+    private readonly CREDENTIAL_PREFIX = "cred_";
+    private readonly PRESENTATION_PREFIX = "present_";
+
     private identitySelected: Array<number> = [];
     private credentials: Array<any>;
 
@@ -49,8 +53,8 @@ export class ConfirmAccess {
         let securedCredentials;
 
         let credentialPromises = this.identitySelected.map((element) => {
-            let index = element - 1;
-            return this.securedStrg.getJSON(this.credentials[index]["field_name"]);
+            let index = element;
+            return this.securedStrg.getJSON(this.CREDENTIAL_PREFIX + this.credentials[index]["field_name"]);
         });
 
         Promise.all(credentialPromises)
@@ -58,7 +62,6 @@ export class ConfirmAccess {
                 console.log(result);
                 securedCredentials = result;
             });
-
     }
 
     private saveCredentials() {
@@ -67,25 +70,29 @@ export class ConfirmAccess {
             this.showLoading();
 
             let credentialPromises = this.identitySelected.map((element) => {
-                let index = element - 1;
+                let index = element;
                 let credentialKeys = Object.getOwnPropertyNames(this.credentials[index]);
 
                 let hasKey;
+                let currentCredentialKey = this.CREDENTIAL_PREFIX + credentialKeys[2];
                 let currentCredentialValue;
 
-                let credentialPromise = this.securedStrg.hasKey(credentialKeys[2])
+                let finalCredential = this.credentials[index];
+                finalCredential.issuer = this.issName;
+
+                let credentialPromise = this.securedStrg.hasKey(currentCredentialKey)
                     .then(result => {
                         hasKey = result;
                         if (result) {
-                            return this.securedStrg.getJSON(credentialKeys[2]);
+                            return this.securedStrg.getJSON(currentCredentialKey);
                         } else {
-                            return this.securedStrg.setJSON(credentialKeys[2], this.credentials[index]);
+                            return this.securedStrg.setJSON(currentCredentialKey, finalCredential);
                         }
                     }).then(result => {
                         if (hasKey) {
                             currentCredentialValue = result[credentialKeys[2]];
                             if (this.credentials[index][credentialKeys[2]] !== currentCredentialValue) {
-                                return this.securedStrg.setJSON(credentialKeys[2] + "_" + Math.random(), this.credentials[index]);
+                                return this.securedStrg.setJSON(currentCredentialKey + "_" + Math.random(), finalCredential);
                             }
                         } else {
                             return Promise.resolve();

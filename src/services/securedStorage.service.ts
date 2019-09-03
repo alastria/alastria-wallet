@@ -59,6 +59,10 @@ export class IdentitySecuredStorageService {
         return JSON.parse(jsonTmp);
     }
 
+    async removeJson(key: string){
+        return this.securedStorageObject.remove(key);
+    }
+
     async matchAndGetJSON(key: string) {
         let regex = new RegExp(key);
         let allKeys;

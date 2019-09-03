@@ -81,7 +81,7 @@ export class Camera {
           this.showConfirmLogin(verifiedToken["iss"], "SERVICE PROVIDER", verifiedToken["cbu"], alastriaSession);
           break;
         case ProtocolTypes.credentialOffer:
-          this.showConfirmAcces("SERVICE PROVIDER", verifiedToken["cbu"], verifiedToken["credentials"], verifiedToken["iat"], verifiedToken["exp"]);
+          this.showConfirmAcces("SERVICE PROVIDER", verifiedToken["cbu"], verifiedToken["credentials"], verifiedToken["iat"], verifiedToken["exp"], false);
           break;
         case ProtocolTypes.presentationRequest:
           this.showConfirmAcces("SERVICE PROVIDER", verifiedToken["cbu"], verifiedToken["data"], verifiedToken["iat"], verifiedToken["exp"], true);
