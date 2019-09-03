@@ -17,7 +17,8 @@ import { ConfirmAccess } from '../../confirm-access/confirm-access';
 
 export class Camera {
 
-  qrCode: string;
+  private readonly QR_CODE = "QR_CODE";
+
   data: any = {};
   cameraEnabled = true;
   file: File;
@@ -39,8 +40,9 @@ export class Camera {
 
     let options = {
       prompt: "Situe el código Qr en el interior del rectángulo.",
-      formats: "QR_CODE"
+      formats: this.QR_CODE
     }
+    
     this.barcodeScanner.scan(options).then(barcodeData => {
       console.log('QR data', barcodeData.text);
       let alastriaToken = barcodeData.text;
@@ -53,7 +55,6 @@ export class Camera {
       this.launchProtocol(tokenType, verifiedJWT, secret);
     }).catch(err => {
       console.log('Error', err);
-      this.qrCode = "hola";
       this.toastCtrl.presentToast("Error: Contacte con el service provider", 3000);
       this.navCtrl.setRoot(Index);
     });
@@ -64,8 +65,8 @@ export class Camera {
     alert.present();
   }
 
-  private showConfirmAcces(issName: string, cbu: string, credentials: Array<any>, iat: number, exp: number, isCredentialRequest = false) {
-    const alert = this.modalCtrl.create(ConfirmAccess, { "issName": issName, "cbu": cbu, "dataNumberAccess": credentials.length, "credentials": credentials, "iat": iat, "exp": exp, "isCredentialRequest": isCredentialRequest });
+  private showConfirmAcces(issName: string, cbu: string, credentials: Array<any>, iat: number, exp: number, isPresentationRequest = false) {
+    const alert = this.modalCtrl.create(ConfirmAccess, { "issName": issName, "cbu": cbu, "dataNumberAccess": credentials.length, "credentials": credentials, "iat": iat, "exp": exp, "isPresentationRequest": isPresentationRequest });
     alert.present();
   }
 
@@ -80,9 +81,9 @@ export class Camera {
           this.showConfirmLogin(verifiedToken["iss"], "SERVICE PROVIDER", verifiedToken["cbu"], alastriaSession);
           break;
         case ProtocolTypes.credentialOffer:
-          this.showConfirmAcces("SERVICE PROVIDER", verifiedToken["cbu"], verifiedToken["credentials"], verifiedToken["iat"], verifiedToken["exp"]);
+          this.showConfirmAcces("SERVICE PROVIDER", verifiedToken["cbu"], verifiedToken["credentials"], verifiedToken["iat"], verifiedToken["exp"], false);
           break;
-        case ProtocolTypes.credentialRequest:
+        case ProtocolTypes.presentationRequest:
           this.showConfirmAcces("SERVICE PROVIDER", verifiedToken["cbu"], verifiedToken["data"], verifiedToken["iat"], verifiedToken["exp"], true);
           break;
       }
@@ -95,5 +96,5 @@ export class Camera {
 export enum ProtocolTypes {
   authentication = "authentication",
   credentialOffer = "credentialOffer",
-  credentialRequest = "credentialRequest"
+  presentationRequest = "presentationRequest"
 }

@@ -2,7 +2,7 @@
     <ion-row justify-content-center>
         <img src="assets/images/logo/logo1.png" class="alastria-logo">
     </ion-row>
-    <ion-row *ngIf="isCredentialRequest; else credentialOffer" text-center>
+    <ion-row *ngIf="isPresentationRequest; else credentialOffer" text-center>
         <h2 class="description"> {{issName | uppercase}} ha <strong>solicitado acceso</strong> a {{dataNumberAccess}}
             datos de tu identidad</h2>
     </ion-row>

@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
-import { ViewController, NavParams, NavController, ModalController } from 'ionic-angular';
-import { TabsPage } from '../tabsPage/tabsPage';
-import { SuccessPage } from '../success/success';
+import { ViewController, NavParams, ModalController } from 'ionic-angular';
 import { ToastService } from '../../services/toast-service';
 import { IdentitySecuredStorageService } from '../../services/securedStorage.service';
+import { LoadingService } from '../../services/loading-service';
 
 
 @Component({
@@ -13,28 +12,27 @@ import { IdentitySecuredStorageService } from '../../services/securedStorage.ser
 export class ConfirmAccess {
 
     public dataNumberAccess: number;
-    public isCredentialRequest: boolean;
+    public isPresentationRequest: boolean;
     public issName: string;
+
+    private readonly CREDENTIAL_PREFIX = "cred_";
+    private readonly PRESENTATION_PREFIX = "present_";
+
     private identitySelected: Array<number> = [];
     private credentials: Array<any>;
 
     constructor(
         public viewCtrl: ViewController,
         public navParams: NavParams,
-        public navCtrl: NavController,
         public modalCtrl: ModalController,
         public toastCtrl: ToastService,
-        private securedStrg: IdentitySecuredStorageService
+        private securedStrg: IdentitySecuredStorageService,
+        private loadingSrv: LoadingService
     ) {
         this.dataNumberAccess = this.navParams.get("dataNumberAccess");
         this.issName = this.navParams.get("issName");
         this.credentials = this.navParams.get("credentials");
-        this.isCredentialRequest = this.navParams.get("isCredentialRequest");
-    }
-
-    public dismiss() {
-        this.navCtrl.setRoot(TabsPage);
-        this.viewCtrl.dismiss();
+        this.isPresentationRequest = this.navParams.get("isPresentationRequest");
     }
 
     onStarClass(items: any, index: number, e: any) {
@@ -44,7 +42,7 @@ export class ConfirmAccess {
     }
 
     public manageCredentials() {
-        if (this.isCredentialRequest) {
+        if (this.isPresentationRequest) {
             this.sendPresentation();
         } else {
             this.saveCredentials();
@@ -53,62 +51,64 @@ export class ConfirmAccess {
 
     private sendPresentation() {
         let securedCredentials;
-        let credentialPromises = [];
 
-        for (let i = 0; i < this.identitySelected.length; i++) {
-            let index = this.identitySelected[i] - 1;
-            credentialPromises.push(this.securedStrg.getJSON(this.credentials[index]["field_name"]));
-        }
+        let credentialPromises = this.identitySelected.map((element) => {
+            let index = element;
+            return this.securedStrg.getJSON(this.CREDENTIAL_PREFIX + this.credentials[index]["field_name"]);
+        });
+
         Promise.all(credentialPromises)
             .then((result) => {
                 console.log(result);
                 securedCredentials = result;
             });
-        
     }
 
     private saveCredentials() {
         if (this.identitySelected.length > 0) {
             console.log('Sending Credentials');
+            this.showLoading();
 
-            for (let i = 0; i < this.identitySelected.length; i++) {
-                let index = this.identitySelected[i] - 1;
+            let credentialPromises = this.identitySelected.map((element) => {
+                let index = element;
                 let credentialKeys = Object.getOwnPropertyNames(this.credentials[index]);
 
                 let hasKey;
+                let currentCredentialKey = this.CREDENTIAL_PREFIX + credentialKeys[2];
                 let currentCredentialValue;
-                let securedCredentials = [];
 
-                this.securedStrg.hasKey(credentialKeys[2])
+                let finalCredential = this.credentials[index];
+                finalCredential.issuer = this.issName;
+
+                let credentialPromise = this.securedStrg.hasKey(currentCredentialKey)
                     .then(result => {
                         hasKey = result;
-                        if (hasKey) {
-                            this.securedStrg.matchAndGetJSON(credentialKeys[2])
-                                .then(credentials => {
-                                    credentials.forEach(credential => {
-                                        securedCredentials.push(JSON.parse(credential));
-                                    });
-                                    console.log(securedCredentials);
-
-                                    this.showLoading();
-                                });
-                            /* this.securedStrg.getJSON(credentialKeys[2])
-                                .then(result => {
-                                    currentCredentialValue = result[credentialKeys[2]];
-                                    if (this.credentials[index][credentialKeys[2]] !== currentCredentialValue) {
-                                        this.securedStrg.setJSON(credentialKeys[2] + "_" + Math.random(), this.credentials[index]);
-                                    }
-                                }); */
+                        if (result) {
+                            return this.securedStrg.getJSON(currentCredentialKey);
                         } else {
-                            this.securedStrg.setJSON(credentialKeys[2], this.credentials[index])
-                                .then(() => {
-                                    this.showLoading();
-                                });
+                            return this.securedStrg.setJSON(currentCredentialKey, finalCredential);
                         }
-
+                    }).then(result => {
+                        if (hasKey) {
+                            currentCredentialValue = result[credentialKeys[2]];
+                            if (this.credentials[index][credentialKeys[2]] !== currentCredentialValue) {
+                                return this.securedStrg.setJSON(currentCredentialKey + "_" + Math.random(), finalCredential);
+                            }
+                        } else {
+                            return Promise.resolve();
+                        }
                     });
-            }
+                return credentialPromise;
 
+            });
+
+            //TODO: Confirm credential reception on blockchain
+
+            Promise.all(credentialPromises)
+                .then(() => {
+                    this.showSucces();
+                    this.viewCtrl.dismiss();
+                });
 
         } else {
             this.toastCtrl.presentToast("Por favor seleccione al menos una credential para enviar", 3000);
@@ -126,21 +126,10 @@ export class ConfirmAccess {
     }
 
     public showLoading() {
-        let titleSuccess = 'Estamos <strong>actualizando tu AlastriaID</strong>';
-        let textSuccess = 'Solo será un momento';
-        let imgPrincipal = 'assets/images/alastria/loading.png';
-        let imgSuccess = '';
-        let page = "loading";
+        this.loadingSrv.showModal();
+    }
 
-        let modal = this.modalCtrl.create(SuccessPage, {
-            titleSuccess: titleSuccess,
-            textSuccess: textSuccess,
-            imgPrincipal: imgPrincipal,
-            imgSuccess: imgSuccess,
-            page: page,
-            callback: "success"
-        });
-        modal.present();
-        this.viewCtrl.dismiss();
+    public showSucces() {
+        this.loadingSrv.updateModalState();
     }
 }
