@@ -4,8 +4,6 @@ import { ToastService } from '../../services/toast-service';
 import { IdentitySecuredStorageService } from '../../services/securedStorage.service';
 import { LoadingService } from '../../services/loading-service';
 import { TabsPage } from '../tabsPage/tabsPage';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
-
 
 @Component({
     selector: 'confirm-access',
@@ -22,6 +20,7 @@ export class ConfirmAccess {
     private readonly PRESENTATION_PREFIX = "present_";
 
     private identitySelected: Array<number> = [];
+    private identityLoaded = new Array<any>();
     private credentials: Array<any>;
 
     constructor(
@@ -38,6 +37,9 @@ export class ConfirmAccess {
         this.issDID = this.navParams.get("iss");
         this.credentials = this.navParams.get("credentials");
         this.isPresentationRequest = this.navParams.get("isPresentationRequest");
+        for (let id of this.credentials) {
+            this.identityLoaded.push(undefined);
+        }
     }
 
     onStarClass(items: any, index: number, e: any) {
@@ -55,12 +57,19 @@ export class ConfirmAccess {
     }
 
     private sendPresentation() {
-
+        console.log("Selected ids: ", this.identitySelected);
         if (this.identitySelected.length === this.credentials.length) {
+            let securedCredentials = new Array<any>();
+            let pendingIdentities = new Array<number>();
 
-            let securedCredentials;
-
-            let credentialExistsPromises = this.identitySelected.map((element) => {
+            for (let id of this.identitySelected) {
+                if (this.identityLoaded[id]) {
+                    securedCredentials.push(this.identityLoaded[id]);
+                } else {
+                    pendingIdentities.push(id);
+                }
+            }
+            let credentialExistsPromises = pendingIdentities.map((element) => {
                 let index = element;
                 return this.securedStrg.hasKey(this.CREDENTIAL_PREFIX + this.credentials[index]["field_name"]);
             });
@@ -73,15 +82,14 @@ export class ConfirmAccess {
                 .then((result) => {
                     if (result === true) {
                         this.showLoading();
-                        let credentialPromises = this.identitySelected.map((element) => {
+                        let credentialPromises = pendingIdentities.map((element) => {
                             let index = element;
                             return this.securedStrg.getJSON(this.CREDENTIAL_PREFIX + this.credentials[index]["field_name"]);
                         });
 
                         Promise.all(credentialPromises)
                             .then((result) => {
-                                securedCredentials = result;
-
+                                securedCredentials = securedCredentials.concat(result);
                                 let iat = new Date(this.navParams.get("iat") * 1000);
                                 let exp = new Date(this.navParams.get("exp") * 1000);
                                 let iatString = iat.getDay() + "/" + (iat.getMonth() + 1) + "/" + iat.getFullYear();
@@ -97,11 +105,11 @@ export class ConfirmAccess {
                                     "nbf": iat,
                                     "credentials": securedCredentials
                                 }
-                                
+
                                 this.securedStrg.setJSON(this.PRESENTATION_PREFIX + this.navParams.get("jti"), presentation)
-                                .then(() => {
-                                    this.showSucces();
-                                });
+                                    .then(() => {
+                                        this.showSucces();
+                                    });
                             });
                     } else {
                         this.toastCtrl.presentToast("Uno o mas campos de los solicitados estan vacios", 3000);
@@ -168,8 +176,12 @@ export class ConfirmAccess {
         } else {
             this.identitySelected = this.identitySelected.filter(identity => (identity !== identitySelect.id));
         }
-
         console.log(this.identitySelected);
+    }
+
+    public loadCredential(event: any) {
+        this.identityLoaded[event.index] = event.credential;
+        console.log(this.identityLoaded)
     }
 
     public showLoading() {

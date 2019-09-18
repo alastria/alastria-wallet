@@ -14,7 +14,7 @@
     </ng-template>
 </ion-header>
 <ion-content class="tutorial-page">
-    <identity-data-list isSelectable="true" (handleIdentitySelect)="handleIdentitySelect($event)"></identity-data-list>
+    <identity-data-list isSelectable="true" (handleIdentitySelect)="handleIdentitySelect($event)" (loadCredential)="loadCredential($event)"></identity-data-list>
     <ion-footer>
         <ion-row justify-content-center>
             <button ion-button class="btnConfirm" style="width: 80%" (click)="manageCredentials()">ACEPTAR</button>
