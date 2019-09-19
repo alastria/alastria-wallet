@@ -219,19 +219,31 @@ export class Activity {
         }
 
         return this.securedStrg.matchAndGetJSON(prefix)
-            .then((credentials) => {
-                console.log(credentials);
+            .then((elements) => {
+                console.log(elements);
                 let count = 0;
-                this.activities = credentials.map(credential => {
-                    let credentialObj = JSON.parse(credential);
-                    let credentialKeys = Object.getOwnPropertyNames(credentialObj);
-                    return {
-                        "activityId": count++,
-                        "title": credentialKeys[2],
-                        "subtitle": credentialObj[credentialKeys[2]],
-                        "description": credentialObj.issuer,
-                        "datetime": "",
-                        "type": this.type
+                this.activities = elements.map(element => {
+                    let elementObj = JSON.parse(element);
+                    let elementKeys = Object.getOwnPropertyNames(elementObj);
+                    if (prefix === this.CREDENTIAL_PREFIX) {
+                        return {
+                            "activityId": count++,
+                            "title": elementKeys[2],
+                            "subtitle": elementObj[elementKeys[2]],
+                            "description": elementObj.issuer,
+                            "datetime": "",
+                            "type": this.type
+                        }
+                    } else {
+                        return {
+                            "activityId": count++,
+                            "title": "Presentación " + count,
+                            "subtitle": "",
+                            "description": elementObj["iss"],
+                            "datetime": elementObj["iat"],
+                            "type": this.type,
+                            "jti": elementObj["jti"]
+                        }
                     }
                 });
             });
@@ -252,7 +264,11 @@ export class Activity {
         }
 
         let keysToRemove = ids.map(element => {
-            return this.activities[element]["title"];
+            if (prefix === this.CREDENTIAL_PREFIX) {
+                return this.activities[element]["title"];
+            }else{
+                return this.activities[element]["jti"];
+            }
         })
             .map(key => {
                 return this.securedStrg.removeJson(prefix + key);

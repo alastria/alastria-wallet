@@ -27,6 +27,7 @@ import { WalkthroughPage } from '../pages/walkthrough/walkthrough';
 import { ConfirmLogin } from '../pages/confirmLogin/confirmLogin';
 import { TermsConditionsPageModule } from '../pages/terms-conditions/terms-conditions.module';
 import { ConfirmAccess } from '../pages/confirm-access/confirm-access';
+import { SelectIdentity } from './../pages/confirm-access/select-identity/select-identity';
 import { HttpClientModule } from "@angular/common/http"
 import { TokenService } from '../services/token-service';
 import { ToastService } from '../services/toast-service';
@@ -43,7 +44,8 @@ import { ToastService } from '../services/toast-service';
         WalkthroughPage,
         ConfirmLogin,
         WalkthroughPage,
-        ConfirmAccess
+        ConfirmAccess,
+        SelectIdentity
     ],
     imports: [
         BrowserModule,
@@ -75,7 +77,8 @@ import { ToastService } from '../services/toast-service';
         WalkthroughPage,
         ConfirmAccess,
         WalkthroughPage,
-        ConfirmLogin
+        ConfirmLogin,
+        SelectIdentity
     ],
     providers: [
         StatusBar,
