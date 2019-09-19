@@ -2,6 +2,7 @@ import { DetailProfilePage } from './../../pages/detail-profile/detail-profile';
 import { Component, Input, EventEmitter, Output } from '@angular/core';
 import { NavParams, NavController } from 'ionic-angular';
 import { IdentitySecuredStorageService } from '../../services/securedStorage.service';
+import { SelectIdentity } from '../../pages/confirm-access/select-identity/select-identity';
 
 export interface mockCredential {
     id: number,
@@ -16,7 +17,9 @@ export interface mockCredential {
     endDate: string,
     level: string,
     iconsStars: Array<any>,
-    credentialAssigned: boolean
+    credentialAssigned: boolean,
+    isExpanded: boolean,
+    isHidden: boolean
 }
 
 @Component({
@@ -30,19 +33,30 @@ export class IdentityDataListComponent {
 
     @Output()
     public handleIdentitySelect = new EventEmitter();
+    @Output()
+    public loadCredential = new EventEmitter();
 
-    public identityData = new Array<mockCredential>();
+    public credentials: any[];
+    public identityDisplay = new Array<mockCredential>();
+    public chosenIndex: number;
     public isDataSetted = false;
-
+    public isOrderInverted = false;
     private readonly CREDENTIAL_PREFIX = "cred_";
+    private isPresentationRequest: Boolean;
+    private isManualSelection: Boolean;
 
     constructor(
         public navCtrl: NavController,
         public navParams: NavParams,
         private securedStrg: IdentitySecuredStorageService
     ) {
-        let credentials = this.navParams.get("credentials");
-        let isPresentationRequest = this.navParams.get("isPresentationRequest");
+        this.isPresentationRequest = this.navParams.get("isPresentationRequest");
+        this.isManualSelection = this.navParams.get("isManualSelection");
+        if (this.isManualSelection) {
+            this.credentials = this.navParams.get("allCredentials");
+        } else {
+            this.credentials = this.navParams.get("credentials");
+        }
 
         let iat = new Date(this.navParams.get("iat") * 1000);
         let exp = new Date(this.navParams.get("exp") * 1000);
@@ -50,7 +64,7 @@ export class IdentityDataListComponent {
         let expString = exp.getDay() + "/" + (exp.getMonth() + 1) + "/" + exp.getFullYear();
         let count = 0;
 
-        let credentialPromises = credentials.map((credential) => {
+        let credentialPromises = this.credentials.map((credential) => {
             let propNames = Object.getOwnPropertyNames(credential);
 
             let level = credential.levelOfAssurance;
@@ -75,7 +89,7 @@ export class IdentityDataListComponent {
 
             let obj: mockCredential;
 
-            if (isPresentationRequest) {
+            if (this.isPresentationRequest) {
                 let securedCredentials;
                 let key = credential["field_name"];
                 return this.securedStrg.hasKey(this.CREDENTIAL_PREFIX + key)
@@ -98,12 +112,14 @@ export class IdentityDataListComponent {
                                         endDate: expString,
                                         level: "Nivel " + level,
                                         iconsStars: stars,
-                                        credentialAssigned: true
+                                        credentialAssigned: true,
+                                        isExpanded: false,
+                                        isHidden: false
                                     };
-                                    this.identityData.push(obj);
+                                    this.identityDisplay.push(obj);
                                     return Promise.resolve();
                                 });
-                        }else{
+                        } else {
                             obj = {
                                 id: count++,
                                 titleP: credential[propNames[2].toString()],
@@ -117,9 +133,11 @@ export class IdentityDataListComponent {
                                 endDate: "",
                                 level: "Nivel " + level,
                                 iconsStars: stars,
-                                credentialAssigned: false
+                                credentialAssigned: false,
+                                isExpanded: false,
+                                isHidden: false
                             };
-                            this.identityData.push(obj);
+                            this.identityDisplay.push(obj);
                             return Promise.resolve();
                         }
                     });
@@ -137,13 +155,17 @@ export class IdentityDataListComponent {
                     endDate: expString,
                     level: "Nivel " + level,
                     iconsStars: stars,
-                    credentialAssigned: true
+                    credentialAssigned: true,
+                    isExpanded: false,
+                    isHidden: false
                 };
-                this.identityData.push(obj);
+                this.identityDisplay.push(obj);
                 return Promise.resolve();
             }
         });
-
+        if (this.isManualSelection) {
+            this.identityDisplay.sort();
+        }
         Promise.all(credentialPromises)
             .then(() => {
                 this.isDataSetted = true;
@@ -151,16 +173,68 @@ export class IdentityDataListComponent {
     }
 
     public detail(item: any): void {
-        this.navCtrl.push(DetailProfilePage, { item });
+        if (this.isPresentationRequest) {
+            this.securedStrg.getAllCredentials()
+                .then((credentials: any) => {
+                    console.log('getAllCredentials: ', this.identityDisplay);
+                    let allCredentials = credentials.map((credential) => JSON.parse(credential));
+                    let iat = this.navParams.get("iat");
+                    let exp = this.navParams.get("exp");
+
+                    new Promise((resolve) => {
+                        this.navCtrl.push(SelectIdentity, {
+                            item,
+                            isManualSelection: true,
+                            allCredentials,
+                            iat,
+                            exp,
+                            resolve
+                        })
+                    }).then((data: any) => {
+                        if (data.mock && data.credential) {
+                            console.log("Manual credential: ", data.credential)
+                            data.mock.isChecked = item.isChecked
+                            data.mock.id = item.id;
+                            this.identityDisplay[item.id] = data.mock;
+                            const result: any = {
+                                credential: data.credential,
+                                index: item.id
+                            }
+                            this.loadCredential.emit(result);
+                        }
+                    });
+                });
+        } else {
+            this.navCtrl.push(DetailProfilePage, { item });
+        }
+    }
+
+    public expandCredential(item: mockCredential) {
+        item.isExpanded = !item.isExpanded;
     }
 
     public changeIdentitySelect(event: any, id: number): void {
+        console.log(event);
         const result: any = {
             id,
             value: event.checked
         }
-
-        this.handleIdentitySelect.emit(result);
+        if (this.isManualSelection) {
+            if (event.checked) {
+                result.data = this.identityDisplay[id];
+                this.chosenIndex = id;
+                for (let i = 0; i < this.identityDisplay.length; i++) {
+                    if (i != id) {
+                        this.identityDisplay[i]['isChecked'] = null;
+                    }
+                }
+                this.handleIdentitySelect.emit(result);
+            } else if (this.chosenIndex === id) {
+                this.handleIdentitySelect.emit(result);
+            }
+        }
+        else {
+            this.handleIdentitySelect.emit(result);
+        }
     }
-
 }
