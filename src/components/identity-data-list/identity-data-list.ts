@@ -18,7 +18,8 @@ export interface mockCredential {
     level: string,
     iconsStars: Array<any>,
     credentialAssigned: boolean,
-    isExpanded: boolean
+    isExpanded: boolean,
+    isHidden: boolean
 }
 
 @Component({
@@ -37,10 +38,9 @@ export class IdentityDataListComponent {
 
     public credentials: any[];
     public identityDisplay = new Array<mockCredential>();
-    public identityData = new Array<mockCredential>();
     public chosenIndex: number;
     public isDataSetted = false;
-
+    public isOrderInverted = false;
     private readonly CREDENTIAL_PREFIX = "cred_";
     private isPresentationRequest: Boolean;
     private isManualSelection: Boolean;
@@ -113,7 +113,8 @@ export class IdentityDataListComponent {
                                         level: "Nivel " + level,
                                         iconsStars: stars,
                                         credentialAssigned: true,
-                                        isExpanded: false
+                                        isExpanded: false,
+                                        isHidden: false
                                     };
                                     this.identityDisplay.push(obj);
                                     return Promise.resolve();
@@ -133,7 +134,8 @@ export class IdentityDataListComponent {
                                 level: "Nivel " + level,
                                 iconsStars: stars,
                                 credentialAssigned: false,
-                                isExpanded: false
+                                isExpanded: false,
+                                isHidden: false
                             };
                             this.identityDisplay.push(obj);
                             return Promise.resolve();
@@ -154,7 +156,8 @@ export class IdentityDataListComponent {
                     level: "Nivel " + level,
                     iconsStars: stars,
                     credentialAssigned: true,
-                    isExpanded: false
+                    isExpanded: false,
+                    isHidden: false
                 };
                 this.identityDisplay.push(obj);
                 return Promise.resolve();
@@ -162,7 +165,6 @@ export class IdentityDataListComponent {
         });
         if (this.isManualSelection) {
             this.identityDisplay.sort();
-            this.identityData = this.identityDisplay;
         }
         Promise.all(credentialPromises)
             .then(() => {

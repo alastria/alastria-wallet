@@ -35,15 +35,13 @@ export class SelectIdentity {
     onSearch(event?: any) {
         console.log('Event ', event);
         console.log('searchTerm', this.searchTerm);
-        try {
-            this.identityDataList.identityDisplay = this.identityDataList.identityData.filter(mock => {
-                if (mock.titleP.toLowerCase().indexOf(this.searchTerm.toLowerCase()) !== -1
-                    || mock.value.toLowerCase().indexOf(this.searchTerm.toLowerCase()) !== -1) {
-                    return mock;
-                }
-            });
-        } catch (err) {
-            console.log(err);
+        for (let credential of this.identityDataList.identityDisplay) {
+            if (credential.titleP.toLowerCase().indexOf(this.searchTerm.toLowerCase()) !== -1
+                || credential.value.toLowerCase().indexOf(this.searchTerm.toLowerCase()) !== -1) {
+                credential.isHidden = false;
+            } else {
+                credential.isHidden = true;
+            }
         }
     }
 
@@ -57,6 +55,9 @@ export class SelectIdentity {
     }
 
     sortCredentials() {
+        for (let credential of this.identityDataList.identityDisplay) {
+            credential.id = this.identityDataList.identityDisplay.length - credential.id - 1;
+        }
         this.identityDataList.identityDisplay.reverse();
     }
 
