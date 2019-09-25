@@ -3,6 +3,7 @@ import { Component, Input, EventEmitter, Output } from '@angular/core';
 import { NavParams, NavController } from 'ionic-angular';
 import { IdentitySecuredStorageService } from '../../services/securedStorage.service';
 import { SelectIdentity } from '../../pages/confirm-access/select-identity/select-identity';
+import { JsonPipe } from '@angular/common';
 
 export interface mockCredential {
     id: number,
@@ -30,6 +31,14 @@ export interface mockCredential {
 export class IdentityDataListComponent {
     @Input()
     public isSelectable = false;
+    @Input()
+    public allCredentials: any[];
+    @Input()
+    public isManualSelection: boolean;
+    @Input()
+    public iat: any;
+    @Input()
+    public exp: any;
 
     @Output()
     public handleIdentitySelect = new EventEmitter();
@@ -43,27 +52,40 @@ export class IdentityDataListComponent {
     public isOrderInverted = false;
     private readonly CREDENTIAL_PREFIX = "cred_";
     private isPresentationRequest: Boolean;
-    private isManualSelection: Boolean;
 
     constructor(
         public navCtrl: NavController,
         public navParams: NavParams,
         private securedStrg: IdentitySecuredStorageService
     ) {
+
+    }
+
+    ngOnInit() {
         this.isPresentationRequest = this.navParams.get("isPresentationRequest");
-        this.isManualSelection = this.navParams.get("isManualSelection");
+        console.log("ISMANUALSELECTION", this.isManualSelection);
+        console.log("CREDENTIALS " + JSON.stringify(this.allCredentials));
+        let iat: any;
+        let exp: any;
+        let iatString: any; 
+        let expString: any;
         if (this.isManualSelection) {
-            this.credentials = this.navParams.get("allCredentials");
+            console.log("ESTOY " + this.allCredentials);
+            
+            this.credentials = this.allCredentials.map(cred => JSON.parse(cred));
+            iat = new Date(this.iat * 1000);
+            exp = new Date(this.exp * 1000);
+            iatString = iat.getDay() + "/" + (iat.getMonth() + 1) + "/" + iat.getFullYear();
+            expString = exp.getDay() + "/" + (exp.getMonth() + 1) + "/" + exp.getFullYear();
         } else {
+            console.log("MEFUI");
             this.credentials = this.navParams.get("credentials");
+            iat = new Date(this.navParams.get("iat") * 1000);
+            exp = new Date(this.navParams.get("exp") * 1000);
+            iatString = iat.getDay() + "/" + (iat.getMonth() + 1) + "/" + iat.getFullYear();
+            expString = exp.getDay() + "/" + (exp.getMonth() + 1) + "/" + exp.getFullYear();
         }
-
-        let iat = new Date(this.navParams.get("iat") * 1000);
-        let exp = new Date(this.navParams.get("exp") * 1000);
-        let iatString = iat.getDay() + "/" + (iat.getMonth() + 1) + "/" + iat.getFullYear();
-        let expString = exp.getDay() + "/" + (exp.getMonth() + 1) + "/" + exp.getFullYear();
         let count = 0;
-
         let credentialPromises = this.credentials.map((credential) => {
             let propNames = Object.getOwnPropertyNames(credential);
 
@@ -176,16 +198,17 @@ export class IdentityDataListComponent {
         if (this.isPresentationRequest) {
             this.securedStrg.getAllCredentials()
                 .then((credentials: any) => {
-                    console.log('getAllCredentials: ', this.identityDisplay);
-                    let allCredentials = credentials.map((credential) => JSON.parse(credential));
+                    
+    
                     let iat = this.navParams.get("iat");
                     let exp = this.navParams.get("exp");
+                    console.log('CREDENTIALDETAIL: ' + JSON.stringify(credentials));
 
                     new Promise((resolve) => {
                         this.navCtrl.push(SelectIdentity, {
                             item,
                             isManualSelection: true,
-                            allCredentials,
+                            allCredentials: credentials,
                             iat,
                             exp,
                             resolve

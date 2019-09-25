@@ -21,6 +21,9 @@ export class Index {
 
     constructor(private toastCtrl: ToastService) {
         console.log("[Debug] Index enter");
+    }
+
+    ngOnInit(){
         this.getList();
     }
 
