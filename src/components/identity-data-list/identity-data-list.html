@@ -1,5 +1,5 @@
 <!-- Lista de elementos -->
-<ion-content>
+<ion-content *ngIf="isDataSetted">
     <ion-card *ngFor="let item of identityDisplay">
         <div *ngIf="isDataSetted && !item.isHidden" style="padding-bottom: 10px;">
             <ion-card-content class="credential-card-content">
@@ -47,4 +47,5 @@
             </ion-card-content>
         </div>
     </ion-card>
+
 </ion-content>

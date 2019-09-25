@@ -13,9 +13,7 @@ export class ExpandableList {
   @ViewChild(Content)
   content: Content;
 
-  constructor(public modalCtrl: ModalController) { 
-    console.log(this.data);
-    
+  constructor(public modalCtrl: ModalController) {
   }
 
   onEvent(event: string, item: any, e: any) {
