@@ -12,7 +12,7 @@
                     <ion-searchbar [(ngModel)]="searchTerm" (ionInput)="onSearch($event)"></ion-searchbar>
                 </ion-col>
                 <ion-col col-1 (click)="sortCredentials()">
-                    <img class="expand-btn" src="../../../assets/svg/sort.svg"/>
+                    <img class="expand-btn" src="../../../assets/svg/sort.svg" />
                 </ion-col>
                 <ion-col col-1>
                     <ion-icon class="expand-btn" name="ios-funnel"></ion-icon>
@@ -24,7 +24,8 @@
     </div>
 </ion-header>
 <ion-content class="tutorial-page">
-    <identity-data-list isSelectable="true" (handleIdentitySelect)="handleIdentitySelect($event)"></identity-data-list>
+    <identity-data-list isSelectable="true" [allCredentials]="allCredentials" isManualSelection="true"
+        [iat]="iat" [exp]="exp" (handleIdentitySelect)="handleIdentitySelect($event)"></identity-data-list>
     <ion-footer>
         <ion-row justify-content-center>
             <button ion-button class="btnConfirm" style="width: 80%" (click)="accept()">ACEPTAR</button>

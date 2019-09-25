@@ -55,19 +55,14 @@ export class IdentitySecuredStorageService {
     }
 
     async getAllCredentials() {
-        const credentials = [];
-        return this.getKeys().then(keys => {
-            keys.forEach(key => {
-                if (key.split('_')[0] === 'cred') {
-                    this.get(key).then(async credential => {
-                        console.log('credential ', credential);
-                        await credentials.push(credential);
-                    });
-                }
+        let credentials;
+        let keys = await this.getKeys();
+        credentials = keys.filter(key => key.split('_')[0] === 'cred')
+            .map(key => {
+                    return this.get(key);
             });
-            console.log('Credentials getall ', credentials);
-            return credentials;
-        });
+
+        return Promise.all(credentials);
     }
 
     async getJSON(key: string) {
