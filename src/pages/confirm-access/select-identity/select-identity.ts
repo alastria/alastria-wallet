@@ -12,18 +12,20 @@ export class SelectIdentity {
 
     @Output() handleSelectNewCredential = new EventEmitter();
 
-    private readonly CREDENTIAL_PREFIX = "cred_";
-    private readonly PRESENTATION_PREFIX = "present_";
-
-    private identityReplaced: number;
-    private selectedMockCredential: any;
-
     public searchTerm = "";
+    private selectedMockCredential: any;
+    private allCredentials: any[];
+    private iat: any;
+    private exp: any;
 
     constructor(
         public navParams: NavParams,
         public navCtrl: NavController,
     ) {
+        this.allCredentials = navParams.get("allCredentials");
+        
+        this.iat = this.navParams.get("iat");
+        this.exp = this.navParams.get("exp");
     }
 
     onStarClass(items: any, index: number, e: any) {

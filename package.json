@@ -39,10 +39,10 @@
     "braces": "2.3.1",
     "cordova-android": "8.0.0",
     "cordova-browser": "5.0.4",
+    "cordova-ios": "5.0.0",
     "cordova-plugin-compat": "1.2.0",
-    "cordova-plugin-console": "1.1.0",
     "cordova-plugin-device": "1.1.7",
-    "cordova-plugin-fingerprint-aio": "1.5.0",
+    "cordova-plugin-fingerprint-aio": "2.0.0",
     "cordova-plugin-flashlight": "3.2.0",
     "cordova-plugin-google-analytics": "1.8.6",
     "cordova-plugin-ionic-webview": "2.2.0",
@@ -76,7 +76,6 @@
   },
   "cordovaPlugins": [
     "cordova-plugin-whitelist",
-    "cordova-plugin-console",
     "cordova-plugin-statusbar",
     "cordova-plugin-device",
     "cordova-plugin-splashscreen",
@@ -98,7 +97,6 @@
       "cordova-plugin-spinner-dialog": {},
       "cordova-plugin-vibration": {},
       "cordova-plugin-x-toast": {},
-      "cordova-plugin-console": {},
       "cordova-plugin-ionic-webview": {
         "ANDROID_SUPPORT_ANNOTATIONS_VERSION": "27.+"
       },
@@ -106,11 +104,14 @@
         "ANDROID_SUPPORT_V4_VERSION": "27.+"
       },
       "cordova-plugin-secure-storage": {},
-      "cordova-plugin-fingerprint-aio": {}
+      "cordova-plugin-fingerprint-aio": {
+        "FACEID_USAGE_DESCRIPTION": " "
+      }
     },
     "platforms": [
       "browser",
-      "android"
+      "android",
+      "ios"
     ]
   }
 }

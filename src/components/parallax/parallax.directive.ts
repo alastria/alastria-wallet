@@ -23,9 +23,9 @@ export class ScrollHideDirective implements AfterViewInit {
 
     ngAfterViewInit() {
         this.button = document.getElementsByClassName('ion-md-leerQr')[0] as HTMLElement;
-        this.button.style.transformOrigin = 'bottom center';
+        /*this.button.style.transformOrigin = 'bottom center';
         this.button.style.paddingBottom = '5px';
-        console.log(this.button);
+        console.log(this.button);*/
     }
 
     ngOnChanges(changes: SimpleChanges) {
