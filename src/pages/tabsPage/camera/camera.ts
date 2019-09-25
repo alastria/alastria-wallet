@@ -65,8 +65,8 @@ export class Camera {
     alert.present();
   }
 
-  private showConfirmAcces(issName: string, cbu: string, credentials: Array<any>, iat: number, exp: number, isPresentationRequest = false) {
-    const alert = this.modalCtrl.create(ConfirmAccess, { "issName": issName, "cbu": cbu, "dataNumberAccess": credentials.length, "credentials": credentials, "iat": iat, "exp": exp, "isPresentationRequest": isPresentationRequest });
+  private showConfirmAcces(iss: string, cbu: string, credentials: Array<any>, iat: number, exp: number, isPresentationRequest = false, jti?: string) {
+    const alert = this.modalCtrl.create(ConfirmAccess, { "iss": iss, "cbu": cbu, "dataNumberAccess": credentials.length, "credentials": credentials, "iat": iat, "exp": exp, "isPresentationRequest": isPresentationRequest, "jti": jti});
     alert.present();
   }
 
@@ -84,7 +84,7 @@ export class Camera {
           this.showConfirmAcces("SERVICE PROVIDER", verifiedToken["cbu"], verifiedToken["credentials"], verifiedToken["iat"], verifiedToken["exp"], false);
           break;
         case ProtocolTypes.presentationRequest:
-          this.showConfirmAcces("SERVICE PROVIDER", verifiedToken["cbu"], verifiedToken["data"], verifiedToken["iat"], verifiedToken["exp"], true);
+          this.showConfirmAcces(verifiedToken["iss"], verifiedToken["cbu"], verifiedToken["data"], verifiedToken["iat"], verifiedToken["exp"], true, verifiedToken["jti"]);
           break;
       }
     } else {
