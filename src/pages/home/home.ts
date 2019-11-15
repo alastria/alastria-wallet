@@ -4,6 +4,7 @@ import { TabsPage } from '../tabsPage/tabsPage';
 import { SessionSecuredStorageService } from '../../services/securedStorage.service';
 import { FingerprintAIO } from '@ionic-native/fingerprint-aio';
 import { WalkthroughPage } from '../walkthrough/walkthrough';
+import { Web3Service } from '../../services/web3-service';
 
 @Component({
     selector: 'page-home',
@@ -20,7 +21,8 @@ export class HomePage implements OnInit {
         public navCtrl: NavController,
         private sessionSecuredStorageService: SessionSecuredStorageService,
         private faio: FingerprintAIO,
-        public alertCtrl: AlertController
+        public alertCtrl: AlertController,
+        private web3Srv: Web3Service
     ) { }
 
     async ngOnInit(): Promise<void> {
