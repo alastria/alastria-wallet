@@ -4,6 +4,7 @@ import { NavParams, NavController } from 'ionic-angular';
 import { IdentitySecuredStorageService } from '../../services/securedStorage.service';
 import { SelectIdentity } from '../../pages/confirm-access/select-identity/select-identity';
 import { JsonPipe } from '@angular/common';
+import { TokenService } from '../../services/token-service';
 
 export interface mockCredential {
     id: number,
@@ -56,7 +57,8 @@ export class IdentityDataListComponent {
     constructor(
         public navCtrl: NavController,
         public navParams: NavParams,
-        private securedStrg: IdentitySecuredStorageService
+        private securedStrg: IdentitySecuredStorageService,
+        private tokenSrv: TokenService
     ) {
 
     }
@@ -70,7 +72,6 @@ export class IdentityDataListComponent {
         let iatString: any; 
         let expString: any;
         if (this.isManualSelection) {
-            console.log("ESTOY " + this.allCredentials);
             
             this.credentials = this.allCredentials.map(cred => JSON.parse(cred));
             iat = new Date(this.iat * 1000);
@@ -78,7 +79,6 @@ export class IdentityDataListComponent {
             iatString = iat.getDay() + "/" + (iat.getMonth() + 1) + "/" + iat.getFullYear();
             expString = exp.getDay() + "/" + (exp.getMonth() + 1) + "/" + exp.getFullYear();
         } else {
-            console.log("MEFUI");
             this.credentials = this.navParams.get("credentials");
             iat = new Date(this.navParams.get("iat") * 1000);
             exp = new Date(this.navParams.get("exp") * 1000);
@@ -90,6 +90,20 @@ export class IdentityDataListComponent {
             let propNames = Object.getOwnPropertyNames(credential);
 
             let level = credential.levelOfAssurance;
+            switch (level){
+                case "Self":
+                    level = 0;
+                    break;
+                case "Low":
+                    level = 1;
+                    break;
+                case "Substantial":
+                    level = 2;
+                    break;
+                case "High":
+                    level = 3;
+                    break;
+            }
 
             let stars = [{
                 "iconActive": "icon-star",
@@ -123,7 +137,7 @@ export class IdentityDataListComponent {
                                     securedCredentials = JSON.parse(result);
                                     obj = {
                                         id: count++,
-                                        titleP: credential[propNames[2].toString()],
+                                        titleP: credential["field_name"].toUpperCase().replace(/_/g, " "),
                                         emitter: "Emisor del testimonio",
                                         valueT: "Valor",
                                         value: securedCredentials[key],
@@ -166,10 +180,10 @@ export class IdentityDataListComponent {
             } else {
                 obj = {
                     id: count++,
-                    titleP: propNames[2].toUpperCase(),
+                    titleP: propNames[1].toUpperCase().replace(/_/g, " "),
                     emitter: "Emisor del testimonio",
                     valueT: "Valor",
-                    value: credential[propNames[2].toString()],
+                    value: credential[propNames[1].toString()],
                     place: "Emisor de credencial",
                     addDateT: "Fecha incorporación del testimonio",
                     addDate: iatString,

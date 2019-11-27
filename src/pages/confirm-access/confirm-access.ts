@@ -4,6 +4,8 @@ import { ToastService } from '../../services/toast-service';
 import { IdentitySecuredStorageService } from '../../services/securedStorage.service';
 import { LoadingService } from '../../services/loading-service';
 import { TabsPage } from '../tabsPage/tabsPage';
+import { TokenService } from '../../services/token-service';
+import { tokensFactory } from "alastria-identity-lib"
 
 @Component({
     selector: 'confirm-access',
@@ -30,7 +32,8 @@ export class ConfirmAccess {
         public modalCtrl: ModalController,
         public toastCtrl: ToastService,
         private securedStrg: IdentitySecuredStorageService,
-        private loadingSrv: LoadingService
+        private loadingSrv: LoadingService,
+        private tokenSrv: TokenService
     ) {
         this.dataNumberAccess = this.navParams.get("dataNumberAccess");
         this.issName = "SERVICE PROVIDER";
@@ -90,21 +93,28 @@ export class ConfirmAccess {
                         Promise.all(credentialPromises)
                             .then((result) => {
                                 securedCredentials = securedCredentials.concat(result);
-                                let iat = new Date(this.navParams.get("iat") * 1000);
-                                let exp = new Date(this.navParams.get("exp") * 1000);
-                                let iatString = iat.getDay() + "/" + (iat.getMonth() + 1) + "/" + iat.getFullYear();
-                                let expString = exp.getDay() + "/" + (exp.getMonth() + 1) + "/" + exp.getFullYear();
+                                let iat = Math.round(Date.now()/1000)
+                                let exp = this.navParams.get("exp")
 
-                                let presentation = {
-                                    "@context": "https://w3id.org/credentials/v1",
-                                    "jti": "https://www.metrovacesa.com/alastria/credentials/3732",
-                                    "iss": this.issDID,
-                                    "sub": "did:alastria:quorum:testnet1:QmeeasCZ9jLbX...ueBJ7d7csxhb",
-                                    "iat": iatString,
-                                    "exp": expString,
-                                    "nbf": iat,
-                                    "credentials": securedCredentials
-                                }
+                                let kidCredential = "did:ala:quor:redt:QmeeasCZ9jLbXueBJ7d7csxhb#keys-1";
+                                let didIsssuer = this.issDID;
+                                let subjectAlastriaID = "did:alastria:quorum:testnet1:QmeeasCZ9jLbX...ueBJ7d7csxhb";
+                                let context = ["https://www.w3.org/2018/credentials/v1", "JWT"];
+                                let jti = this.navParams.get("jti");
+                                let procHash = "H398sjHd...kldjUYn475n";
+                                let procUrl = "https://www.metrovacesa.com/alastria/businessprocess/4583";
+
+                                let signedCredentialJwts = securedCredentials.map(securedCredential => {
+                                    let credentialSubject = securedCredential;
+
+                                    let credentialJson = tokensFactory.tokens.createCredential(kidCredential, didIsssuer, subjectAlastriaID,
+                                        context, credentialSubject, exp, iat, jti);
+
+                                    return this.tokenSrv.signToken(JSON.stringify(credentialJson));
+                                });
+
+                                let presentation = tokensFactory.tokens.createPresentation(kidCredential, didIsssuer, subjectAlastriaID, context, signedCredentialJwts, 
+                                    procUrl, procHash, exp, iat, jti);
 
                                 this.securedStrg.setJSON(this.PRESENTATION_PREFIX + this.navParams.get("jti"), presentation)
                                     .then(() => {
@@ -130,7 +140,7 @@ export class ConfirmAccess {
                 let credentialKeys = Object.getOwnPropertyNames(this.credentials[index]);
 
                 let hasKey;
-                let currentCredentialKey = this.CREDENTIAL_PREFIX + credentialKeys[2];
+                let currentCredentialKey = this.CREDENTIAL_PREFIX + credentialKeys[1];
                 let currentCredentialValue;
 
                 let finalCredential = this.credentials[index];
@@ -146,8 +156,8 @@ export class ConfirmAccess {
                         }
                     }).then(result => {
                         if (hasKey) {
-                            currentCredentialValue = result[credentialKeys[2]];
-                            if (this.credentials[index][credentialKeys[2]] !== currentCredentialValue) {
+                            currentCredentialValue = result[credentialKeys[1]];
+                            if (this.credentials[index][credentialKeys[1]] !== currentCredentialValue) {
                                 return this.securedStrg.setJSON(currentCredentialKey + "_" + Math.random(), finalCredential);
                             }
                         } else {

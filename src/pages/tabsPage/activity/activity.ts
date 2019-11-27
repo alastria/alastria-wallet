@@ -228,21 +228,23 @@ export class Activity {
                     if (prefix === this.CREDENTIAL_PREFIX) {
                         return {
                             "activityId": count++,
-                            "title": elementKeys[2],
-                            "subtitle": elementObj[elementKeys[2]],
+                            "title": elementKeys[1],
+                            "subtitle": elementObj[elementKeys[1]],
                             "description": elementObj.issuer,
                             "datetime": "",
                             "type": this.type
                         }
                     } else {
+                        let iat = new Date(elementObj["payload"]["iat"] * 1000);
+                        let iatString = iat.getDay() + "/" + (iat.getMonth() + 1) + "/" + iat.getFullYear();
                         return {
                             "activityId": count++,
                             "title": "Presentación " + count,
                             "subtitle": "",
-                            "description": elementObj["iss"],
-                            "datetime": elementObj["iat"],
+                            "description": elementObj["payload"]["iss"],
+                            "datetime": iatString,
                             "type": this.type,
-                            "jti": elementObj["jti"]
+                            "jti": elementObj["payload"]["jti"]
                         }
                     }
                 });
