@@ -33,6 +33,7 @@ import { TokenService } from '../services/token-service';
 import { ToastService } from '../services/toast-service';
 import { Web3Service } from '../services/web3-service';
 import { IdentityService } from '../services/identity-service';
+import { TransactionService } from '../services/transaction-service';
 
 @NgModule({
     declarations: [
@@ -93,6 +94,7 @@ import { IdentityService } from '../services/identity-service';
         IdentityService,
         SessionSecuredStorageService,
         IdentitySecuredStorageService,
+        TransactionService,
         Activities,
         { provide: ErrorHandler, useClass: IonicErrorHandler },
         ToastService,
