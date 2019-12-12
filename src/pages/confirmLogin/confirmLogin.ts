@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders } from "@angular/common/http"
 import { sign } from 'jsonwebtoken';
 import { SuccessPage } from '../success/success';
 import { TabsPage } from '../tabsPage/tabsPage';
+import { AppConfig } from '../../app.config';
 
 @IonicPage()
 @Component({
@@ -24,10 +25,10 @@ export class ConfirmLogin {
         public viewCtrl: ViewController,
         public http : HttpClient
     ) {
-        this.iss = this.navParams.get("iss");
-        this.issName = this.navParams.get("issName");
-        this.cbu = this.navParams.get("cbu");
-        this.as = this.navParams.get("as");
+        this.iss = this.navParams.get(AppConfig.ISSUER);
+        this.issName = this.navParams.get(AppConfig.ISSUER_NAME);
+        this.cbu = this.navParams.get(AppConfig.CBU);
+        this.as = this.navParams.get(AppConfig.AS);
     }
 
     ionViewDidLoad() {
@@ -41,9 +42,8 @@ export class ConfirmLogin {
 
     public sendAuthentication() {
         console.log("Sending authetication");
-        let secret = "your-256-bit-secret";
         let signedJWT = {
-            "token": sign(this.as,secret)
+            "token": sign(this.as,AppConfig.SECRET)
         };
         console.log("sending token");
         

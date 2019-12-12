@@ -6,6 +6,7 @@ import { LoadingService } from '../../services/loading-service';
 import { TabsPage } from '../tabsPage/tabsPage';
 import { TokenService } from '../../services/token-service';
 import { tokensFactory } from "alastria-identity-lib"
+import { AppConfig } from '../../app.config';
 
 @Component({
     selector: 'confirm-access',
@@ -17,9 +18,6 @@ export class ConfirmAccess {
     public isPresentationRequest: boolean;
     public issName: string;
     public issDID: string;
-
-    private readonly CREDENTIAL_PREFIX = "cred_";
-    private readonly PRESENTATION_PREFIX = "present_";
 
     private identitySelected: Array<number> = [];
     private identityLoaded = new Array<any>();
@@ -35,11 +33,11 @@ export class ConfirmAccess {
         private loadingSrv: LoadingService,
         private tokenSrv: TokenService
     ) {
-        this.dataNumberAccess = this.navParams.get("dataNumberAccess");
-        this.issName = "SERVICE PROVIDER";
-        this.issDID = this.navParams.get("iss");
-        this.credentials = this.navParams.get("credentials");
-        this.isPresentationRequest = this.navParams.get("isPresentationRequest");
+        this.dataNumberAccess = this.navParams.get(AppConfig.DATA_COUNT);
+        this.issName = AppConfig.SERVICE_PROVIDER;
+        this.issDID = this.navParams.get(AppConfig.ISSUER);
+        this.credentials = this.navParams.get(AppConfig.CREDENTIALS);
+        this.isPresentationRequest = this.navParams.get(AppConfig.IS_PRESENTATION_REQ);
         for (let id of this.credentials) {
             this.identityLoaded.push(undefined);
         }
@@ -74,7 +72,7 @@ export class ConfirmAccess {
             }
             let credentialExistsPromises = pendingIdentities.map((element) => {
                 let index = element;
-                return this.securedStrg.hasKey(this.CREDENTIAL_PREFIX + this.credentials[index]["field_name"]);
+                return this.securedStrg.hasKey(AppConfig.CREDENTIAL_PREFIX + this.credentials[index][AppConfig.FIELD_NAME]);
             });
 
             Promise.all(credentialExistsPromises)
@@ -87,20 +85,20 @@ export class ConfirmAccess {
                         this.showLoading();
                         let credentialPromises = pendingIdentities.map((element) => {
                             let index = element;
-                            return this.securedStrg.getJSON(this.CREDENTIAL_PREFIX + this.credentials[index]["field_name"]);
+                            return this.securedStrg.getJSON(AppConfig.CREDENTIAL_PREFIX + this.credentials[index][AppConfig.FIELD_NAME]);
                         });
 
                         Promise.all(credentialPromises)
                             .then((result) => {
                                 securedCredentials = securedCredentials.concat(result);
-                                let iat = Math.round(Date.now()/1000)
-                                let exp = this.navParams.get("exp")
+                                let iat = Math.round(Date.now()/1000);
+                                let exp = this.navParams.get(AppConfig.EXP);
 
                                 let kidCredential = "did:ala:quor:redt:QmeeasCZ9jLbXueBJ7d7csxhb#keys-1";
                                 let didIsssuer = this.issDID;
                                 let subjectAlastriaID = "did:alastria:quorum:testnet1:QmeeasCZ9jLbX...ueBJ7d7csxhb";
                                 let context = ["https://www.w3.org/2018/credentials/v1", "JWT"];
-                                let jti = this.navParams.get("jti");
+                                let jti = this.navParams.get(AppConfig.JTI);
                                 let procHash = "H398sjHd...kldjUYn475n";
                                 let procUrl = "https://www.metrovacesa.com/alastria/businessprocess/4583";
 
@@ -116,7 +114,7 @@ export class ConfirmAccess {
                                 let presentation = tokensFactory.tokens.createPresentation(kidCredential, didIsssuer, subjectAlastriaID, context, signedCredentialJwts, 
                                     procUrl, procHash, exp, iat, jti);
 
-                                this.securedStrg.setJSON(this.PRESENTATION_PREFIX + this.navParams.get("jti"), presentation)
+                                this.securedStrg.setJSON(AppConfig.PRESENTATION_PREFIX + this.navParams.get(AppConfig.JTI), presentation)
                                     .then(() => {
                                         this.showSucces();
                                     });
@@ -140,7 +138,7 @@ export class ConfirmAccess {
                 let credentialKeys = Object.getOwnPropertyNames(this.credentials[index]);
 
                 let hasKey;
-                let currentCredentialKey = this.CREDENTIAL_PREFIX + credentialKeys[1];
+                let currentCredentialKey = AppConfig.CREDENTIAL_PREFIX + credentialKeys[1];
                 let currentCredentialValue;
 
                 let finalCredential = this.credentials[index];

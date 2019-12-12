@@ -1,5 +1,34 @@
 export class AppConfig {
 
+    public static readonly QR_CODE = "QR_CODE";
+    public static readonly VERIFIABLE_CREDENTIAL = "verifiableCredential";
+    public static readonly CREDENTIALS = "credentials";
+    public static readonly ISSUER = "iss";
+    public static readonly ISSUER_NAME = "issName";
+    public static readonly CBU = "cbu";
+    public static readonly AS = "as";
+    public static readonly DATA_COUNT = "dataCount";
+    public static readonly IAT = "iat";
+    public static readonly EXP = "exp";
+    public static readonly JTI = "jti";
+    public static readonly IS_PRESENTATION_REQ = "isPresentationRequest";
+    public static readonly PR = "pr";
+    public static readonly VC = "vc";
+    public static readonly PAYLOAD = "payload";
+    public static readonly TITLE = "title";
+    public static readonly CREDENTIALS_DATA = "credentialsData";
+    public static readonly CREDENTIALS_SUBJECT = "credentialSubject";
+    public static readonly DATA = "data";
+    public static readonly SERVICE_PROVIDER = "SERVICE PROVIDER";
+    public static readonly FIELD_NAME = "field_name";
+    public static readonly CREDENTIAL_PREFIX = "cred_";
+    public static readonly PRESENTATION_PREFIX = "present_";
+    public static readonly CREDENTIAL_TYPE = "credentials";
+    public static readonly PRESENTATION_TYPE = "presentations";
+
+    public static readonly SECRET = "your-256-bit-secret";
+
+
     public static readonly nodeURL = "http://63.33.206.111/rpc";
     public static readonly addressPassword = "Passw0rd";
     public static readonly rawPublicKeySubject = "03fdd57adec3d438ea237fe46b33ee1e016eda6b585c3e27ea66686c2ea5358479";
@@ -52,5 +81,14 @@ export class AppConfig {
     public static readonly recieverPresentationStatus = {
         exist: true,
         status: "1"
+    }
+}
+
+export namespace AppConfig {
+    export enum LevelOfAssurance {
+        Self = "Self",
+        Low = "Low",
+        Substantial = "Substantial",
+        High = "High"
     }
 }

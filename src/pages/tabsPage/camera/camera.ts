@@ -8,6 +8,8 @@ import { ConfirmLogin } from '../../confirmLogin/confirmLogin';
 import { Index } from '../index';
 import { TokenService } from '../../../services/token-service';
 import { ConfirmAccess } from '../../confirm-access/confirm-access';
+import { AppConfig } from '../../../app.config';
+import { HttpClient } from '@angular/common/http';
 
 @IonicPage()
 @Component({
@@ -16,9 +18,6 @@ import { ConfirmAccess } from '../../confirm-access/confirm-access';
 })
 
 export class Camera {
-
-    private readonly QR_CODE = "QR_CODE";
-    private readonly VERIFIABLE_CREDENTIAL = "verifiableCredential";
 
     data: any = {};
     cameraEnabled = true;
@@ -30,7 +29,8 @@ export class Camera {
         public navCtrl: NavController,
         public popoverCtrl: PopoverController,
         public modalCtrl: ModalController,
-        private tokenSrv: TokenService) {
+        private tokenSrv: TokenService,
+        private http: HttpClient) {
         this.data = {
             title: "Cámara",
             format: "Escaneo de QRCodes blockchain",
@@ -39,25 +39,25 @@ export class Camera {
 
         let options = {
             prompt: "Situe el código Qr en el interior del rectángulo.",
-            formats: this.QR_CODE
+            formats: AppConfig.QR_CODE
         }
 
         this.barcodeScanner.scan(options).then(barcodeData => {
             console.log('QR data', barcodeData.text);
+            let httpRegex = /http:\/\//;
             let alastriaToken = barcodeData.text;
-            let secret = "your-256-bit-secret";
-            let parsedToken = JSON.parse(alastriaToken);
-            let verifiedJWT;
-
-            if (!parsedToken[this.VERIFIABLE_CREDENTIAL]) {
-                verifiedJWT = this.tokenSrv.verifyToken(alastriaToken, secret);
-            } else {
-                verifiedJWT = parsedToken;
+            if (httpRegex.test(alastriaToken)){
+                this.http.get(alastriaToken).subscribe(data => {
+                    this.prepareDataAndInit(data);
+                }, error => {
+                    console.log('Error', error);
+                    this.toastCtrl.presentToast("Error: Contacte con el service provider", 3000);
+                    this.navCtrl.setRoot(Index);
+                });
+            }else{
+                this.prepareDataAndInit(alastriaToken);
             }
-
-            let tokenType = this.tokenSrv.getTokenType(verifiedJWT);
-
-            this.launchProtocol(tokenType, verifiedJWT, secret);
+            
         }).catch(err => {
             console.log('Error', err);
             this.toastCtrl.presentToast("Error: Contacte con el service provider", 3000);
@@ -65,13 +65,34 @@ export class Camera {
         });
     }
 
+    private prepareDataAndInit(alastriaToken){
+        let parsedToken;
+            try {
+                parsedToken = JSON.parse(alastriaToken);
+            } catch (error) { }
+            let verifiedJWT;
+
+            if (!parsedToken) {
+                verifiedJWT = this.tokenSrv.verifyToken(alastriaToken, AppConfig.SECRET);
+            } else {
+                verifiedJWT = parsedToken;
+            }
+
+            let tokenType = this.tokenSrv.getTokenType(verifiedJWT);
+
+            this.launchProtocol(tokenType, verifiedJWT, AppConfig.SECRET);
+    }
+
     private showConfirmLogin(iss: string, issName: string, cbu: string, as: string | object) {
-        const alert = this.modalCtrl.create(ConfirmLogin, { "iss": iss, "issName": issName, "cbu": cbu, "as": as });
+        const alert = this.modalCtrl.create(ConfirmLogin, { [AppConfig.ISSUER]: iss, [AppConfig.ISSUER_NAME]: issName, [AppConfig.CBU]: cbu, [AppConfig.AS]: as });
         alert.present();
     }
 
     private showConfirmAcces(iss: string, credentials: Array<any>, iat: number, exp: number, isPresentationRequest = false, jti?: string) {
-        const alert = this.modalCtrl.create(ConfirmAccess, { "iss": iss, "dataNumberAccess": credentials.length, "credentials": credentials, "iat": iat, "exp": exp, "isPresentationRequest": isPresentationRequest, "jti": jti });
+        const alert = this.modalCtrl.create(ConfirmAccess, {
+            [AppConfig.ISSUER]: iss, [AppConfig.DATA_COUNT]: credentials.length,
+            [AppConfig.CREDENTIALS]: credentials, [AppConfig.IAT]: iat, [AppConfig.EXP]: exp, [AppConfig.IS_PRESENTATION_REQ]: isPresentationRequest, [AppConfig.JTI]: jti
+        });
         alert.present();
     }
 
@@ -82,14 +103,15 @@ export class Camera {
             alastriaSession = this.tokenSrv.getSessionToken(verifiedToken);
             switch (protocolType) {
                 case ProtocolTypes.authentication:
-                    this.showConfirmLogin(verifiedToken["iss"], "SERVICE PROVIDER", verifiedToken["cbu"], alastriaSession);
+                    this.showConfirmLogin(verifiedToken[AppConfig.ISSUER], AppConfig.SERVICE_PROVIDER, verifiedToken[AppConfig.CBU], alastriaSession);
                     break;
                 case ProtocolTypes.presentation:
                     let tokenData = this.prepareCredentials(verifiedToken, secret);
-                    this.showConfirmAcces("SERVICE PROVIDER", tokenData["credentialsData"], tokenData["iat"], tokenData["exp"], false);
+                    this.showConfirmAcces(AppConfig.SERVICE_PROVIDER, tokenData[AppConfig.CREDENTIALS_DATA], tokenData[AppConfig.IAT], tokenData[AppConfig.EXP], false);
                     break;
                 case ProtocolTypes.presentationRequest:
-                    this.showConfirmAcces(verifiedToken["iss"], verifiedToken["pr"]["data"], verifiedToken["iat"], verifiedToken["exp"], true, verifiedToken["jti"]);
+                    this.showConfirmAcces(verifiedToken[AppConfig.ISSUER], verifiedToken[AppConfig.PR][AppConfig.DATA], verifiedToken[AppConfig.IAT],
+                        verifiedToken[AppConfig.EXP], true, verifiedToken[AppConfig.JTI]);
                     break;
             }
         } else {
@@ -100,17 +122,17 @@ export class Camera {
     private prepareCredentials(verifiedToken: string | object, secret: string) {
         let iat;
         let exp;
-        let credentialsJWT = verifiedToken[this.VERIFIABLE_CREDENTIAL];
+        let credentialsJWT = verifiedToken[AppConfig.VERIFIABLE_CREDENTIAL];
         let credentialsData = credentialsJWT.map(credential => {
             let verifiedJWT = this.tokenSrv.verifyToken(credential, secret);
-            iat = verifiedJWT["iat"];
-            exp = verifiedJWT["exp"];
-            return verifiedJWT["vc"]["credentialSubject"];
+            iat = verifiedJWT[AppConfig.IAT];
+            exp = verifiedJWT[AppConfig.EXP];
+            return verifiedJWT[AppConfig.VC][AppConfig.CREDENTIALS_SUBJECT];
         });
         return {
-            "iat": iat,
-            "exp": exp,
-            "credentialsData": credentialsData
+            [AppConfig.IAT]: iat,
+            [AppConfig.EXP]: exp,
+            [AppConfig.CREDENTIALS_DATA]: credentialsData
         };
     }
 }
