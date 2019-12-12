@@ -20,41 +20,28 @@ export class TransactionService {
 
 
     public addSubjectCredential(kidCredential, didIsssuer, subjectAlastriaID, context, credentialSubject, tokenExpTime, tokenActivationDate, jti, uri): Promise<CredentialStatus> {
-        return this.web3.eth.net.isListening
-        ().then((res) => {
-            console.log('TS: Is connected');
-            console.log("TS: Connected to the node via Web3 ");
+        let credential = tokensFactory.tokens.createCredential(kidCredential, didIsssuer, 
+            subjectAlastriaID, context, credentialSubject, tokenExpTime, tokenActivationDate, jti);
 
-            let credential = tokensFactory.tokens.createCredential(kidCredential, didIsssuer, 
-                subjectAlastriaID, context, credentialSubject, tokenExpTime, tokenActivationDate, jti);
-    
-            let signedJWTCredential = tokensFactory.tokens.signJWT(credential, this.identitySrv.getPrivateKey());
-            
-            let credentialHash = tokensFactory.tokens.PSMHash(this.web3, signedJWTCredential, didIsssuer);
-    
-            let subjectCredential;
-            try {
-                subjectCredential = transactionFactory.credentialRegistry.addSubjectCredential(this.web3, credentialHash, uri); //aqui no funciona
-            } catch (error) {
-                console.log("ERROR: ", error);
-            }
+        let signedJWTCredential = tokensFactory.tokens.signJWT(credential, this.identitySrv.getPrivateKey());
+        
+        let credentialHash = tokensFactory.tokens.PSMHash(this.web3, signedJWTCredential, didIsssuer);
 
-            this.identitySrv.getKnownTransaction(subjectCredential).then((subjectCredentialSigned: string) => {
-                console.log("(addSubjectCredential)The transaction bytes data is: " + subjectCredentialSigned);
-                return this.sendSigned(subjectCredentialSigned);
-            }).then(receipt => {
-                console.log("RECEIPT:" + receipt)
-                let subject = subjectAlastriaID; //Not sure
-                let subjectCredentialTransaction = transactionFactory.credentialRegistry.getCredentialStatus(this.web3, subject, credentialHash);
-                return this.web3.eth.call(subjectCredentialTransaction);
-            }).then(SubjectCredentialStatus => {
-                let result = this.web3.eth.abi.decodeParameters(["bool", "uint8"], SubjectCredentialStatus);
-                let credentialStatus: CredentialStatus = result;
-                console.log("(SubjectCredentialStatus) -----> " + credentialStatus);
-                return credentialStatus;
-            });
-        }).catch(e => {
-            console.log('TS: Lost connection: ' + e);
+        let subjectCredential = transactionFactory.credentialRegistry.addSubjectCredential(this.web3, credentialHash, uri); //aqui no funciona
+
+        return this.identitySrv.getKnownTransaction(subjectCredential).then((subjectCredentialSigned: string) => {
+            console.log("(addSubjectCredential)The transaction bytes data is: " + subjectCredentialSigned);
+            return this.sendSigned(subjectCredentialSigned);
+        }).then(receipt => {
+            console.log("RECEIPT:" + receipt)
+            let subject = subjectAlastriaID;
+            let subjectCredentialTransaction = transactionFactory.credentialRegistry.getCredentialStatus(this.web3, subject, credentialHash);
+            return this.web3.eth.call(subjectCredentialTransaction);
+        }).then(SubjectCredentialStatus => {
+            let result = this.web3.eth.abi.decodeParameters(["bool", "uint8"], SubjectCredentialStatus);
+            let credentialStatus: CredentialStatus = result;
+            console.log("(SubjectCredentialStatus) -----> " + credentialStatus);
+            return credentialStatus;
         });
     }
 

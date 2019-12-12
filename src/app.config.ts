@@ -1,5 +1,4 @@
 export class AppConfig {
-
     public static readonly nodeURL = "http://63.33.206.111/rpc";
     public static readonly addressPassword = "Passw0rd";
     public static readonly rawPublicKeySubject = "03fdd57adec3d438ea237fe46b33ee1e016eda6b585c3e27ea66686c2ea5358479";
@@ -17,7 +16,7 @@ export class AppConfig {
     public static readonly tokenPayload = {
         iss: "joe",
         exp: 1300819380,
-        example: true,
+        "http://example.com/is_root": true,
     };
     public static readonly jti = "https://www.empresa.com/alastria/credentials/3734";
     public static readonly kidCredential = "did:ala:quor:redt:QmeeasCZ9jLbXueBJ7d7csxhb#keys-1";
@@ -29,20 +28,20 @@ export class AppConfig {
     public static readonly procHash = "H398sjHd...kldjUYn475n";
     public static readonly data = [
         {
-            context: "JWT",
+            "@context": "JWT",
             levelOfAssurance: "High",
             required: true,
             field_name: "name"
         },
         {
-            context: "JWT",
+            "@context": "JWT",
             levelOfAssurance: "High",
             required: true,
             field_name: "email"
         }
     ];
-    public static readonly subject = "0xd7aa62f167c53f6c4ad9525f8be147a6eec9a58e";
-    public static readonly receiver = "0x4a67445aec5b2b66701f855d77feca57a598e44f";
+    public static readonly subject = "0x82bee0102fd5e057b8f300234cdc3cfd3d0e24f2";
+    public static readonly receiver = "0x83b60cb398d999ca9c6140de659c9eec2777e5c0";
     public static readonly updateSubjectPresentationTo = 2;
     public static readonly updateReceiverPresentationTo = 1;
     public static readonly subjectPresentationStatus = {
@@ -53,4 +52,42 @@ export class AppConfig {
         exist: true,
         status: "1"
     }
+
+    public static readonly basicTransaction = { "to": "0x0000000000000000000000000000000000000000", "data": "0x0", "gasLimit": 0, "gasPrice": 0, "nonce": "0x0" }
+
+    public static readonly jsonAux = { 
+        "name":"addSubjectCredential",
+        "type":"function",
+        "inputs":[ 
+           { 
+              "name":"subjectCredentialHash",
+              "type":"bytes32"
+           },
+           { 
+              "name":"URI",
+              "type":"string"
+           }
+        ],
+    }
+
+    public static readonly jsonAuxTwo = { 
+        "constant":false,
+        "inputs":[ 
+           { 
+              "name":"subjectCredentialHash",
+              "type":"bytes32"
+           },
+           { 
+              "name":"URI",
+              "type":"string"
+           }
+        ],
+        "name":"addSubjectCredential",
+        "outputs":[ 
+     
+        ],
+        "payable":false,
+        "stateMutability":"nonpayable",
+        "type":"function"
+     }
 }
