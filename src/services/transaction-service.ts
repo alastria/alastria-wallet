@@ -5,6 +5,7 @@ import { IdentityService } from "./identity-service";
 import { SubjectCredential } from "../models/subject-credential.model";
 import * as Web3 from "web3";
 import { CredentialStatus } from "../models/credential-status.model";
+import { AppConfig } from "../app.config";
 
 @Injectable()
 export class TransactionService {
@@ -15,17 +16,20 @@ export class TransactionService {
         private web3Srv: Web3Service,
         private identitySrv: IdentityService
     ) {
-        this.web3 = web3Srv.getWeb3(); 
+        this.web3 = web3Srv.getWeb3();
     }
 
 
     public addSubjectCredential(kidCredential, didIsssuer, subjectAlastriaID, context, credentialSubject, tokenExpTime, tokenActivationDate, jti, uri): Promise<CredentialStatus> {
-        let credential = tokensFactory.tokens.createCredential(kidCredential, didIsssuer, 
+        let credential = tokensFactory.tokens.createCredential(kidCredential, didIsssuer,
             subjectAlastriaID, context, credentialSubject, tokenExpTime, tokenActivationDate, jti);
+        console.log("The credential1 is: " + credential);
 
         let signedJWTCredential = tokensFactory.tokens.signJWT(credential, this.identitySrv.getPrivateKey());
-        
+        console.log("The signed token is: " + signedJWTCredential);
+
         let credentialHash = tokensFactory.tokens.PSMHash(this.web3, signedJWTCredential, didIsssuer);
+        console.log("The PSMHash is:" + credentialHash);
 
         let subjectCredential = transactionFactory.credentialRegistry.addSubjectCredential(this.web3, credentialHash, uri); //aqui no funciona
 
@@ -34,21 +38,15 @@ export class TransactionService {
             return this.sendSigned(subjectCredentialSigned);
         }).then(receipt => {
             console.log("RECEIPT:" + receipt)
-            let subject = subjectAlastriaID;
-            let subjectCredentialTransaction = transactionFactory.credentialRegistry.getCredentialStatus(this.web3, subject, credentialHash);
-            return this.web3.eth.call(subjectCredentialTransaction);
-        }).then(SubjectCredentialStatus => {
-            let result = this.web3.eth.abi.decodeParameters(["bool", "uint8"], SubjectCredentialStatus);
-            let credentialStatus: CredentialStatus = result;
-            console.log("(SubjectCredentialStatus) -----> " + credentialStatus);
-            return credentialStatus;
-        });
+            let subject = AppConfig.subject; //Not sure
+            return this.getSubjectCredentialStatus(subject, credentialHash);
+        })
     }
 
-    public getSubjectCredentialList(subject: string) {
+    public getSubjectCredentialList(subject: string): Promise<any> {
         console.log("Getting Creedential List for subject " + subject);
         let credentialList = transactionFactory.credentialRegistry.getSubjectCredentialList(this.web3, subject)
-        return this.web3.call(credentialList).then(subjectCredentialList => {
+        return this.web3.eth.call(credentialList).then(subjectCredentialList => {
             console.log("(subjectCredentialList) Transaction ------->", subjectCredentialList);
             let resultList = this.web3.eth.abi.decodeParameters(["uint256", "bytes32[]"], subjectCredentialList);
             let credentialList = {
@@ -59,8 +57,21 @@ export class TransactionService {
             return credentialList;
         });
     }
+
+    public getSubjectCredentialStatus(subject: string, credentialHash: string): Promise<CredentialStatus> {
+        console.log("Getting Creedential status for: " + credentialHash);
+        let subjectCredentialTransaction =  transactionFactory.credentialRegistry.getSubjectCredentialStatus(this.web3, subject, credentialHash);
+        return this.web3.eth.call(subjectCredentialTransaction).then(SubjectCredentialStatus => {
+            let result = this.web3.eth.abi.decodeParameters(["bool", "uint8"], SubjectCredentialStatus);
+            let credentialStatus: CredentialStatus = result;
+            console.log("(SubjectCredentialStatus) -----> " + credentialStatus);
+            return credentialStatus;
+        });
+    }
+
     
-    private sendSigned(subjectCredentialSigned: string): any { //:Promise<void | TransactionReceipt>
+
+    private sendSigned(subjectCredentialSigned: string): Promise<any> { //:Promise<void | TransactionReceipt>
         return this.web3.eth.sendSignedTransaction(subjectCredentialSigned).
         then(transactionHash => {
             console.log("Hash transaction" + transactionHash);
@@ -69,5 +80,5 @@ export class TransactionService {
             console.log("Error in transaction (sendTx function): " + e);
             throw e;
         });
-	}
+    }
 }

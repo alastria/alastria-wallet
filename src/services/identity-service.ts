@@ -26,7 +26,7 @@ export class IdentityService {
         return this.subjectPrivateKey;
     }
 
-    public getKnownTransaction(subjectCredential: SubjectCredential) {
+    public getKnownTransaction(subjectCredential): Promise<string> {
         return this.subjectIdentity.getKnownTransaction(subjectCredential);
     }
 

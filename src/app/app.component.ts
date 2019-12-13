@@ -23,14 +23,6 @@ export class MyApp {
                 statusBar.backgroundColorByHexString('#325b8e');
             }
             splashScreen.hide();
-            let web3 = web3Srv.getWeb3();
-            console.log("AppConfig "  + JSON.stringify(AppConfig.credentialKey));
-            let credentialSubject = {};
-            credentialSubject[AppConfig.credentialKey] = AppConfig.credentialValue;
-            credentialSubject["levelOfAssurance"]="basic";
-            let serT = new TransactionService(web3Srv, identitySrv);
-            serT.addSubjectCredential(AppConfig.kidCredential, AppConfig.didIsssuer, AppConfig.subjectAlastriaID, AppConfig.context, credentialSubject, AppConfig.tokenExpTime, AppConfig.tokenActivationDate, AppConfig.jti, AppConfig.uri).then(result =>  console.log("The final result is " + JSON.stringify(result)));
-            //transactionSrv.getSubjectCredentialList(AppConfig.subject);
         });
     }
 }

@@ -40,8 +40,10 @@ export class AppConfig {
             field_name: "email"
         }
     ];
-    public static readonly subject = "0x82bee0102fd5e057b8f300234cdc3cfd3d0e24f2";
-    public static readonly receiver = "0x83b60cb398d999ca9c6140de659c9eec2777e5c0";
+    public static readonly subject = "0xe84736d4efb4115e2470499a4686f08a0693ded3";
+    public static readonly receiver = "0xd028f7326aa0172b87cebe78a53a944747fb6d7f";
+    public static readonly issuer= "0x0221e47db4464dc0d2cd01e99a4c8b9946c0c6f5";
+    
     public static readonly updateSubjectPresentationTo = 2;
     public static readonly updateReceiverPresentationTo = 1;
     public static readonly subjectPresentationStatus = {
