@@ -50,6 +50,15 @@ export class Login {
             return this.transactioService.getSubjectCredentialList(AppConfig.subject);
         }).then(res => {
             console.log("The list is ", res);
+            return this.transactioService.getSubjectPresentationStatus(AppConfig.subject, AppConfig.PSMHashSubject.psmhash);
+        }).then(res => {
+            console.log("The status of the subject presentation is: ", res);
+            return this.transactioService.getSubjectPresentationList(AppConfig.subject);
+        }).then(res => {
+            console.log("The list of presentation is: ", res);
+            return this.transactioService.updateSubjectPresentation(AppConfig.subject, AppConfig.PSMHashSubject.psmhash, AppConfig.updateSubjectPresentationTo);
+        }).then(res => {
+            console.log("The updated presentation is: ", res);
         });
     }
 

@@ -6,6 +6,7 @@ import { SubjectCredential } from "../models/subject-credential.model";
 import * as Web3 from "web3";
 import { CredentialStatus } from "../models/credential-status.model";
 import { AppConfig } from "../app.config";
+import { PresentationStatus } from "../models/presentation-status.model";
 
 @Injectable()
 export class TransactionService {
@@ -60,7 +61,7 @@ export class TransactionService {
 
     public getSubjectCredentialStatus(subject: string, credentialHash: string): Promise<CredentialStatus> {
         console.log("Getting Creedential status for: " + credentialHash);
-        let subjectCredentialTransaction =  transactionFactory.credentialRegistry.getSubjectCredentialStatus(this.web3, subject, credentialHash);
+        let subjectCredentialTransaction = transactionFactory.credentialRegistry.getSubjectCredentialStatus(this.web3, subject, credentialHash);
         return this.web3.eth.call(subjectCredentialTransaction).then(SubjectCredentialStatus => {
             let result = this.web3.eth.abi.decodeParameters(["bool", "uint8"], SubjectCredentialStatus);
             let credentialStatus: CredentialStatus = result;
@@ -69,7 +70,40 @@ export class TransactionService {
         });
     }
 
-    
+    public getSubjectPresentationStatus(subject: string, presentationHash: string): Promise<PresentationStatus> {
+        let presentationStatus = transactionFactory.presentationRegistry.getSubjectPresentationStatus(this.web3, subject, presentationHash);
+        return this.web3.eth.call(presentationStatus).then(result => {
+            let resultStatus = this.web3.eth.abi.decodeParameters(["bool", "uint8"], result);
+            let presentationStatus: PresentationStatus = resultStatus;
+            console.log('presentationStatus ------>', presentationStatus);
+            return presentationStatus;
+        })
+    }
+
+    public getSubjectPresentationList(subject: string): Promise<any> {
+        let presentationList = transactionFactory.presentationRegistry.getSubjectPresentationList(this.web3, subject);
+        return this.web3.eth.call(presentationList).then(subjectPresentationList => {
+            console.log('(subjectPresentationList) Transaction ------->', subjectPresentationList);
+            let resultList = this.web3.eth.abi.decodeParameters(["uint256", "bytes32[]"], subjectPresentationList);
+            let presentationListresult = {
+                "uint": resultList[0],
+                "bytes32[]": resultList[1]
+            };
+            return presentationListresult;
+        })
+    }
+
+    public updateSubjectPresentation(subject: string, presentationHash: string, updateTo: number): Promise<PresentationStatus> {
+        let updateSubjectPresentation = transactionFactory.presentationRegistry.updateSubjectPresentation(this.web3, presentationHash, updateTo);
+        return this.identitySrv.getKnownTransaction(updateSubjectPresentation).then(res => {
+            let presentationStatus = transactionFactory.presentationRegistry.getSubjectPresentationStatus(this.web3, subject, presentationHash);
+            return this.web3.eth.call(presentationStatus);
+        }).then(result => {
+            let resultStatus = this.web3.eth.abi.decodeParameters(["bool", "uint8"], result)
+            let presentationStatus: PresentationStatus = resultStatus;
+            return presentationStatus;
+        });
+    }
 
     private sendSigned(subjectCredentialSigned: string): Promise<any> { //:Promise<void | TransactionReceipt>
         return this.web3.eth.sendSignedTransaction(subjectCredentialSigned).
