@@ -88,15 +88,15 @@ export class Camera {
         alert.present();
     }
 
-    private showConfirmAcces(iss: string, credentials: Array<any>, iat: number, exp: number, isPresentationRequest = false, jti?: string) {
+    private showConfirmAcces(iss: string, credentials: Array<any>, iat: number, exp: number, isPresentationRequest = false, verifiedJWT = null, jti?: string) {
         const alert = this.modalCtrl.create(ConfirmAccess, {
-            [AppConfig.ISSUER]: iss, [AppConfig.DATA_COUNT]: credentials.length,
+            [AppConfig.ISSUER]: iss, [AppConfig.DATA_COUNT]: credentials.length, [AppConfig.VERIFIED_JWT]: verifiedJWT,
             [AppConfig.CREDENTIALS]: credentials, [AppConfig.IAT]: iat, [AppConfig.EXP]: exp, [AppConfig.IS_PRESENTATION_REQ]: isPresentationRequest, [AppConfig.JTI]: jti
         });
         alert.present();
     }
 
-    private launchProtocol(protocolType: ProtocolTypes | String, verifiedToken: string | object, secret: string) {
+    private launchProtocol(protocolType: ProtocolTypes | String, verifiedToken: Array<string>, secret: string) {
         let alastriaSession;
 
         if (verifiedToken) {
@@ -107,11 +107,13 @@ export class Camera {
                     break;
                 case ProtocolTypes.presentation:
                     let tokenData = this.prepareCredentials(verifiedToken, secret);
-                    this.showConfirmAcces(AppConfig.SERVICE_PROVIDER, tokenData[AppConfig.CREDENTIALS_DATA], tokenData[AppConfig.IAT], tokenData[AppConfig.EXP], false);
+                    let verifiedCredentials = this.prepareVerfiedJWT(verifiedToken[AppConfig.VERIFIABLE_CREDENTIAL], secret)
+                    this.showConfirmAcces(AppConfig.SERVICE_PROVIDER, tokenData[AppConfig.CREDENTIALS_DATA], tokenData[AppConfig.IAT], 
+                        tokenData[AppConfig.EXP], false, verifiedCredentials);
                     break;
                 case ProtocolTypes.presentationRequest:
                     this.showConfirmAcces(verifiedToken[AppConfig.ISSUER], verifiedToken[AppConfig.PR][AppConfig.DATA], verifiedToken[AppConfig.IAT],
-                        verifiedToken[AppConfig.EXP], true, verifiedToken[AppConfig.JTI]);
+                        verifiedToken[AppConfig.EXP], true, verifiedToken, verifiedToken[AppConfig.JTI]);
                     break;
             }
         } else {
@@ -134,6 +136,12 @@ export class Camera {
             [AppConfig.EXP]: exp,
             [AppConfig.CREDENTIALS_DATA]: credentialsData
         };
+    }
+
+    private prepareVerfiedJWT(verifiedToken: Array<string>, secret: string){
+        return verifiedToken.map(token => {
+            return this.tokenSrv.decodeToken(token);
+        });
     }
 }
 

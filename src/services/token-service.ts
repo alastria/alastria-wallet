@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { verify, sign } from "jsonwebtoken";
+import { verify, sign, decode } from "jsonwebtoken";
 
 @Injectable()
 export class TokenService {
@@ -57,6 +57,12 @@ export class TokenService {
 
   public verifyToken(token: string, secret: string): string|object{
     return verify(token, secret, { algorithms: ["HS256"] });
+  }
+
+  public decodeToken(token:string): string | object{
+    let decodedToken =  decode(token, {complete: true})
+    delete decodedToken["signature"];
+    return decodedToken;
   }
 
   public signToken(payload: string, secret?: string): string|object{

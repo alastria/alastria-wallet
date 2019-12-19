@@ -7,6 +7,7 @@ import { TabsPage } from '../tabsPage/tabsPage';
 import { TokenService } from '../../services/token-service';
 import { tokensFactory } from "alastria-identity-lib"
 import { AppConfig } from '../../app.config';
+import { TransactionService } from '../../services/transaction-service';
 
 @Component({
     selector: 'confirm-access',
@@ -22,6 +23,7 @@ export class ConfirmAccess {
     private identitySelected: Array<number> = [];
     private identityLoaded = new Array<any>();
     private credentials: Array<any>;
+    private verifiedJWT: any;
 
     constructor(
         public viewCtrl: ViewController,
@@ -31,13 +33,15 @@ export class ConfirmAccess {
         public toastCtrl: ToastService,
         private securedStrg: IdentitySecuredStorageService,
         private loadingSrv: LoadingService,
-        private tokenSrv: TokenService
+        private tokenSrv: TokenService,
+        private transactionSrv: TransactionService
     ) {
         this.dataNumberAccess = this.navParams.get(AppConfig.DATA_COUNT);
         this.issName = AppConfig.SERVICE_PROVIDER;
         this.issDID = this.navParams.get(AppConfig.ISSUER);
         this.credentials = this.navParams.get(AppConfig.CREDENTIALS);
         this.isPresentationRequest = this.navParams.get(AppConfig.IS_PRESENTATION_REQ);
+        this.verifiedJWT = this.navParams.get(AppConfig.VERIFIED_JWT)
         for (let id of this.credentials) {
             this.identityLoaded.push(undefined);
         }
@@ -91,7 +95,7 @@ export class ConfirmAccess {
                         Promise.all(credentialPromises)
                             .then((result) => {
                                 securedCredentials = securedCredentials.concat(result);
-                                let iat = Math.round(Date.now()/1000);
+                                let iat = Math.round(Date.now() / 1000);
                                 let exp = this.navParams.get(AppConfig.EXP);
 
                                 let kidCredential = "did:ala:quor:redt:QmeeasCZ9jLbXueBJ7d7csxhb#keys-1";
@@ -111,7 +115,7 @@ export class ConfirmAccess {
                                     return this.tokenSrv.signToken(JSON.stringify(credentialJson));
                                 });
 
-                                let presentation = tokensFactory.tokens.createPresentation(kidCredential, didIsssuer, subjectAlastriaID, context, signedCredentialJwts, 
+                                let presentation = tokensFactory.tokens.createPresentation(kidCredential, didIsssuer, subjectAlastriaID, context, signedCredentialJwts,
                                     procUrl, procHash, exp, iat, jti);
 
                                 this.securedStrg.setJSON(AppConfig.PRESENTATION_PREFIX + this.navParams.get(AppConfig.JTI), presentation)
@@ -144,26 +148,15 @@ export class ConfirmAccess {
                 let finalCredential = this.credentials[index];
                 finalCredential.issuer = this.issDID;
 
-                let credentialPromise = this.securedStrg.hasKey(currentCredentialKey)
+                return this.securedStrg.hasKey(currentCredentialKey)
                     .then(result => {
                         hasKey = result;
                         if (result) {
-                            return this.securedStrg.getJSON(currentCredentialKey);
+                            return this.hasKeyPromise(currentCredentialKey, currentCredentialValue, credentialKeys, index, finalCredential);
                         } else {
-                            return this.securedStrg.setJSON(currentCredentialKey, finalCredential);
-                        }
-                    }).then(result => {
-                        if (hasKey) {
-                            currentCredentialValue = result[credentialKeys[1]];
-                            if (this.credentials[index][credentialKeys[1]] !== currentCredentialValue) {
-                                return this.securedStrg.setJSON(currentCredentialKey + "_" + Math.random(), finalCredential);
-                            }
-                        } else {
-                            return Promise.resolve();
+                            return this.noKeyPromise(currentCredentialKey, index, finalCredential);
                         }
                     });
-                return credentialPromise;
-
             });
 
             //TODO: Confirm credential reception on blockchain
@@ -176,6 +169,27 @@ export class ConfirmAccess {
         } else {
             this.toastCtrl.presentToast("Por favor seleccione al menos una credential para enviar", 3000);
         }
+    }
+
+    private hasKeyPromise(currentCredentialKey: string, currentCredentialValue: string, credentialKeys: any, index: number, finalCredential: any): Promise<any> {
+        return this.securedStrg.getJSON(currentCredentialKey)
+            .then(result => {
+                currentCredentialValue = result[credentialKeys[1]];
+                if (this.credentials[index][credentialKeys[1]] !== currentCredentialValue) {
+                    return this.securedStrg.setJSON(currentCredentialKey + "_" + Math.random(), finalCredential);
+                }
+            })
+            .then((result: any) => {
+                console.log(result)
+                return this.transactionSrv.addSubjectCredential(this.verifiedJWT[index], this.issDID, "www.google.com");
+            });
+    }
+
+    private noKeyPromise(currentCredentialKey: string, index: number, finalCredential: any): Promise<any> {
+        return this.securedStrg.setJSON(currentCredentialKey, finalCredential)
+        .then(result => {
+            return this.transactionSrv.addSubjectCredential(this.verifiedJWT[index], this.issDID, "www.google.com");
+        });
     }
 
     public handleIdentitySelect(identitySelect: any) {

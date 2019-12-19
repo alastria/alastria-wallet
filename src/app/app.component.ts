@@ -23,6 +23,8 @@ export class MyApp {
                 statusBar.backgroundColorByHexString('#325b8e');
             }
             splashScreen.hide();
+            let web3 = web3Srv.getWeb3();
+            console.log("AppConfig "  + JSON.stringify(AppConfig.credentialKey));
         });
     }
 }
