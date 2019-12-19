@@ -1,9 +1,11 @@
 import { Component, Input } from '@angular/core';
-import { IonicPage, ModalController, ViewController, NavParams, NavController } from 'ionic-angular';
+import { IonicPage, ModalController, ViewController, NavParams, NavController, Config } from 'ionic-angular';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner';
 import { ContructionsPage } from '../contructions/contructions';
 import { SessionSecuredStorageService } from '../../services/securedStorage.service';
 import { HomePage } from '../home/home';
+import { AppConfig } from "../../app.config";
+import { TransactionService } from '../../services/transaction-service';
 
 @IonicPage()
 @Component({
@@ -28,11 +30,36 @@ export class Login {
         public barcodeScanner: BarcodeScanner,
         public navCtrl: NavController,
         public modalCtrl: ModalController,
-        public sessionSecuredStorageService: SessionSecuredStorageService
+        public sessionSecuredStorageService: SessionSecuredStorageService,
+        private transactioService: TransactionService
     ) {
 
         this.user = '';
         this.pass = '';
+
+        console.log("Initializing Example of Contract Manager");
+    }
+
+    private init() {
+        let credentialSubject = {};
+        credentialSubject[AppConfig.credentialKey] = AppConfig.credentialValue;
+        credentialSubject["levelOfAssurance"] = "basic";
+        this.transactioService.addSubjectCredential(AppConfig.kidCredential, AppConfig.didIsssuer, AppConfig.subjectAlastriaID, AppConfig.context, credentialSubject, AppConfig.tokenExpTime, AppConfig.tokenActivationDate, AppConfig.jti, AppConfig.uri)
+        .then(result => {
+            console.log("The final result is " + JSON.stringify(result));
+            return this.transactioService.getSubjectCredentialList(AppConfig.subject);
+        }).then(res => {
+            console.log("The list is ", res);
+            return this.transactioService.getSubjectPresentationStatus(AppConfig.subject, AppConfig.PSMHashSubject.psmhash);
+        }).then(res => {
+            console.log("The status of the subject presentation is: ", res);
+            return this.transactioService.getSubjectPresentationList(AppConfig.subject);
+        }).then(res => {
+            console.log("The list of presentation is: ", res);
+            return this.transactioService.updateSubjectPresentation(AppConfig.subject, AppConfig.PSMHashSubject.psmhash, AppConfig.updateSubjectPresentationTo);
+        }).then(res => {
+            console.log("The updated presentation is: ", res);
+        });
     }
 
     /*TODO: NO SE LLAMA NUNCA, cambiar de sitio */
@@ -106,7 +133,6 @@ export class Login {
         modal.present();
         console.log('Navigating to page: ' + text);
     }
-
 }
 
 @Component({
