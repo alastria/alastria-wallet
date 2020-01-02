@@ -137,35 +137,32 @@ export class ConfirmAccess {
             console.log('Sending Credentials');
             this.showLoading();
 
-            let credentialPromises = this.identitySelected.map((element) => {
-                let index = element;
-                let credentialKeys = Object.getOwnPropertyNames(this.credentials[index]);
+            this.identitySelected.reduce((prevVal, index) => {
+                return prevVal.then(() => {
+                    let credentialKeys = Object.getOwnPropertyNames(this.credentials[index]);
 
-                let hasKey;
-                let currentCredentialKey = AppConfig.CREDENTIAL_PREFIX + credentialKeys[1];
-                let currentCredentialValue;
+                    let hasKey;
+                    let currentCredentialKey = AppConfig.CREDENTIAL_PREFIX + credentialKeys[1];
+                    let currentCredentialValue;
 
-                let finalCredential = this.credentials[index];
-                finalCredential.issuer = this.issDID;
+                    let finalCredential = this.credentials[index];
+                    finalCredential.issuer = this.verifiedJWT[index][AppConfig.PAYLOAD][AppConfig.ISSUER];
 
-                return this.securedStrg.hasKey(currentCredentialKey)
-                    .then(result => {
-                        hasKey = result;
-                        if (result) {
-                            return this.hasKeyPromise(currentCredentialKey, currentCredentialValue, credentialKeys, index, finalCredential);
-                        } else {
-                            return this.noKeyPromise(currentCredentialKey, index, finalCredential);
-                        }
-                    });
-            });
-
-            //TODO: Confirm credential reception on blockchain
-
-            Promise.all(credentialPromises)
-                .then(() => {
-                    this.showSucces();
+                    return this.securedStrg.hasKey(currentCredentialKey)
+                        .then(result => {
+                            hasKey = result;
+                            let ret;
+                            if (result) {
+                                ret = this.hasKeyPromise(currentCredentialKey, currentCredentialValue, credentialKeys, index, finalCredential);
+                            } else {
+                                ret = this.noKeyPromise(currentCredentialKey, index, finalCredential);
+                            }
+                            return ret;
+                        });
                 });
-
+            }, Promise.resolve()).then(() => {
+                this.showSucces();
+            });
         } else {
             this.toastCtrl.presentToast("Por favor seleccione al menos una credential para enviar", 3000);
         }
@@ -175,21 +172,31 @@ export class ConfirmAccess {
         return this.securedStrg.getJSON(currentCredentialKey)
             .then(result => {
                 currentCredentialValue = result[credentialKeys[1]];
+                let ret;
                 if (this.credentials[index][credentialKeys[1]] !== currentCredentialValue) {
-                    return this.securedStrg.setJSON(currentCredentialKey + "_" + Math.random(), finalCredential);
+                    ret = this.securedStrg.setJSON(currentCredentialKey + "_" + Math.random(), finalCredential);
+                }else{
+                    ret = Promise.resolve(false);
                 }
+                return ret;
             })
             .then((result: any) => {
                 console.log(result)
-                return this.transactionSrv.addSubjectCredential(this.verifiedJWT[index], this.issDID, "www.google.com");
+                let ret;
+                if(result){
+                    ret = this.transactionSrv.addSubjectCredential(this.verifiedJWT[index], this.issDID, "www.google.com");
+                }else{
+                    ret = false;
+                }
+                return ret;
             });
     }
 
     private noKeyPromise(currentCredentialKey: string, index: number, finalCredential: any): Promise<any> {
         return this.securedStrg.setJSON(currentCredentialKey, finalCredential)
-        .then(result => {
-            return this.transactionSrv.addSubjectCredential(this.verifiedJWT[index], this.issDID, "www.google.com");
-        });
+            .then(result => {
+                return this.transactionSrv.addSubjectCredential(this.verifiedJWT[index], this.verifiedJWT[index][AppConfig.PAYLOAD][AppConfig.ISSUER], "www.google.com");
+            });
     }
 
     public handleIdentitySelect(identitySelect: any) {

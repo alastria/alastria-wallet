@@ -44,22 +44,6 @@ export class Login {
         let credentialSubject = {};
         credentialSubject[AppConfig.credentialKey] = AppConfig.credentialValue;
         credentialSubject["levelOfAssurance"] = "basic";
-        this.transactioService.addSubjectCredential(AppConfig.kidCredential, AppConfig.didIsssuer, AppConfig.subjectAlastriaID, AppConfig.context, credentialSubject, AppConfig.tokenExpTime, AppConfig.tokenActivationDate, AppConfig.jti, AppConfig.uri)
-        .then(result => {
-            console.log("The final result is " + JSON.stringify(result));
-            return this.transactioService.getSubjectCredentialList(AppConfig.subject);
-        }).then(res => {
-            console.log("The list is ", res);
-            return this.transactioService.getSubjectPresentationStatus(AppConfig.subject, AppConfig.PSMHashSubject.psmhash);
-        }).then(res => {
-            console.log("The status of the subject presentation is: ", res);
-            return this.transactioService.getSubjectPresentationList(AppConfig.subject);
-        }).then(res => {
-            console.log("The list of presentation is: ", res);
-            return this.transactioService.updateSubjectPresentation(AppConfig.subject, AppConfig.PSMHashSubject.psmhash, AppConfig.updateSubjectPresentationTo);
-        }).then(res => {
-            console.log("The updated presentation is: ", res);
-        });
     }
 
     /*TODO: NO SE LLAMA NUNCA, cambiar de sitio */

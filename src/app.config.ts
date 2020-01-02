@@ -4,6 +4,7 @@ export class AppConfig {
     public static readonly VERIFIABLE_CREDENTIAL = "verifiableCredential";
     public static readonly CREDENTIALS = "credentials";
     public static readonly ISSUER = "iss";
+    public static readonly SUBJECT = "sub";
     public static readonly ISSUER_NAME = "issName";
     public static readonly CBU = "cbu";
     public static readonly AS = "as";
@@ -11,11 +12,16 @@ export class AppConfig {
     public static readonly IAT = "iat";
     public static readonly EXP = "exp";
     public static readonly JTI = "jti";
+    public static readonly NBF = "nbf";
+    public static readonly KID = "kid";
+    public static readonly CONTEXT = "@context";
     public static readonly IS_PRESENTATION_REQ = "isPresentationRequest";
     public static readonly PR = "pr";
     public static readonly VC = "vc";
     public static readonly PAYLOAD = "payload";
+    public static readonly HEADER = "header";
     public static readonly TITLE = "title";
+    public static readonly REMOVE_KEY = "removeKey";
     public static readonly CREDENTIALS_DATA = "credentialsData";
     public static readonly CREDENTIALS_SUBJECT = "credentialSubject";
     public static readonly DATA = "data";
@@ -30,7 +36,7 @@ export class AppConfig {
     public static readonly SECRET = "your-256-bit-secret";
 
 
-    public static readonly nodeURL = "http://63.33.206.111/rpc";
+    public static readonly nodeURL = "http://5.56.60.217/rpc";
     public static readonly addressPassword = "Passw0rd";
     public static readonly rawPublicKeySubject = "03fdd57adec3d438ea237fe46b33ee1e016eda6b585c3e27ea66686c2ea5358479";
     public static readonly rawPublicKeyReceiver = "8b82bb2b1b5b4c1d56beeb88c98fcf894c23e8dee598d94c1c77099d3a80367f46";

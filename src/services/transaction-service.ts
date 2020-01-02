@@ -21,7 +21,7 @@ export class TransactionService {
     }
 
 
-    public createAndAddSubjectCredential(kidCredential, didIsssuer, subjectAlastriaID, context, credentialSubject, tokenExpTime, tokenActivationDate, jti, uri): Promise<CredentialStatus> {
+    public createAndAddSubjectCredential(kidCredential, didIsssuer, subjectAlastriaID, context, credentialSubject, tokenExpTime, tokenActivationDate, jti, uri): Promise<any> {
         let credential = tokensFactory.tokens.createCredential(kidCredential, didIsssuer, 
             subjectAlastriaID, context, credentialSubject, tokenExpTime, tokenActivationDate, jti);
         console.log("The credential1 is: " + credential);
@@ -38,28 +38,17 @@ export class TransactionService {
             console.log("(addSubjectCredential)The transaction bytes data is: " + subjectCredentialSigned);
             return this.sendSigned(subjectCredentialSigned);
         }).then(receipt => {
-            console.log("RECEIPT:" + receipt)
-            let subject = AppConfig.subject; //Not sure
-            return this.getSubjectCredentialStatus(subject, credentialHash);
+            console.log("RECEIPT:" + receipt);
         })
     }
 
     public addSubjectCredential(credential, didIsssuer, uri): Promise<any> {
-        let signedJWTCredential = tokensFactory.tokens.signJWT(credential, this.identitySrv.getPrivateKey());
-        
-        let credentialHash = tokensFactory.tokens.PSMHash(this.web3, signedJWTCredential, didIsssuer);
-
-        let subjectCredential = transactionFactory.credentialRegistry.addSubjectCredential(this.web3, credentialHash, uri);
-
-        return this.identitySrv.getKnownTransaction(subjectCredential).then((subjectCredentialSigned: string) => {
-            console.log("(addSubjectCredential)The transaction bytes data is: " + subjectCredentialSigned);
-            return this.sendSigned(subjectCredentialSigned);
-        }).then(receipt => {
-            console.log("RECEIPT:" + receipt)
-            return receipt
-        });
+        return this.createAndAddSubjectCredential(credential[AppConfig.HEADER][AppConfig.KID],didIsssuer,
+            credential[AppConfig.PAYLOAD][AppConfig.subject],credential[AppConfig.PAYLOAD][AppConfig.VC][AppConfig.context], 
+            credential[AppConfig.PAYLOAD][AppConfig.VC][AppConfig.CREDENTIALS_SUBJECT],credential[AppConfig.PAYLOAD][AppConfig.EXP],
+            credential[AppConfig.PAYLOAD][AppConfig.NBF],credential[AppConfig.PAYLOAD][AppConfig.JTI],uri);
     }
-    
+
     public getSubjectCredentialList(subject: string): Promise<any> {
         console.log("Getting Creedential List for subject " + subject);
         let credentialList = transactionFactory.credentialRegistry.getSubjectCredentialList(this.web3, subject)

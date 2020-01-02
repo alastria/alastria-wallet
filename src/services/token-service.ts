@@ -62,6 +62,7 @@ export class TokenService {
   public decodeToken(token:string): string | object{
     let decodedToken =  decode(token, {complete: true})
     delete decodedToken["signature"];
+    decodedToken["header"]["alg"] = "ES256K"
     return decodedToken;
   }
 

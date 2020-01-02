@@ -226,7 +226,8 @@ export class Activity {
                             "subtitle": elementObj[elementKeys[1]],
                             "description": elementObj.issuer,
                             "datetime": "",
-                            "type": this.type
+                            "type": this.type,
+                            "removeKey": elementObj[AppConfig.REMOVE_KEY]
                         }
                     } else {
                         let iat = new Date(elementObj[AppConfig.PAYLOAD][AppConfig.IAT] * 1000);
@@ -261,13 +262,13 @@ export class Activity {
 
         let keysToRemove = ids.map(element => {
             if (prefix === AppConfig.CREDENTIAL_PREFIX) {
-                return this.activities[element][AppConfig.TITLE];
+                return this.activities[element][AppConfig.REMOVE_KEY];
             }else{
                 return this.activities[element][AppConfig.JTI];
             }
         })
             .map(key => {
-                return this.securedStrg.removeJson(prefix + key);
+                return this.securedStrg.removeJson(key);
             });
 
         Promise.all(keysToRemove)
