@@ -4,6 +4,10 @@ import { ToastService } from '../../services/toast-service';
 import { IdentitySecuredStorageService } from '../../services/securedStorage.service';
 import { LoadingService } from '../../services/loading-service';
 import { TabsPage } from '../tabsPage/tabsPage';
+import { TokenService } from '../../services/token-service';
+import { tokensFactory } from "alastria-identity-lib"
+import { AppConfig } from '../../app.config';
+import { TransactionService } from '../../services/transaction-service';
 
 @Component({
     selector: 'confirm-access',
@@ -16,12 +20,10 @@ export class ConfirmAccess {
     public issName: string;
     public issDID: string;
 
-    private readonly CREDENTIAL_PREFIX = "cred_";
-    private readonly PRESENTATION_PREFIX = "present_";
-
     private identitySelected: Array<number> = [];
     private identityLoaded = new Array<any>();
     private credentials: Array<any>;
+    private verifiedJWT: any;
 
     constructor(
         public viewCtrl: ViewController,
@@ -30,13 +32,16 @@ export class ConfirmAccess {
         public modalCtrl: ModalController,
         public toastCtrl: ToastService,
         private securedStrg: IdentitySecuredStorageService,
-        private loadingSrv: LoadingService
+        private loadingSrv: LoadingService,
+        private tokenSrv: TokenService,
+        private transactionSrv: TransactionService
     ) {
-        this.dataNumberAccess = this.navParams.get("dataNumberAccess");
-        this.issName = "SERVICE PROVIDER";
-        this.issDID = this.navParams.get("iss");
-        this.credentials = this.navParams.get("credentials");
-        this.isPresentationRequest = this.navParams.get("isPresentationRequest");
+        this.dataNumberAccess = this.navParams.get(AppConfig.DATA_COUNT);
+        this.issName = AppConfig.SERVICE_PROVIDER;
+        this.issDID = this.navParams.get(AppConfig.ISSUER);
+        this.credentials = this.navParams.get(AppConfig.CREDENTIALS);
+        this.isPresentationRequest = this.navParams.get(AppConfig.IS_PRESENTATION_REQ);
+        this.verifiedJWT = this.navParams.get(AppConfig.VERIFIED_JWT)
         for (let id of this.credentials) {
             this.identityLoaded.push(undefined);
         }
@@ -71,7 +76,7 @@ export class ConfirmAccess {
             }
             let credentialExistsPromises = pendingIdentities.map((element) => {
                 let index = element;
-                return this.securedStrg.hasKey(this.CREDENTIAL_PREFIX + this.credentials[index]["field_name"]);
+                return this.securedStrg.hasKey(AppConfig.CREDENTIAL_PREFIX + this.credentials[index][AppConfig.FIELD_NAME]);
             });
 
             Promise.all(credentialExistsPromises)
@@ -84,29 +89,36 @@ export class ConfirmAccess {
                         this.showLoading();
                         let credentialPromises = pendingIdentities.map((element) => {
                             let index = element;
-                            return this.securedStrg.getJSON(this.CREDENTIAL_PREFIX + this.credentials[index]["field_name"]);
+                            return this.securedStrg.getJSON(AppConfig.CREDENTIAL_PREFIX + this.credentials[index][AppConfig.FIELD_NAME]);
                         });
 
                         Promise.all(credentialPromises)
                             .then((result) => {
                                 securedCredentials = securedCredentials.concat(result);
-                                let iat = new Date(this.navParams.get("iat") * 1000);
-                                let exp = new Date(this.navParams.get("exp") * 1000);
-                                let iatString = iat.getDay() + "/" + (iat.getMonth() + 1) + "/" + iat.getFullYear();
-                                let expString = exp.getDay() + "/" + (exp.getMonth() + 1) + "/" + exp.getFullYear();
+                                let iat = Math.round(Date.now() / 1000);
+                                let exp = this.navParams.get(AppConfig.EXP);
 
-                                let presentation = {
-                                    "@context": "https://w3id.org/credentials/v1",
-                                    "jti": "https://www.metrovacesa.com/alastria/credentials/3732",
-                                    "iss": this.issDID,
-                                    "sub": "did:alastria:quorum:testnet1:QmeeasCZ9jLbX...ueBJ7d7csxhb",
-                                    "iat": iatString,
-                                    "exp": expString,
-                                    "nbf": iat,
-                                    "credentials": securedCredentials
-                                }
+                                let kidCredential = "did:ala:quor:redt:QmeeasCZ9jLbXueBJ7d7csxhb#keys-1";
+                                let didIsssuer = this.issDID;
+                                let subjectAlastriaID = "did:alastria:quorum:testnet1:QmeeasCZ9jLbX...ueBJ7d7csxhb";
+                                let context = ["https://www.w3.org/2018/credentials/v1", "JWT"];
+                                let jti = this.navParams.get(AppConfig.JTI);
+                                let procHash = "H398sjHd...kldjUYn475n";
+                                let procUrl = "https://www.metrovacesa.com/alastria/businessprocess/4583";
 
-                                this.securedStrg.setJSON(this.PRESENTATION_PREFIX + this.navParams.get("jti"), presentation)
+                                let signedCredentialJwts = securedCredentials.map(securedCredential => {
+                                    let credentialSubject = securedCredential;
+
+                                    let credentialJson = tokensFactory.tokens.createCredential(kidCredential, didIsssuer, subjectAlastriaID,
+                                        context, credentialSubject, exp, iat, jti);
+
+                                    return this.tokenSrv.signToken(JSON.stringify(credentialJson));
+                                });
+
+                                let presentation = tokensFactory.tokens.createPresentation(kidCredential, didIsssuer, subjectAlastriaID, context, signedCredentialJwts,
+                                    procUrl, procHash, exp, iat, jti);
+
+                                this.securedStrg.setJSON(AppConfig.PRESENTATION_PREFIX + this.navParams.get(AppConfig.JTI), presentation)
                                     .then(() => {
                                         this.showSucces();
                                     });
@@ -125,49 +137,66 @@ export class ConfirmAccess {
             console.log('Sending Credentials');
             this.showLoading();
 
-            let credentialPromises = this.identitySelected.map((element) => {
-                let index = element;
-                let credentialKeys = Object.getOwnPropertyNames(this.credentials[index]);
+            this.identitySelected.reduce((prevVal, index) => {
+                return prevVal.then(() => {
+                    let credentialKeys = Object.getOwnPropertyNames(this.credentials[index]);
 
-                let hasKey;
-                let currentCredentialKey = this.CREDENTIAL_PREFIX + credentialKeys[2];
-                let currentCredentialValue;
+                    let hasKey;
+                    let currentCredentialKey = AppConfig.CREDENTIAL_PREFIX + credentialKeys[1];
+                    let currentCredentialValue;
 
-                let finalCredential = this.credentials[index];
-                finalCredential.issuer = this.issDID;
+                    let finalCredential = this.credentials[index];
+                    finalCredential.issuer = this.verifiedJWT[index][AppConfig.PAYLOAD][AppConfig.ISSUER];
 
-                let credentialPromise = this.securedStrg.hasKey(currentCredentialKey)
-                    .then(result => {
-                        hasKey = result;
-                        if (result) {
-                            return this.securedStrg.getJSON(currentCredentialKey);
-                        } else {
-                            return this.securedStrg.setJSON(currentCredentialKey, finalCredential);
-                        }
-                    }).then(result => {
-                        if (hasKey) {
-                            currentCredentialValue = result[credentialKeys[2]];
-                            if (this.credentials[index][credentialKeys[2]] !== currentCredentialValue) {
-                                return this.securedStrg.setJSON(currentCredentialKey + "_" + Math.random(), finalCredential);
+                    return this.securedStrg.hasKey(currentCredentialKey)
+                        .then(result => {
+                            hasKey = result;
+                            let ret;
+                            if (result) {
+                                ret = this.hasKeyPromise(currentCredentialKey, currentCredentialValue, credentialKeys, index, finalCredential);
+                            } else {
+                                ret = this.noKeyPromise(currentCredentialKey, index, finalCredential);
                             }
-                        } else {
-                            return Promise.resolve();
-                        }
-                    });
-                return credentialPromise;
-
-            });
-
-            //TODO: Confirm credential reception on blockchain
-
-            Promise.all(credentialPromises)
-                .then(() => {
-                    this.showSucces();
+                            return ret;
+                        });
                 });
-
+            }, Promise.resolve()).then(() => {
+                this.showSucces();
+            });
         } else {
             this.toastCtrl.presentToast("Por favor seleccione al menos una credential para enviar", 3000);
         }
+    }
+
+    private hasKeyPromise(currentCredentialKey: string, currentCredentialValue: string, credentialKeys: any, index: number, finalCredential: any): Promise<any> {
+        return this.securedStrg.getJSON(currentCredentialKey)
+            .then(result => {
+                currentCredentialValue = result[credentialKeys[1]];
+                let ret;
+                if (this.credentials[index][credentialKeys[1]] !== currentCredentialValue) {
+                    ret = this.securedStrg.setJSON(currentCredentialKey + "_" + Math.random(), finalCredential);
+                }else{
+                    ret = Promise.resolve(false);
+                }
+                return ret;
+            })
+            .then((result: any) => {
+                console.log(result)
+                let ret;
+                if(result){
+                    ret = this.transactionSrv.addSubjectCredential(this.verifiedJWT[index], this.issDID, "www.google.com");
+                }else{
+                    ret = false;
+                }
+                return ret;
+            });
+    }
+
+    private noKeyPromise(currentCredentialKey: string, index: number, finalCredential: any): Promise<any> {
+        return this.securedStrg.setJSON(currentCredentialKey, finalCredential)
+            .then(result => {
+                return this.transactionSrv.addSubjectCredential(this.verifiedJWT[index], this.verifiedJWT[index][AppConfig.PAYLOAD][AppConfig.ISSUER], "www.google.com");
+            });
     }
 
     public handleIdentitySelect(identitySelect: any) {

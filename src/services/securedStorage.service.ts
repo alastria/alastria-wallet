@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SecureStorage, SecureStorageObject } from '@ionic-native/secure-storage';
 import { Platform } from 'ionic-angular';
+import { AppConfig } from '../app.config';
 
 @Injectable()
 export class IdentitySecuredStorageService {
@@ -91,10 +92,15 @@ export class IdentitySecuredStorageService {
                 let jsonTmp = [];
 
                 for (let z = 0; z < matchingKeys.length; z++) {
-                    jsonTmp.push(this.securedStorageObject.get(matchingKeys[z]));
+                    this.securedStorageObject.get(matchingKeys[z])
+                    .then(currentKey => {
+                        let keyObj = JSON.parse(currentKey);
+                        keyObj[AppConfig.REMOVE_KEY] = matchingKeys[z];
+                        jsonTmp.push(JSON.stringify(keyObj));
+                    })
+                    
                 }
-
-                return Promise.all(jsonTmp);
+                return jsonTmp;
             });
     }
 

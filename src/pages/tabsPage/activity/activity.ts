@@ -1,4 +1,4 @@
-import { ModalController } from 'ionic-angular';
+import { ModalController, App } from 'ionic-angular';
 import { Component, ViewChild } from '@angular/core';
 import { IonicPage, AlertController } from 'ionic-angular';
 import { ToastService } from '../../../services/toast-service';
@@ -7,6 +7,7 @@ import { Activities } from './../../../services/activities/activities.service';
 import { ActivityM } from './../../../models/activity.model';
 import { OptionsComponent } from './options/options';
 import { IdentitySecuredStorageService } from '../../../services/securedStorage.service';
+import { AppConfig } from '../../../app.config';
 
 @IonicPage()
 @Component({
@@ -25,19 +26,13 @@ export class Activity {
     public activitiesSelected: Array<any> = new Array<any>();
     public selection: boolean = false;
 
-    private readonly CREDENTIAL_TYPE = "credentials";
-    private readonly PRESENTATION_TYPE = "presentations";
-
-    private readonly CREDENTIAL_PREFIX = "cred_";
-    private readonly PRESENTATION_PREFIX = "present_";
-
     constructor(private toastCtrl: ToastService,
         private activitiesService: Activities,
         public alertCtrl: AlertController,
         public modalCtrl: ModalController,
         private securedStrg: IdentitySecuredStorageService
     ) {
-        this.type = this.CREDENTIAL_TYPE;
+        this.type = AppConfig.CREDENTIAL_TYPE;
         this.getActivities();
     }
 
@@ -82,7 +77,6 @@ export class Activity {
     segmentChanged(event: any): void {
         this.resetSelection();
         this.onSearch();
-        //this.getActivities();
     }
 
     /**
@@ -212,10 +206,10 @@ export class Activity {
     */
     public getActivities() {
         let prefix: string;
-        if (this.type === this.CREDENTIAL_TYPE) {
-            prefix = this.CREDENTIAL_PREFIX;
+        if (this.type === AppConfig.CREDENTIAL_TYPE) {
+            prefix = AppConfig.CREDENTIAL_PREFIX;
         } else {
-            prefix = this.PRESENTATION_PREFIX;
+            prefix = AppConfig.PRESENTATION_PREFIX;
         }
 
         return this.securedStrg.matchAndGetJSON(prefix)
@@ -225,24 +219,27 @@ export class Activity {
                 this.activities = elements.map(element => {
                     let elementObj = JSON.parse(element);
                     let elementKeys = Object.getOwnPropertyNames(elementObj);
-                    if (prefix === this.CREDENTIAL_PREFIX) {
+                    if (prefix === AppConfig.CREDENTIAL_PREFIX) {
                         return {
                             "activityId": count++,
-                            "title": elementKeys[2],
-                            "subtitle": elementObj[elementKeys[2]],
+                            "title": elementKeys[1],
+                            "subtitle": elementObj[elementKeys[1]],
                             "description": elementObj.issuer,
                             "datetime": "",
-                            "type": this.type
+                            "type": this.type,
+                            "removeKey": elementObj[AppConfig.REMOVE_KEY]
                         }
                     } else {
+                        let iat = new Date(elementObj[AppConfig.PAYLOAD][AppConfig.IAT] * 1000);
+                        let iatString = iat.getDay() + "/" + (iat.getMonth() + 1) + "/" + iat.getFullYear();
                         return {
                             "activityId": count++,
                             "title": "Presentación " + count,
                             "subtitle": "",
-                            "description": elementObj["iss"],
-                            "datetime": elementObj["iat"],
+                            "description": elementObj[AppConfig.PAYLOAD][AppConfig.ISSUER],
+                            "datetime": iatString,
                             "type": this.type,
-                            "jti": elementObj["jti"]
+                            "jti": elementObj[AppConfig.PAYLOAD][AppConfig.JTI]
                         }
                     }
                 });
@@ -257,21 +254,21 @@ export class Activity {
         const messageSuccess = 'Se han borrado las actividades correctamente';
 
         let prefix: string;
-        if (this.type === this.CREDENTIAL_TYPE) {
-            prefix = this.CREDENTIAL_PREFIX;
+        if (this.type === AppConfig.CREDENTIAL_TYPE) {
+            prefix = AppConfig.CREDENTIAL_PREFIX;
         } else {
-            prefix = this.PRESENTATION_PREFIX;
+            prefix = AppConfig.PRESENTATION_PREFIX;
         }
 
         let keysToRemove = ids.map(element => {
-            if (prefix === this.CREDENTIAL_PREFIX) {
-                return this.activities[element]["title"];
+            if (prefix === AppConfig.CREDENTIAL_PREFIX) {
+                return this.activities[element][AppConfig.REMOVE_KEY];
             }else{
-                return this.activities[element]["jti"];
+                return this.activities[element][AppConfig.JTI];
             }
         })
             .map(key => {
-                return this.securedStrg.removeJson(prefix + key);
+                return this.securedStrg.removeJson(key);
             });
 
         Promise.all(keysToRemove)

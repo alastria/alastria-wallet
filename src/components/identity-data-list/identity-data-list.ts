@@ -3,7 +3,8 @@ import { Component, Input, EventEmitter, Output } from '@angular/core';
 import { NavParams, NavController } from 'ionic-angular';
 import { IdentitySecuredStorageService } from '../../services/securedStorage.service';
 import { SelectIdentity } from '../../pages/confirm-access/select-identity/select-identity';
-import { JsonPipe } from '@angular/common';
+import { TokenService } from '../../services/token-service';
+import { AppConfig } from '../../app.config';
 
 export interface mockCredential {
     id: number,
@@ -50,27 +51,26 @@ export class IdentityDataListComponent {
     public chosenIndex: number;
     public isDataSetted = false;
     public isOrderInverted = false;
-    private readonly CREDENTIAL_PREFIX = "cred_";
+
     private isPresentationRequest: Boolean;
 
     constructor(
         public navCtrl: NavController,
         public navParams: NavParams,
-        private securedStrg: IdentitySecuredStorageService
+        private securedStrg: IdentitySecuredStorageService,
+        private tokenSrv: TokenService
     ) {
 
     }
 
     ngOnInit() {
-        this.isPresentationRequest = this.navParams.get("isPresentationRequest");
-        console.log("ISMANUALSELECTION", this.isManualSelection);
-        console.log("CREDENTIALS " + JSON.stringify(this.allCredentials));
+        this.isPresentationRequest = this.navParams.get(AppConfig.IS_PRESENTATION_REQ);
+
         let iat: any;
         let exp: any;
         let iatString: any; 
         let expString: any;
         if (this.isManualSelection) {
-            console.log("ESTOY " + this.allCredentials);
             
             this.credentials = this.allCredentials.map(cred => JSON.parse(cred));
             iat = new Date(this.iat * 1000);
@@ -78,10 +78,9 @@ export class IdentityDataListComponent {
             iatString = iat.getDay() + "/" + (iat.getMonth() + 1) + "/" + iat.getFullYear();
             expString = exp.getDay() + "/" + (exp.getMonth() + 1) + "/" + exp.getFullYear();
         } else {
-            console.log("MEFUI");
-            this.credentials = this.navParams.get("credentials");
-            iat = new Date(this.navParams.get("iat") * 1000);
-            exp = new Date(this.navParams.get("exp") * 1000);
+            this.credentials = this.navParams.get(AppConfig.CREDENTIALS);
+            iat = new Date(this.navParams.get(AppConfig.IAT) * 1000);
+            exp = new Date(this.navParams.get(AppConfig.EXP) * 1000);
             iatString = iat.getDay() + "/" + (iat.getMonth() + 1) + "/" + iat.getFullYear();
             expString = exp.getDay() + "/" + (exp.getMonth() + 1) + "/" + exp.getFullYear();
         }
@@ -90,19 +89,39 @@ export class IdentityDataListComponent {
             let propNames = Object.getOwnPropertyNames(credential);
 
             let level = credential.levelOfAssurance;
+            switch (level){
+                case AppConfig.LevelOfAssurance.Self:
+                    level = 0;
+                    break;
+                case AppConfig.LevelOfAssurance.Low:
+                    level = 1;
+                    break;
+                case AppConfig.LevelOfAssurance.Substantial:
+                    level = 2;
+                    break;
+                case AppConfig.LevelOfAssurance.High:
+                    level = 3;
+                    break;
+            }
+
+            let iconActive = "iconActive";
+            let iconInactive = "iconInactive";
+            let isActive = "isActive";
+            let iconStar = "icon-star";
+            let iconStarOutline = "icon-star-outline";
 
             let stars = [{
-                "iconActive": "icon-star",
-                "iconInactive": "icon-star-outline",
-                "isActive": true
+                [iconActive]: iconStar,
+                [iconInactive]: iconStarOutline,
+                [isActive]: true
             }, {
-                "iconActive": "icon-star",
-                "iconInactive": "icon-star-outline",
-                "isActive": true
+                [iconActive]: iconStar,
+                [iconInactive]: iconStarOutline,
+                [isActive]: true
             }, {
-                "iconActive": "icon-star",
-                "iconInactive": "icon-star-outline",
-                "isActive": true
+                [iconActive]: iconStar,
+                [iconInactive]: iconStarOutline,
+                [isActive]: true
             }];
 
             for (let z = 0; z < stars.length; z++) {
@@ -113,17 +132,16 @@ export class IdentityDataListComponent {
 
             if (this.isPresentationRequest) {
                 let securedCredentials;
-                let key = credential["field_name"];
-                return this.securedStrg.hasKey(this.CREDENTIAL_PREFIX + key)
+                let key = credential[AppConfig.FIELD_NAME];
+                return this.securedStrg.hasKey(AppConfig.CREDENTIAL_PREFIX + key)
                     .then(result => {
                         if (result) {
-                            return this.securedStrg.get(this.CREDENTIAL_PREFIX + key)
+                            return this.securedStrg.get(AppConfig.CREDENTIAL_PREFIX + key)
                                 .then((result) => {
-                                    console.log(result);
                                     securedCredentials = JSON.parse(result);
                                     obj = {
                                         id: count++,
-                                        titleP: credential[propNames[2].toString()],
+                                        titleP: credential[AppConfig.FIELD_NAME].toUpperCase().replace(/_/g, " "),
                                         emitter: "Emisor del testimonio",
                                         valueT: "Valor",
                                         value: securedCredentials[key],
@@ -166,10 +184,10 @@ export class IdentityDataListComponent {
             } else {
                 obj = {
                     id: count++,
-                    titleP: propNames[2].toUpperCase(),
+                    titleP: propNames[1].toUpperCase().replace(/_/g, " "),
                     emitter: "Emisor del testimonio",
                     valueT: "Valor",
-                    value: credential[propNames[2].toString()],
+                    value: credential[propNames[1].toString()],
                     place: "Emisor de credencial",
                     addDateT: "Fecha incorporación del testimonio",
                     addDate: iatString,
@@ -199,10 +217,8 @@ export class IdentityDataListComponent {
             this.securedStrg.getAllCredentials()
                 .then((credentials: any) => {
                     
-    
-                    let iat = this.navParams.get("iat");
-                    let exp = this.navParams.get("exp");
-                    console.log('CREDENTIALDETAIL: ' + JSON.stringify(credentials));
+                    let iat = this.navParams.get(AppConfig.IAT);
+                    let exp = this.navParams.get(AppConfig.EXP);
 
                     new Promise((resolve) => {
                         this.navCtrl.push(SelectIdentity, {
@@ -215,7 +231,6 @@ export class IdentityDataListComponent {
                         })
                     }).then((data: any) => {
                         if (data.mock && data.credential) {
-                            console.log("Manual credential: ", data.credential)
                             data.mock.isChecked = item.isChecked
                             data.mock.id = item.id;
                             this.identityDisplay[item.id] = data.mock;
@@ -237,7 +252,7 @@ export class IdentityDataListComponent {
     }
 
     public changeIdentitySelect(event: any, id: number): void {
-        console.log(event);
+        let isChecked = "isChecked";
         const result: any = {
             id,
             value: event.checked
@@ -248,7 +263,7 @@ export class IdentityDataListComponent {
                 this.chosenIndex = id;
                 for (let i = 0; i < this.identityDisplay.length; i++) {
                     if (i != id) {
-                        this.identityDisplay[i]['isChecked'] = null;
+                        this.identityDisplay[i][isChecked] = null;
                     }
                 }
                 this.handleIdentitySelect.emit(result);

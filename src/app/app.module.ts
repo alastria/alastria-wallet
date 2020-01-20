@@ -31,6 +31,9 @@ import { SelectIdentity } from './../pages/confirm-access/select-identity/select
 import { HttpClientModule } from "@angular/common/http"
 import { TokenService } from '../services/token-service';
 import { ToastService } from '../services/toast-service';
+import { Web3Service } from '../services/web3-service';
+import { IdentityService } from '../services/identity-service';
+import { TransactionService } from '../services/transaction-service';
 
 @NgModule({
     declarations: [
@@ -87,8 +90,11 @@ import { ToastService } from '../services/toast-service';
         BarcodeScanner,
         FingerprintAIO,
         SecureStorage,
+        Web3Service,
+        IdentityService,
         SessionSecuredStorageService,
         IdentitySecuredStorageService,
+        TransactionService,
         Activities,
         { provide: ErrorHandler, useClass: IonicErrorHandler },
         ToastService,

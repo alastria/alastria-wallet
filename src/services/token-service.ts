@@ -1,13 +1,12 @@
-import { Injectable } from '@angular/core';
-import { verify } from 'jsonwebtoken';
+import { Injectable } from "@angular/core";
+import { verify, sign, decode } from "jsonwebtoken";
 
 @Injectable()
 export class TokenService {
 
-  private readonly ATR_CREDENTIAL = "credential";
-  private readonly ATR_CREDENTIALS = "credentials";
-  private readonly ATR_DATA = "data";
-  private readonly TYPE_CREDENTIAL_OFFER = "credentialOffer";
+  private readonly ATR_CREDENTIAL = "verifiableCredential";
+  private readonly ATR_PRESENTATION_REQUEST = "pr";
+  private readonly TYPE_CREDENTIAL_OFFER = "presentation";
   private readonly TYPE_AUTH = "authentication";
   private readonly TYPE_PRESENTATION_REQ = "presentationRequest";
   private readonly SECRET = "your-256-bit-secret";
@@ -18,9 +17,9 @@ export class TokenService {
 
   public getTokenType(token: string | object): string{
     let tokenType: string;
-    if(token[this.ATR_CREDENTIAL] || token[this.ATR_CREDENTIALS]){
+    if(token[this.ATR_CREDENTIAL]){
       tokenType = this.TYPE_CREDENTIAL_OFFER
-    }else if (token[this.ATR_DATA]){
+    }else if (token[this.ATR_PRESENTATION_REQUEST]){
       tokenType = this.TYPE_PRESENTATION_REQ;
     }else{
       tokenType = this.TYPE_AUTH;
@@ -57,7 +56,26 @@ export class TokenService {
   }
 
   public verifyToken(token: string, secret: string): string|object{
-    return verify(token, secret, { algorithms: ['HS256'] });
+    return verify(token, secret, { algorithms: ["HS256"] });
   }
 
+  public decodeToken(token:string): string | object{
+    let decodedToken =  decode(token, {complete: true})
+    delete decodedToken["signature"];
+    decodedToken["header"]["alg"] = "ES256K"
+    return decodedToken;
+  }
+
+  public signToken(payload: string, secret?: string): string|object{
+    secret = secret ? secret : this.SECRET;
+    return sign(payload, secret);
+  }
+
+  public verifyAndGetCredentialData(tokens: Array<string>, secret?: string): Array<any>{
+    secret = secret ? secret : this.SECRET;
+    return tokens.map(token => {
+      let data = this.verifyToken(token, secret);
+      return data["vc"]["credentialSubject"];
+    });
+  }
 }
