@@ -214,7 +214,8 @@ export class Activity {
 
         return this.securedStrg.matchAndGetJSON(prefix)
             .then((elements) => {
-                console.log(elements);
+                console.log("Secure storage elements:" + elements);
+                console.log("Secure storage elements:", elements);
                 let count = 0;
                 this.activities = elements.map(element => {
                     let elementObj = JSON.parse(element);

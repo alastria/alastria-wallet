@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { SecureStorage, SecureStorageObject } from '@ionic-native/secure-storage';
 import { Platform } from 'ionic-angular';
 import { AppConfig } from '../app.config';
+import { PROP_METADATA } from '@angular/core/src/util/decorators';
 
 @Injectable()
 export class IdentitySecuredStorageService {
@@ -55,6 +56,10 @@ export class IdentitySecuredStorageService {
         return this.securedStorageObject.get(key);
     }
 
+    async clearStorage(){
+        return this.securedStorageObject.clear();
+    }
+
     async getAllCredentials() {
         let credentials;
         let keys = await this.getKeys();
@@ -83,24 +88,25 @@ export class IdentitySecuredStorageService {
         return this.getKeys()
             .then(result => {
                 allKeys = result;
+                console.log("All storage keys" + allKeys);
+                console.log("All storage keys", allKeys);
+                
 
                 for (let i = 0; i < allKeys.length; i++) {
                     if (regex.test(allKeys[i])) {
                         matchingKeys.push(allKeys[i]);
                     }
                 }
-                let jsonTmp = [];
-
+                let promises = [];
                 for (let z = 0; z < matchingKeys.length; z++) {
-                    this.securedStorageObject.get(matchingKeys[z])
+                    promises.push(this.securedStorageObject.get(matchingKeys[z])
                     .then(currentKey => {
                         let keyObj = JSON.parse(currentKey);
                         keyObj[AppConfig.REMOVE_KEY] = matchingKeys[z];
-                        jsonTmp.push(JSON.stringify(keyObj));
-                    })
-                    
+                        return JSON.stringify(keyObj);
+                    }))
                 }
-                return jsonTmp;
+                return Promise.all(promises);
             });
     }
 
