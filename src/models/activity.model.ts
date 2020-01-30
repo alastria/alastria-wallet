@@ -1,3 +1,5 @@
+import { AppConfig } from "../app.config"
+
 export class ActivityM {
     activityId: number;
     title: string;
@@ -5,4 +7,5 @@ export class ActivityM {
     description: string;
     datetime: string;
     type: string;
+    status: AppConfig.ActivityStatus;
 }
