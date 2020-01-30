@@ -8,7 +8,6 @@ import { StatusBar } from '@ionic-native/status-bar';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
-import { Login, InfoPage } from '../pages/login/login';
 import { LoadingService } from '../services/loading-service';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner';
 import { NgxQRCodeModule } from 'ngx-qrcode2';
@@ -34,13 +33,13 @@ import { ToastService } from '../services/toast-service';
 import { Web3Service } from '../services/web3-service';
 import { IdentityService } from '../services/identity-service';
 import { TransactionService } from '../services/transaction-service';
+import { LoginPage } from '../pages/login/login';
 
 @NgModule({
     declarations: [
         MyApp,
         HomePage,
-        Login,
-        InfoPage,
+        LoginPage,
         ProfilePage,
         DetailProfilePage,
         RegisterHub,
@@ -72,8 +71,7 @@ import { TransactionService } from '../services/transaction-service';
     entryComponents: [
         MyApp,
         HomePage,
-        Login,
-        InfoPage,
+        LoginPage,
         ProfilePage,
         DetailProfilePage,
         RegisterHub,
