@@ -269,7 +269,7 @@ export class Activity {
             }
         })
             .map(key => {
-                return this.securedStrg.removeJson(key);
+                return this.securedStrg.removePresentation(key);
             });
 
         Promise.all(keysToRemove)
