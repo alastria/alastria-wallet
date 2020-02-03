@@ -1,10 +1,7 @@
-#logo, h3 {
-  width: 80%;
-}
-
 #logo {
   margin-top: 40px;
   margin-bottom: 40px;
+  width: 80%;
 }
 
 .mainContent {
@@ -39,6 +36,48 @@
   background-color: white;
   color: #3A6D96;
   font-size: larger;
+  margin-bottom: 15px;
+}
+
+.input-key {
+  border-bottom-color: white !important;
+  box-shadow: inset 0 -1px 0 0 white !important;
+}
+
+.input-key, ion-label {
+  background-color: transparent;
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  line-height: normal;
+  font-size: 18px;
+  color: white !important;
+  width: 90%;
+  margin: auto;
+}
+
+.child-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  align-items: center;
+}
+
+.mainContent {
+  ion-grid {
+    min-height: 100%;
+  }
+  .row1 {
+    flex: 0;
+  }
+  .row2 {
+    flex: 5;
+    align-content: flex-end;
+  }
+  .row3 {
+    flex: 2;
+    align-content: flex-end;
+  }
 }
 
 ion-icon {

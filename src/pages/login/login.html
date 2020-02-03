@@ -1,37 +1,45 @@
 <ion-header></ion-header>
 <ion-nav class="main" id="nav" #content [root]="Login">
 </ion-nav>
-<ion-content ion-fixed class="mainContent" style="z-index: 1;">
-  <div style="display: flex; flex-direction: column; justify-content: space-between; min-height: 100%; align-items: center">
+<ion-content padding class="mainContent">
+  <!-- <div class="child-content" [ngStyle]="{'justify-content': (loginType === buttons[0].type) ? 'start': 'space-between'}"> -->
         <ion-grid>
-            <ion-row>
-                <ion-col>
+            <ion-row class="row1">
+                <ion-col col-12>
                     <img [src]="logoUrl" id="logo">
                     <br />
+                    <h3 *ngIf="loginType !== 'key'"> ¡Hola! </h3>
+                    <h3> {{ title }} </h3>
                 </ion-col>
             </ion-row>
-            <ion-row>
-                <ion-col>
-                    <h3> ¡Hola! </h3>
-                    <h3> Accede para gestionar tu identidad de Alastria. </h3>
+            <ion-row id="key-form" class="row2" *ngIf="loginType === buttons[0].type">
+                <ion-col col-12>
+                    <ion-item *ngFor="let input of inputsKeyForm; let i = index" class="input-key">
+                        <ion-label floating class="grey">{{input.label}}</ion-label>
+                        <ion-input class="menu" type="password" [(ngModel)]="input.value"></ion-input>
+                    </ion-item>
+                </ion-col>
+            </ion-row>
+            <ion-row class="row3" *ngIf="!loginType" id="button-select-login"> 
+                <ion-col col-12>
+                    <button *ngFor="let button of buttons; let i = index"
+                        ion-button
+                        block class="btnLogin" 
+                        (click)="selectTypeLogin(button.type)">
+                        {{ button.label }}
+                        <ion-icon name="ios-arrow-forward"></ion-icon>
+                    </button>
+                </ion-col>
+            </ion-row>
+            <ion-row class="row3" *ngIf="loginType === buttons[0].type"> 
+                <ion-col col-12 class="ion-align-self-end">
+                    <button ion-button block class="btnLogin" (click)="selectTypeLogin(button.type)">
+                        Aceptar
+                        <ion-icon name="ios-arrow-forward"></ion-icon>
+                    </button>
                 </ion-col>
             </ion-row>
         </ion-grid>
-        <ion-grid id="button-select-login">
-            <ion-list>
-                <ion-row *ngFor="let button of buttons; let i = index"> 
-                    <ion-col>
-                        <button ion-button block class="btnLogin" (click)="selectTypeLogin(button.type)">
-                            <span>
-                                
-                            </span>
-                            {{ button.label }}
-                            <ion-icon name="ios-arrow-forward"></ion-icon>
-                        </button>
-                    </ion-col>
-                </ion-row>
-            </ion-list>
-        </ion-grid>
-  </div>
+  <!-- </div> -->
 </ion-content>
  

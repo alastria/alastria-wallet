@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, Platform } from 'ionic-angular';
 
 /**
  * Generated class for the LoginPage page.
@@ -14,6 +14,7 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
   templateUrl: 'login.html',
 })
 export class LoginPage {
+  title: string = 'Accede para gestionar tu identidad de Alastria.';
   logoUrl: string = 'assets/images/logo/logo.png';
   loginType: string; // key = key access; patron = patron access; fingerprint
   buttons: Array<any> = [
@@ -29,14 +30,43 @@ export class LoginPage {
       type: 'fingerprint',
       label: 'ACCEDE CON HUELLA'
     }
-  ]
+  ];
+  inputsKeyForm: Array<any> = [
+    {
+      label: 'Clave de acceso',
+      value: ''
+    },
+    {
+      label: 'Repita clave de acceso',
+      value: ''
+    }
+  ];
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
-    console.log('button ', this.buttons);
+  constructor(public navCtrl: NavController, public navParams: NavParams,
+    private platform: Platform) {
+    this.platform.registerBackButtonAction(() => {
+      if (this.loginType) {
+        this.loginType = null;
+      }
+    },1);
   }
 
   selectTypeLogin(type: string) {
-    console.log(type);
+    this.loginType = type;
+    switch (this.loginType) {
+      case this.buttons[0].type:
+        this.title = 'Crea un código con el que poder accede a tu AlastriaID';
+        break;
+      case this.buttons[1].type:
+        this.title = 'Accede para gestionar tu identidad de Alastria.';
+        break;
+      case this.buttons[2].type:
+        this.title = 'Accede para gestionar tu identidad de Alastria.';
+        break;
+      default:
+        this.title = 'Accede para gestionar tu identidad de Alastria.';
+        break;
+    }
   }
 
 }
