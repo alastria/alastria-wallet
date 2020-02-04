@@ -13,10 +13,19 @@
         </ion-row>
         <ion-row id="key-form" class="row2" *ngIf="loginType === buttons[0].type">
             <ion-col col-12>
-                <ion-item *ngFor="let input of inputsKeyForm; let i = index" class="input-key">
-                    <ion-label floating class="grey">{{input.label}}</ion-label>
-                    <ion-input class="menu" type="password" [(ngModel)]="input.value"></ion-input>
-                </ion-item>
+                <form [formGroup]="accessKeyForm">
+                    <ion-item *ngFor="let input of inputsKeyForm; let i = index" class="input-key">
+                        <ion-label floating class="grey">{{input.label}}</ion-label>
+                        <ion-input class="menu" type="password" class="form-control" [id]="input.key" [formControlName]="input.key">
+                        </ion-input>
+                        <div class="error" *ngIf="accessKeyForm?.controls[input.key].errors?.required && accessKeyForm?.controls[input.key].touched">
+                            Por favor introduce el valor requerido
+                        </div>
+                    </ion-item>
+                    <div class="error" *ngIf="accessKeyForm?.controls['repeatKey']?.errors?.mismatch">
+                        Las claves no coinciden
+                    </div>
+                </form>
             </ion-col>
         </ion-row>
         <ion-row class="row3" *ngIf="!loginType" id="button-select-login"> 
@@ -26,7 +35,7 @@
                     block class="btnLogin" 
                     (click)="selectTypeLogin(button.type)">
                     {{ button.label }}
-                    <ion-icon name="ios-arrow-forward"></ion-icon>
+                    <ion-icon class="arrow-icon" name="ios-arrow-forward"></ion-icon>
                 </button>
             </ion-col>
         </ion-row>
@@ -34,7 +43,7 @@
             <ion-col col-12 class="ion-align-self-end">
                 <button ion-button block class="btnLogin" (click)="createAccessKey()">
                     Aceptar
-                    <ion-icon name="ios-arrow-forward"></ion-icon>
+                    <ion-icon class="arrow-icon" name="ios-arrow-forward"></ion-icon>
                 </button>
             </ion-col>
         </ion-row>

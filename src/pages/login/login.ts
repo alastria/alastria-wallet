@@ -1,7 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { IonicPage, NavController, NavParams, Platform } from 'ionic-angular';
-import { TabsPage } from '../tabsPage/tabsPage';
 import { FingerprintAIO } from '@ionic-native/fingerprint-aio';
+
+
+// SERVICES
+import { SessionSecuredStorageService } from '../../services/securedStorage.service';
+import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 
 /**
  * Generated class for the LoginPage page.
@@ -16,6 +20,8 @@ import { FingerprintAIO } from '@ionic-native/fingerprint-aio';
   templateUrl: 'login.html',
 })
 export class LoginPage {
+  @Output() handleLogin = new EventEmitter<any>();
+  accessKeyForm: FormGroup;
   title: string = 'Accede para gestionar tu identidad de Alastria.';
   logoUrl: string = 'assets/images/logo/logo.png';
   loginType: string; // key = key access; patron = patron access; fingerprint
@@ -36,18 +42,20 @@ export class LoginPage {
   inputsKeyForm: Array<any> = [
     {
       label: 'Clave de acceso',
-      value: ''
+      key: 'key'
     },
     {
       label: 'Repita clave de acceso',
-      value: ''
+      key: 'repeatKey'
     }
   ];
 
   constructor(public navCtrl: NavController, 
               public navParams: NavParams,
               private platform: Platform,
-              private faio: FingerprintAIO,) {
+              private faio: FingerprintAIO,
+              private secureStorageService: SessionSecuredStorageService,
+              private fb: FormBuilder) {
     this.platform.registerBackButtonAction(() => {
       if (this.loginType) {
         this.loginType = null;
@@ -55,10 +63,14 @@ export class LoginPage {
     },1);
   }
 
+  ngOnInit() {
+  }
+
   selectTypeLogin(type: string) {
     this.loginType = type;
     switch (this.loginType) {
       case this.buttons[0].type:
+        this.generateForm();
         this.title = 'Crea un código con el que poder accede a tu AlastriaID';
         break;
       case this.buttons[1].type:
@@ -73,8 +85,45 @@ export class LoginPage {
     }
   }
 
-  createAccessKey() {
-    console.log(this.inputsKeyForm);
+  async createAccessKey() {
+    if (this.accessKeyForm && this.accessKeyForm.status === "VALID") {
+      await this.secureStorageService.createAccessKey(this.accessKeyForm.get('key').value);
+      this.handleLogin.emit(true);
+    }
+  }
+
+  /*
+  * Generate accessKeyForm with inputsForm
+  */
+  generateForm(): void {
+    const parametersForm: object = {};
+    this.inputsKeyForm.map((input: any) => {
+        parametersForm[input.key] = [{ value: null}, Validators.required];
+    });
+    this.accessKeyForm = this.fb.group({
+      key: ['', Validators.required],
+      repeatKey: ['', Validators.required],
+    },
+    {
+      validator : this.validateAreEqual.bind(this)
+    });
+  }
+
+   /*
+  * Check if passwords are equal
+  */
+  private validateAreEqual(): void {
+    if (this.accessKeyForm &&  this.accessKeyForm.get('repeatKey') && this.accessKeyForm.get('key')) {
+    }
+    if (this.accessKeyForm &&  this.accessKeyForm.get('repeatKey') && this.accessKeyForm.get('key')
+      && this.accessKeyForm.get('repeatKey').value !== '' && this.accessKeyForm.get('key').value !== ''
+      && this.accessKeyForm.get('repeatKey').value !== this.accessKeyForm.get('key').value) {
+        this.accessKeyForm.get('repeatKey').setErrors({mismatch: true});
+    } else {
+      if (this.accessKeyForm && this.accessKeyForm.get('repeatKey') && this.accessKeyForm.get('repeatKey').value !== '') {
+        this.accessKeyForm.get('repeatKey').setErrors(null);
+      }
+    }
   }
 
   regFinger() {
@@ -92,16 +141,16 @@ export class LoginPage {
             .then(result => {
               console.log('faio ', result);
               next('Ok!');
-              // this.isLoged = true;
-              this.navCtrl.setRoot(TabsPage);
+              this.handleLogin.emit(true);
             })
             .catch(err => {
-                console.log('err show ', err);
-                // this.isLoged = false;
+                console.log('err show ', err);              
+                this.handleLogin.emit(false);
                 reject('Error in fingerprint');
             });
         }).catch(err => {
             console.log('err finger ', err);
+            this.handleLogin.emit(false);
             if (err === "cordova_not_available") {
               reject('Cordova not aviable');
             }

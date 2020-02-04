@@ -90,7 +90,18 @@
   margin-left: 15px;
 }
 
-ion-icon {
+.error {
+  color: red;
+  text-align: left;
+  width: 90%;
+  margin-top: 5px;
+  position: relative;
+  float: right;
+
+}
+
+.arrow-icon {
   position: absolute;
   left: 85%;
 }
+

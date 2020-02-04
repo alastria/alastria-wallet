@@ -196,7 +196,7 @@ export class SessionSecuredStorageService {
 
     async isRegistered() {
         return new Promise(
-            (resolve, reject) => {
+            async (resolve, reject) =>  {
                 if (!this.securedStorageObject) {
                     this.securedStorage.create('sessionSecureStorage').then(
                         (securedStorageObject) => {
@@ -214,16 +214,21 @@ export class SessionSecuredStorageService {
                         }
                     )
                 } else {
-                    this.getUsername().then(
-                        (result) => {
-                            if (result) {
-                                resolve(result);
+                    const keys: any = await this.securedStorageObject.keys();
+                    if (keys.includes('accessKey')) {
+                        resolve(this.securedStorageObject.get('accessKey'));
+                    } else {
+                        this.getUsername().then(
+                            (result) => {
+                                if (result) {
+                                    resolve(result);
+                                }
+                                else {
+                                    reject('No esta registrado, hay que crear una cuenta nueva');
+                                }
                             }
-                            else {
-                                reject('No esta registrado, hay que crear una cuenta nueva');
-                            }
-                        }
-                    );
+                        );
+                    }
                 }
             }
         )
@@ -284,5 +289,9 @@ export class SessionSecuredStorageService {
                 );
             }
         )
+    }
+
+    createAccessKey(key): Promise<any> {
+        return this.securedStorageObject.set('accessKey', key);
     }
 }
