@@ -39,12 +39,14 @@ export class TransactionService {
             return this.sendSigned(subjectCredentialSigned);
         }).then(receipt => {
             console.log("RECEIPT:" + receipt);
+            return credentialHash;
         })
     }
 
     public addSubjectCredential(credential, didIsssuer, uri): Promise<any> {
+        this.identitySrv.setUserDID(credential[AppConfig.PAYLOAD][AppConfig.SUBJECT]);
         return this.createAndAddSubjectCredential(credential[AppConfig.HEADER][AppConfig.KID],didIsssuer,
-            credential[AppConfig.PAYLOAD][AppConfig.subject],credential[AppConfig.PAYLOAD][AppConfig.VC][AppConfig.context], 
+            credential[AppConfig.PAYLOAD][AppConfig.SUBJECT],credential[AppConfig.PAYLOAD][AppConfig.VC][AppConfig.context], 
             credential[AppConfig.PAYLOAD][AppConfig.VC][AppConfig.CREDENTIALS_SUBJECT],credential[AppConfig.PAYLOAD][AppConfig.EXP],
             credential[AppConfig.PAYLOAD][AppConfig.NBF],credential[AppConfig.PAYLOAD][AppConfig.JTI],uri);
     }

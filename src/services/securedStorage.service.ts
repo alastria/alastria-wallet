@@ -47,6 +47,16 @@ export class IdentitySecuredStorageService {
         return this.securedStorageObject.set(key, value);
     }
 
+    async setDID(DID: string) {
+        return this.set(AppConfig.DID, DID);
+    }
+
+    async getDID() {
+        let hasDID = await this.hasKey(AppConfig.DID);
+        let result = hasDID ? this.get(AppConfig.DID): null;
+        return result;
+    }
+
     async setJSON(key: string, value: any) {
         const jsonTmp = JSON.stringify(value);
         return this.securedStorageObject.set(key, jsonTmp);
