@@ -60,6 +60,12 @@ export class Index {
                 "title": "Estudios",
                 "description": "Añade tus datos académicos, tanto si ya has finalizado tus estudios como si aún estás en ello.",
                 "link": "page-contructions"
+            },
+            {
+                "backgroundImage": "assets/images/alastria/social.jpeg",
+                "title": "Bono Social",
+                "description": "Añade tus datos de titularidad de solicitudes de Bono Social u otros datos relativos.",
+                "link": "page-contructions"
             }
         ];
     }

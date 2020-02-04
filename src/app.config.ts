@@ -32,6 +32,11 @@ export class AppConfig {
     public static readonly CREDENTIAL_TYPE = "credentials";
     public static readonly PRESENTATION_TYPE = "presentations";
     public static readonly VERIFIED_JWT = "verifiedJWT";
+    public static readonly PSM_HASH = "PSMHash";
+    public static readonly DID = "DID";
+
+
+
 
     public static readonly SECRET = "your-256-bit-secret";
 
