@@ -141,6 +141,12 @@ export namespace AppConfig {
         Substantial = "Substantial",
         High = "High"
     }
+    export enum ActivityStatus {
+        Valid = "Valid",
+        AskIssuer = "AskIssuer",
+        Revoked = "Revoked",
+        DeletedBySubject = "DeletedBySubject"
+    }
 }
 
     

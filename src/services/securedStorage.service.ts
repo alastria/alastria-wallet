@@ -56,7 +56,7 @@ export class IdentitySecuredStorageService {
         return this.securedStorageObject.get(key);
     }
 
-    async clearStorage(){
+    async clearStorage() {
         return this.securedStorageObject.clear();
     }
 
@@ -65,7 +65,7 @@ export class IdentitySecuredStorageService {
         let keys = await this.getKeys();
         credentials = keys.filter(key => key.split('_')[0] === 'cred')
             .map(key => {
-                    return this.get(key);
+                return this.get(key);
             });
 
         return Promise.all(credentials);
@@ -80,6 +80,15 @@ export class IdentitySecuredStorageService {
         return this.securedStorageObject.remove(key);
     }
 
+    async removePresentation(jti: string) {
+        let keys = await this.getKeys();
+        let regex = new RegExp(jti);
+
+        let key = keys.filter(key => regex.test(key))
+
+        return this.removeJson(key[0]);
+    }
+
     async matchAndGetJSON(key: string) {
         let regex = new RegExp(key);
         let allKeys;
@@ -90,7 +99,7 @@ export class IdentitySecuredStorageService {
                 allKeys = result;
                 console.log("All storage keys" + allKeys);
                 console.log("All storage keys", allKeys);
-                
+
 
                 for (let i = 0; i < allKeys.length; i++) {
                     if (regex.test(allKeys[i])) {
@@ -100,11 +109,11 @@ export class IdentitySecuredStorageService {
                 let promises = [];
                 for (let z = 0; z < matchingKeys.length; z++) {
                     promises.push(this.securedStorageObject.get(matchingKeys[z])
-                    .then(currentKey => {
-                        let keyObj = JSON.parse(currentKey);
-                        keyObj[AppConfig.REMOVE_KEY] = matchingKeys[z];
-                        return JSON.stringify(keyObj);
-                    }))
+                        .then(currentKey => {
+                            let keyObj = JSON.parse(currentKey);
+                            keyObj[AppConfig.REMOVE_KEY] = matchingKeys[z];
+                            return JSON.stringify(keyObj);
+                        }))
                 }
                 return Promise.all(promises);
             });
