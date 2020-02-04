@@ -2,44 +2,50 @@
 <ion-nav class="main" id="nav" #content [root]="Login">
 </ion-nav>
 <ion-content padding class="mainContent">
-  <!-- <div class="child-content" [ngStyle]="{'justify-content': (loginType === buttons[0].type) ? 'start': 'space-between'}"> -->
-        <ion-grid>
-            <ion-row class="row1">
-                <ion-col col-12>
-                    <img [src]="logoUrl" id="logo">
-                    <br />
-                    <h3 *ngIf="loginType !== 'key'"> ¡Hola! </h3>
-                    <h3> {{ title }} </h3>
-                </ion-col>
-            </ion-row>
-            <ion-row id="key-form" class="row2" *ngIf="loginType === buttons[0].type">
-                <ion-col col-12>
-                    <ion-item *ngFor="let input of inputsKeyForm; let i = index" class="input-key">
-                        <ion-label floating class="grey">{{input.label}}</ion-label>
-                        <ion-input class="menu" type="password" [(ngModel)]="input.value"></ion-input>
-                    </ion-item>
-                </ion-col>
-            </ion-row>
-            <ion-row class="row3" *ngIf="!loginType" id="button-select-login"> 
-                <ion-col col-12>
-                    <button *ngFor="let button of buttons; let i = index"
-                        ion-button
-                        block class="btnLogin" 
-                        (click)="selectTypeLogin(button.type)">
-                        {{ button.label }}
-                        <ion-icon name="ios-arrow-forward"></ion-icon>
-                    </button>
-                </ion-col>
-            </ion-row>
-            <ion-row class="row3" *ngIf="loginType === buttons[0].type"> 
-                <ion-col col-12 class="ion-align-self-end">
-                    <button ion-button block class="btnLogin" (click)="selectTypeLogin(button.type)">
-                        Aceptar
-                        <ion-icon name="ios-arrow-forward"></ion-icon>
-                    </button>
-                </ion-col>
-            </ion-row>
-        </ion-grid>
-  <!-- </div> -->
+    <ion-grid>
+        <ion-row class="row1">
+            <ion-col col-12>
+                <img [src]="logoUrl" id="logo">
+                <br />
+                <h3 *ngIf="loginType !== 'key'"> ¡Hola! </h3>
+                <h3> {{ title }} </h3>
+            </ion-col>
+        </ion-row>
+        <ion-row id="key-form" class="row2" *ngIf="loginType === buttons[0].type">
+            <ion-col col-12>
+                <ion-item *ngFor="let input of inputsKeyForm; let i = index" class="input-key">
+                    <ion-label floating class="grey">{{input.label}}</ion-label>
+                    <ion-input class="menu" type="password" [(ngModel)]="input.value"></ion-input>
+                </ion-item>
+            </ion-col>
+        </ion-row>
+        <ion-row class="row3" *ngIf="!loginType" id="button-select-login"> 
+            <ion-col col-12>
+                <button *ngFor="let button of buttons; let i = index"
+                    ion-button
+                    block class="btnLogin" 
+                    (click)="selectTypeLogin(button.type)">
+                    {{ button.label }}
+                    <ion-icon name="ios-arrow-forward"></ion-icon>
+                </button>
+            </ion-col>
+        </ion-row>
+        <ion-row class="row3" *ngIf="loginType === buttons[0].type"> 
+            <ion-col col-12 class="ion-align-self-end">
+                <button ion-button block class="btnLogin" (click)="createAccessKey()">
+                    Aceptar
+                    <ion-icon name="ios-arrow-forward"></ion-icon>
+                </button>
+            </ion-col>
+        </ion-row>
+        <ion-row class="row3" *ngIf="loginType === buttons[2].type">
+            <ion-col col-12 class="ion-align-self-end">
+                <div class="fingerPrint" (click)="regFinger()">
+                    <img src="assets/images/logo/BiometricFinger.png" />
+                    Accede con tu huella
+                </div>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
 </ion-content>
  
