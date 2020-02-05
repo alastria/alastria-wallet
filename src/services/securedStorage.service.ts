@@ -290,12 +290,11 @@ export class SessionSecuredStorageService {
         return this.securedStorageObject.keys()
             .then(result => {
                 keyExists = result.some(k => { return k === key });
-                console.log(keyExists);
                 return keyExists;
             });
     }
 
-    setAccessKey(key: any): Promise<any> {
+    setAccessKey(key: string): Promise<any> {
         return this.securedStorageObject.set('accessKey', key);
     }
 
@@ -309,5 +308,10 @@ export class SessionSecuredStorageService {
 
     getLoginType() {
         return this.securedStorageObject.get('loginType');
+    }
+
+    async isAuthorized(key: string): Promise<boolean> {
+        return this.getAccessKey()
+            .then((keyStore) => (parseInt(keyStore) === parseInt(key)));
     }
 }
