@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, AfterContentInit, Output, EventEmitter } from '@angular/core';
 import { IonicPage, NavController, NavParams, Platform } from 'ionic-angular';
 import { FingerprintAIO } from '@ionic-native/fingerprint-aio';
 
@@ -61,9 +61,15 @@ export class LoginPage {
         this.loginType = null;
       }
     },1);
-  }
-
-  ngOnInit() {
+    this.platform.ready()
+      .then(async () => {
+        await this.secureStorageService.initSecureStorage();
+        const hashKey = await this.secureStorageService.hasKey('loginType');
+        if (hashKey) {
+          const loginTypeRes = await this.secureStorageService.getLoginType();
+          this.selectTypeLogin(loginTypeRes);
+        }
+      });
   }
 
   selectTypeLogin(type: string) {
@@ -87,7 +93,8 @@ export class LoginPage {
 
   async createAccessKey() {
     if (this.accessKeyForm && this.accessKeyForm.status === "VALID") {
-      await this.secureStorageService.createAccessKey(this.accessKeyForm.get('key').value);
+      await this.secureStorageService.setLoginType(this.loginType);
+      await this.secureStorageService.setAccessKey(this.accessKeyForm.get('key').value);
       this.handleLogin.emit(true);
     }
   }
@@ -140,8 +147,11 @@ export class LoginPage {
             })
             .then(result => {
               console.log('faio ', result);
-              next('Ok!');
-              this.handleLogin.emit(true);
+              this.secureStorageService.setLoginType(this.loginType)
+                .then(result => {
+                  next('Ok!');
+                  this.handleLogin.emit(true);
+                });
             })
             .catch(err => {
                 console.log('err show ', err);              

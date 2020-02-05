@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { SecureStorage, SecureStorageObject } from '@ionic-native/secure-storage';
 import { Platform } from 'ionic-angular';
 import { AppConfig } from '../app.config';
-import { PROP_METADATA } from '@angular/core/src/util/decorators';
 
 @Injectable()
 export class IdentitySecuredStorageService {
@@ -180,14 +179,10 @@ export class SessionSecuredStorageService {
         private securedStorage: SecureStorage,
         private platform: Platform
     ) {
-        this.platform.ready().then(() => {
-            this.initSecureStorage();
-            console.log("SessionSecureStorage ready");
-        });
     }
 
-    private initSecureStorage() {
-        this.securedStorage.create('sessionSecureStorage').then(
+    initSecureStorage() {
+        return this.securedStorage.create('sessionSecureStorage').then(
             (securedStorageObject) => {
                 this.securedStorageObject = securedStorageObject;
             }
@@ -291,7 +286,29 @@ export class SessionSecuredStorageService {
         )
     }
 
-    createAccessKey(key: any): Promise<any> {
+    async hasKey(key: string) {
+        let keyExists = false;
+        return this.securedStorageObject.keys()
+            .then(result => {
+                keyExists = result.some(k => { return k === key });
+                console.log(keyExists);
+                return keyExists;
+            });
+    }
+
+    setAccessKey(key: any): Promise<any> {
         return this.securedStorageObject.set('accessKey', key);
+    }
+
+    getAccessKey(): Promise<any> {
+        return this.securedStorageObject.get('accessKey');
+    }
+
+    setLoginType(type: string) {
+        return this.securedStorageObject.set('loginType', type);
+    }
+
+    getLoginType() {
+        return this.securedStorageObject.get('loginType');
     }
 }
