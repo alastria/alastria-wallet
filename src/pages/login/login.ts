@@ -56,9 +56,12 @@ export class LoginPage {
               private faio: FingerprintAIO,
               private secureStorageService: SessionSecuredStorageService,
               private fb: FormBuilder) {
-    this.platform.registerBackButtonAction(() => {
+    this.platform.registerBackButtonAction(async () => {
       if (this.loginType) {
-        this.loginType = null;
+        const hashKey = await this.secureStorageService.hasKey('loginType');
+        if (!hashKey) {
+          this.loginType = null;
+        }
       }
     },1);
     this.platform.ready()

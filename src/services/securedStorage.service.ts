@@ -176,8 +176,7 @@ export class SessionSecuredStorageService {
     promiseState: Promise<any>;
 
     constructor(
-        private securedStorage: SecureStorage,
-        private platform: Platform
+        private securedStorage: SecureStorage
     ) {
     }
 
