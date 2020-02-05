@@ -64,7 +64,6 @@
     "keypair": "1.0.1",
     "ngx-clipboard": "7.0.4",
     "ngx-qrcode2": "0.0.9",
-    "patternlock": "^2.0.2",
     "phonegap-plugin-barcodescanner": "8.0.1",
     "promise-polyfill": "6.0.2",
     "rxjs": "5.5.6",

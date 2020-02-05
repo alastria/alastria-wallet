@@ -27,12 +27,13 @@ export class HomePage implements OnInit {
 
     async ngOnInit(): Promise<void> {
         // Is session registered
-        this.setLoginParams();
+        // this.setLoginParams();
         return this.sessionSecuredStorageService.isRegistered().then(
             (result) => {
+                console.log('result ', result);
                 this.isRegistered = true;
-                this.login.data.isRegistered = true;
-                this.login.data.userRegister = result;
+                // this.login.data.isRegistered = true;
+                // this.login.data.userRegister = result;
             }
         ).catch(
             (error) => {
@@ -185,5 +186,13 @@ export class HomePage implements OnInit {
             }
         )
 
+    }
+
+    handleLogin(isLogged: boolean): void {
+        console.log({isLogged});
+        this.isLoged = isLogged;
+        if (this.isLoged) {
+            this.navCtrl.setRoot(TabsPage);
+        }
     }
 }

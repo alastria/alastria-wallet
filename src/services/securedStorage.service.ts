@@ -310,7 +310,7 @@ export class SessionSecuredStorageService {
         )
     }
 
-    createAccessKey(key): Promise<any> {
+    createAccessKey(key: any): Promise<any> {
         return this.securedStorageObject.set('accessKey', key);
     }
 }
