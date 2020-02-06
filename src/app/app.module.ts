@@ -34,6 +34,8 @@ import { Web3Service } from '../services/web3-service';
 import { IdentityService } from '../services/identity-service';
 import { TransactionService } from '../services/transaction-service';
 import { LoginPage } from '../pages/login/login';
+import { EntitiesPage } from '../pages/entities/entities';
+import { EntitiesPageModule } from '../pages/entities/entities.module';
 
 @NgModule({
     declarations: [
@@ -65,7 +67,8 @@ import { LoginPage } from '../pages/login/login';
         UserInfoHeaderModule,
         IdentityDataListModule,
         UserInfoHeaderModule,
-        HttpClientModule
+        HttpClientModule,
+        EntitiesPageModule
     ],
     bootstrap: [IonicApp],
     entryComponents: [
@@ -79,7 +82,8 @@ import { LoginPage } from '../pages/login/login';
         ConfirmAccess,
         WalkthroughPage,
         ConfirmLogin,
-        SelectIdentity
+        SelectIdentity,
+        EntitiesPage
     ],
     providers: [
         StatusBar,
