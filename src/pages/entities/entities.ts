@@ -24,11 +24,16 @@ export class EntitiesPage {
     this.getEntities();
   }
 
-  async getEntities() {
+  async getEntities(searchItem?: string) {
     try {
-      this.entities = await this.entityService.getEntities();
+      this.entities = await this.entityService.getEntities(searchItem);
     } catch (error) {
       console.error(error);
     }
+  }
+
+  onSearch(event: any) {
+    const searchTerm = event.target.value;
+    this.getEntities(searchTerm);
   }
 }

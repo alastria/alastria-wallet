@@ -14,9 +14,15 @@ export class EntityService {
   }
 
   async getEntities(filter?: string): Promise<any> {
-    const entities = await this.http.get('../assets/mocks/entities.json').toPromise();
-    console.log('COMPONENT --> ', entities);
-
+    let entities: any = await this.http.get('../assets/mocks/entities.json').toPromise();
+    if (filter) {
+      entities = entities.filter((entity: any) => {
+        if (entity.description.toLowerCase().indexOf(filter.toLowerCase()) !== -1 ||
+            entity.title.toLowerCase().indexOf(filter.toLowerCase()) !== -1) {
+          return entity;
+        }
+      });
+    }
     return entities;
   }
 

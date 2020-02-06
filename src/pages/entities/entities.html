@@ -1,8 +1,11 @@
 <ion-content padding>
   <ion-header>
-    <ion-title>
-      <p align="center">Entidades validadoras</p>
-    </ion-title>
+    <div class="header-title">
+      <ion-title>
+        <p align="center">Entidades validadoras</p>
+      </ion-title>
+    </div>
+    <ion-searchbar [(ngModel)]="searchTerm" (ionInput)="onSearch($event)"></ion-searchbar>
   </ion-header>
 
   <ion-content #pageContent fullscreen>
