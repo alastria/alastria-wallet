@@ -1,0 +1,26 @@
+[
+    {
+      "title": "Banco Santander",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ...",
+      "entityUrl": "http://bancosantander.com",
+      "imgUrl": "../../assets/svg/santander-logo.svg"
+    },
+    {
+      "title": "BBVA",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ...",
+      "entityUrl": "http://bbva.com",
+      "imgUrl": "../../assets/svg/bbva-logo.svg"
+    },
+    {
+      "title": "Banco Sabadell",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ...",
+      "entityUrl": "http://bancosabadell.com",
+      "imgUrl": "../../assets/svg/sabadell-logo.svg"
+    },
+    {
+      "title": "La Caixa",
+      "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ...",
+      "entityUrl": "http://lacaixa.com",
+      "imgUrl": "../../assets/svg/caixa-logo.svg"
+    }
+]
