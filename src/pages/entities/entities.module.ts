@@ -10,6 +10,7 @@ import { TabsModule } from '../../components/tabs/tabs.module';
 
 // SERVICES
 import { EntityService } from '../../services/entity.service';
+import { CameraModule } from '../tabsPage/camera/camera.module';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { EntityService } from '../../services/entity.service';
   ],
   imports: [
     IonicPageModule.forChild(EntitiesPage),
-    TabsModule
+    TabsModule,
+    CameraModule
   ],
   providers: [
     EntityService

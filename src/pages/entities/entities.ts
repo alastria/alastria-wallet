@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { Item } from '../../models/item.model';
 import { EntityService } from '../../services/entity.service';
+import { Camera } from '../tabsPage/camera/camera';
 
 /**
  * Generated class for the EntitiesPage page.
@@ -35,5 +36,9 @@ export class EntitiesPage {
   onSearch(event: any) {
     const searchTerm = event.target.value;
     this.getEntities(searchTerm);
+  }
+
+  readQr(){
+    this.navCtrl.setRoot(Camera);
   }
 }
