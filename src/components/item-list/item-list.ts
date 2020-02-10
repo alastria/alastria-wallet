@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Item } from '../../models/item.model';
 
 /**
@@ -14,12 +14,13 @@ import { Item } from '../../models/item.model';
 export class ItemListComponent {
 
   @Input() items: Array<Item>;
+  @Output() handleSelectItem = new EventEmitter<any>();
 
   constructor() {
   }
 
   selectItem(item: Item) {
-    console.log('Item ', item);
+    this.handleSelectItem.emit(item);
   }
 
 }

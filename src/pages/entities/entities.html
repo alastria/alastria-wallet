@@ -9,7 +9,7 @@
   </ion-header>
 
   <ion-content #pageContent fullscreen>
-    <item-list [items]="entities">
+    <item-list [items]="entities" (handleSelectItem)="openBlank($event)">
     </item-list>
   </ion-content>
 

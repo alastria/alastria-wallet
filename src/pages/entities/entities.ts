@@ -1,7 +1,16 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { DomSanitizer } from '@angular/platform-browser';
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+
+
+// Models
 import { Item } from '../../models/item.model';
+
+//Services
 import { EntityService } from '../../services/entity.service';
+
+// Pages
 import { Camera } from '../tabsPage/camera/camera';
 
 /**
@@ -18,10 +27,13 @@ import { Camera } from '../tabsPage/camera/camera';
 })
 export class EntitiesPage {
   entities: Array<Item>;
+  url: any;
 
   constructor(public navCtrl: NavController,
               public navParams: NavParams,
-              public entityService: EntityService) {
+              public entityService: EntityService,
+              private sanitize: DomSanitizer,
+              private inAppBrowser: InAppBrowser) {
     this.getEntities();
   }
 
@@ -33,6 +45,11 @@ export class EntitiesPage {
     }
   }
 
+  urlpaste(){
+    this.url = 'https://34.244.47.233';
+    return this.sanitize.bypassSecurityTrustResourceUrl(this.url);
+  }
+
   onSearch(event: any) {
     const searchTerm = event.target.value;
     this.getEntities(searchTerm);
@@ -40,5 +57,16 @@ export class EntitiesPage {
 
   readQr(){
     this.navCtrl.setRoot(Camera);
+  }
+
+  openBlank(item: Item) {
+    if (item.entityUrl) {
+      const externalWeb = this.inAppBrowser.create(item.entityUrl, '_blank', 'location=yes');
+      externalWeb.on('message').subscribe(event => {
+        console.log("message -->", event);
+      }, err => {
+          console.log("InAppBrowser loadstart Event Error: " + err);
+      });
+    }
   }
 }

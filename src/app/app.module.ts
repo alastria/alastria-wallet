@@ -36,6 +36,7 @@ import { TransactionService } from '../services/transaction-service';
 import { LoginPage } from '../pages/login/login';
 import { EntitiesPage } from '../pages/entities/entities';
 import { EntitiesPageModule } from '../pages/entities/entities.module';
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 
 @NgModule({
     declarations: [
@@ -100,7 +101,8 @@ import { EntitiesPageModule } from '../pages/entities/entities.module';
         Activities,
         { provide: ErrorHandler, useClass: IonicErrorHandler },
         ToastService,
-        TokenService
+        TokenService,
+        InAppBrowser
     ]
 })
 export class AppModule { }

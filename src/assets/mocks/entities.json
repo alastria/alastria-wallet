@@ -2,13 +2,13 @@
     {
       "title": "Alastria open access",
       "description": "Punto de acceso al nodo de identidad de alastria.",
-      "entityUrl": "34.244.47.233/vinculate",
+      "entityUrl": "http://localhost:4200/vinculate",
       "imgUrl": "../../assets/svg/alastria-icon.svg"
     },
     {
       "title": "Entidades",
       "description": "En esta lista iran el resto de identidades.",
-      "entityUrl": "https://www.entidad.com",
+      "entityUrl": null,
       "imgUrl": "../../assets/images/logo/enterprise.png"
     }
 ]
