@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { DomSanitizer } from '@angular/platform-browser';
-import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { InAppBrowser } from '@ionic-native/in-app-browser';
 
 
 // Models
@@ -61,12 +61,17 @@ export class EntitiesPage {
 
   openBlank(item: Item) {
     if (item.entityUrl) {
-      const externalWeb = this.inAppBrowser.create(item.entityUrl, '_blank', 'location=yes');
-      externalWeb.on('message').subscribe(event => {
-        console.log("message -->", event);
-      }, err => {
-          console.log("InAppBrowser loadstart Event Error: " + err);
-      });
+      const externalWeb = this.inAppBrowser.create(item.entityUrl, '_blank', 'location=no');
+
+      window.addEventListener('message', event => {
+        if (event.origin.startsWith('http://localhost:4200')) { 
+            console.log(event.data); 
+            window.removeEventListener('message', function(e){}, false);
+            externalWeb.close();
+        } else {
+            return; 
+        } 
+    }); 
     }
   }
 }

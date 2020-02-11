@@ -36,7 +36,7 @@ import { TransactionService } from '../services/transaction-service';
 import { LoginPage } from '../pages/login/login';
 import { EntitiesPage } from '../pages/entities/entities';
 import { EntitiesPageModule } from '../pages/entities/entities.module';
-import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
+import { InAppBrowser } from '@ionic-native/in-app-browser';
 
 @NgModule({
     declarations: [
