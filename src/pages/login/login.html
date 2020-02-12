@@ -16,7 +16,7 @@
                 <form [formGroup]="accessKeyForm">
                     <ion-item *ngFor="let input of inputsKeyForm; let i = index" class="input-key">
                         <ion-label floating class="grey">{{input.label}}</ion-label>
-                        <ion-input class="menu" type="password" class="form-control" [id]="input.key" [formControlName]="input.key">
+                        <ion-input class="menu form-control" type="number" style="-webkit-text-security:disc" [id]="input.key" [formControlName]="input.key">
                         </ion-input>
                         <div class="error" *ngIf="accessKeyForm?.controls[input.key].errors?.required && accessKeyForm?.controls[input.key].touched">
                             Por favor introduce el valor requerido
@@ -24,6 +24,9 @@
                     </ion-item>
                     <div class="error" *ngIf="accessKeyForm?.controls['repeatKey']?.errors?.mismatch">
                         Las claves no coinciden
+                    </div>
+                    <div class="error" *ngIf="accessKeyForm?.controls['key']?.errors?.incorrect">
+                        Clave incorrecta
                     </div>
                 </form>
             </ion-col>
@@ -47,11 +50,13 @@
                 </button>
             </ion-col>
         </ion-row>
-        <ion-row class="row3" *ngIf="loginType === buttons[2].type">
+        <ion-row class="row3" *ngIf="loginType === buttons[1].type">
             <ion-col col-12 class="ion-align-self-end">
                 <div class="fingerPrint" (click)="regFinger()">
                     <img src="assets/images/logo/BiometricFinger.png" />
-                    Accede con tu huella
+                    <p>
+                        Accede con tu huella
+                    </p>
                 </div>
             </ion-col>
         </ion-row>

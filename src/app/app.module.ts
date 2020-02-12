@@ -35,6 +35,9 @@ import { IdentityService } from '../services/identity-service';
 import { TransactionService } from '../services/transaction-service';
 import { LoginPage } from '../pages/login/login';
 import { MessageManagerService } from '../services/messageManager-service';
+import { EntitiesPage } from '../pages/entities/entities';
+import { EntitiesPageModule } from '../pages/entities/entities.module';
+import { InAppBrowser } from '@ionic-native/in-app-browser';
 
 @NgModule({
     declarations: [
@@ -66,7 +69,8 @@ import { MessageManagerService } from '../services/messageManager-service';
         UserInfoHeaderModule,
         IdentityDataListModule,
         UserInfoHeaderModule,
-        HttpClientModule
+        HttpClientModule,
+        EntitiesPageModule
     ],
     bootstrap: [IonicApp],
     entryComponents: [
@@ -80,7 +84,8 @@ import { MessageManagerService } from '../services/messageManager-service';
         ConfirmAccess,
         WalkthroughPage,
         ConfirmLogin,
-        SelectIdentity
+        SelectIdentity,
+        EntitiesPage
     ],
     providers: [
         StatusBar,
@@ -98,7 +103,8 @@ import { MessageManagerService } from '../services/messageManager-service';
         Activities,
         { provide: ErrorHandler, useClass: IonicErrorHandler },
         ToastService,
-        TokenService
+        TokenService,
+        InAppBrowser
     ]
 })
 export class AppModule { }

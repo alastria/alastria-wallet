@@ -36,85 +36,62 @@
     line-height: normal;
     font-size: 14px;
     color: #325B8E;
-  }
-  .login-menu button div {
-    width: 45px;
-  }
-  .main {
+}
+.main {
     background: linear-gradient(153.34deg, rgba(50, 91, 142, 0.8) 7.11%, rgba(0, 178, 188, 0.8) 78.61%), url('../assets/images/background/background.png');
     background-repeat: no-repeat;
     background-size: cover;
     mix-blend-mode: normal;
     filter: blur(1px);
-  }
-  .toolbar img {
+}
+.toolbar img {
     max-height: 37px;
-  }
-  .toolbar-background {
+}
+.toolbar-background {
     background-color: rgba(0,0,0,0);
     color: #FFFFFF;
-  }
-  .mainContent {
+}
+.mainContent {
     background-color: rgba(0,0,0,0);
     color: #FFFFFF;
-  }
-  .menu {
+}
+.menu {
     color: #FFFFFF;
-  }
-  .grey,
-  .item-inner .input-wrapper .grey {
+}
+.grey,
+.item-inner .input-wrapper .grey {
     color :#cccccc;
-  }
-  .grey input::placeholder {
+}
+.grey input::placeholder {
     color :#cccccc;
-  }
-  .header-ios {
+}
+.header-ios {
     padding-top:24px;
-  }
-  .label {
+}
+.label {
     font-family: Roboto;
     font-style: normal;
     font-weight: normal;
     line-height: normal;
     font-size: 18px;
     color: #325B8E;
-  }
-  .login-menu {
-    margin-top: 86px;
-    margin-right: 15px;
-  }
-  .logo {
+}
+.logo {
     padding-left: 10px;
-  }
-  .btnLogin {
-    border-radius: 30px;
-    background-color: white;
-    color: #3A6D96;
-  }
-  .btnLogin:before {
-    content: '>';
-    position: absolute;
-    left: 90%;
-    top: 10px;
-  }
-  .iconLogin {
+}
+.iconLogin {
     height: 27px;
-  }
-  .fingerPrint {
+}
+.nameUser {
     font-size: 18px;
     color: #FFFFFF;
-  }
-  .nameUser {
-      font-size: 18px;
-      color: #FFFFFF;
-      text-align: center;
-      padding-bottom: 10%;
-  }
-  .list-md .item-input:last-child {
+    text-align: center;
+    padding-bottom: 10%;
+}
+.list-md .item-input:last-child {
     border-bottom: 0;
-  }
-  .col {
-      width: inherit;
-      min-height: inherit;
-  }
-  
+}
+.col {
+    width: inherit;
+    min-height: inherit;
+}

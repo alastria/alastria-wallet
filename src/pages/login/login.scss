@@ -80,15 +80,19 @@ login-page {
   .fingerPrint {
     font-size: 18px;
     color: #FFFFFF;
-    display: flex;
-    align-items: center;
-    width: 90%;
     margin: auto;
+    width: 235px;
   }
   
   .fingerPrint > img {
     margin-right: 15px;
     margin-left: 15px;
+    display: inherit;
+  }
+
+  .fingerPrint > img, .fingerPrint > p {
+    position: relative;
+    float: left;
   }
   
   .error {
@@ -106,4 +110,3 @@ login-page {
     left: 85%;
   }  
 }
-

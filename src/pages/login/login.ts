@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, AfterContentInit, Output, EventEmitter } from '@angular/core';
 import { IonicPage, NavController, NavParams, Platform } from 'ionic-angular';
 import { FingerprintAIO } from '@ionic-native/fingerprint-aio';
 
@@ -20,7 +20,7 @@ import { Validators, FormBuilder, FormGroup } from '@angular/forms';
   templateUrl: 'login.html',
 })
 export class LoginPage {
-  @Output() handleLogin = new EventEmitter<any>();
+  @Output() handleLogin = new EventEmitter<boolean>();
   accessKeyForm: FormGroup;
   title: string = 'Accede para gestionar tu identidad de Alastria.';
   logoUrl: string = 'assets/images/logo/logo.png';
@@ -29,10 +29,6 @@ export class LoginPage {
     {
       type: 'key',
       label: 'CREA CLAVE DE ACCESO '
-    },
-    {
-      type: 'patron',
-      label: 'ACCEDE CON PATRON'
     },
     {
       type: 'fingerprint',
@@ -49,6 +45,7 @@ export class LoginPage {
       key: 'repeatKey'
     }
   ];
+  hashKey: boolean;
 
   constructor(public navCtrl: NavController, 
               public navParams: NavParams,
@@ -56,14 +53,22 @@ export class LoginPage {
               private faio: FingerprintAIO,
               private secureStorageService: SessionSecuredStorageService,
               private fb: FormBuilder) {
-    this.platform.registerBackButtonAction(() => {
+    this.platform.registerBackButtonAction(async () => {
       if (this.loginType) {
-        this.loginType = null;
+        if (!this.hashKey) {
+          this.loginType = null;
+        }
       }
     },1);
-  }
-
-  ngOnInit() {
+    this.platform.ready()
+      .then(async () => {
+        await this.secureStorageService.initSecureStorage();
+        this.hashKey = await this.secureStorageService.hasKey('loginType');
+        if (this.hashKey) {
+          const loginTypeRes = await this.secureStorageService.getLoginType();
+          this.selectTypeLogin(loginTypeRes);
+        }
+      });
   }
 
   selectTypeLogin(type: string) {
@@ -76,9 +81,6 @@ export class LoginPage {
       case this.buttons[1].type:
         this.title = 'Accede para gestionar tu identidad de Alastria.';
         break;
-      case this.buttons[2].type:
-        this.title = 'Accede para gestionar tu identidad de Alastria.';
-        break;
       default:
         this.title = 'Accede para gestionar tu identidad de Alastria.';
         break;
@@ -87,8 +89,16 @@ export class LoginPage {
 
   async createAccessKey() {
     if (this.accessKeyForm && this.accessKeyForm.status === "VALID") {
-      await this.secureStorageService.createAccessKey(this.accessKeyForm.get('key').value);
-      this.handleLogin.emit(true);
+      await this.secureStorageService.setLoginType(this.loginType);
+      const hasKey = await this.secureStorageService.hasKey('accessKey');
+      if (!hasKey) {
+        await this.secureStorageService.setAccessKey(this.accessKeyForm.get('key').value);
+      }
+      const isAuthorized = await this.secureStorageService.isAuthorized(this.accessKeyForm.get('key').value);
+      if (!isAuthorized) {
+        this.accessKeyForm.get('key').setErrors({incorrect: true});
+      }
+      this.handleLogin.emit(isAuthorized);
     }
   }
 
@@ -96,17 +106,20 @@ export class LoginPage {
   * Generate accessKeyForm with inputsForm
   */
   generateForm(): void {
-    const parametersForm: object = {};
-    this.inputsKeyForm.map((input: any) => {
-        parametersForm[input.key] = [{ value: null}, Validators.required];
-    });
-    this.accessKeyForm = this.fb.group({
-      key: ['', Validators.required],
-      repeatKey: ['', Validators.required],
-    },
-    {
-      validator : this.validateAreEqual.bind(this)
-    });
+    if (this.hashKey) {
+      this.inputsKeyForm.splice(1,1);
+      this.accessKeyForm = this.fb.group({
+        key: [null, Validators.required]
+      });
+    } else {
+      this.accessKeyForm = this.fb.group({
+        key: [null, Validators.required],
+        repeatKey: [null, Validators.required],
+      },
+      {
+        validator : this.validateAreEqual.bind(this)
+      });
+    }
   }
 
    /*
@@ -140,8 +153,10 @@ export class LoginPage {
             })
             .then(result => {
               console.log('faio ', result);
-              next('Ok!');
-              this.handleLogin.emit(true);
+              this.secureStorageService.setLoginType(this.loginType)
+                .then(result => {
+                  this.handleLogin.emit(true);
+                });
             })
             .catch(err => {
                 console.log('err show ', err);              
