@@ -27,7 +27,7 @@ export class LoadingService {
     }
 
     public hide() {
-        this.loading.dismiss();
+        this.loadingModal.dismiss();
     }
 
     public showModal() {

@@ -34,6 +34,7 @@ import { Web3Service } from '../services/web3-service';
 import { IdentityService } from '../services/identity-service';
 import { TransactionService } from '../services/transaction-service';
 import { LoginPage } from '../pages/login/login';
+import { MessageManagerService } from '../services/messageManager-service';
 
 @NgModule({
     declarations: [
@@ -91,6 +92,7 @@ import { LoginPage } from '../pages/login/login';
         Web3Service,
         IdentityService,
         SessionSecuredStorageService,
+        MessageManagerService,
         IdentitySecuredStorageService,
         TransactionService,
         Activities,

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SecureStorage, SecureStorageObject } from '@ionic-native/secure-storage';
-import { Platform } from 'ionic-angular';
+import { Platform, App } from 'ionic-angular';
 import { AppConfig } from '../app.config';
 import { PROP_METADATA } from '@angular/core/src/util/decorators';
 
@@ -55,6 +55,27 @@ export class IdentitySecuredStorageService {
         let hasDID = await this.hasKey(AppConfig.DID);
         let result = hasDID ? this.get(AppConfig.DID): null;
         return result;
+    }
+
+    async getIdentityData() {
+        let identity = {};
+        return this.get(AppConfig.USER_DID)
+        .then(DID => {
+            identity[AppConfig.USER_DID] = DID;
+            return this.get(AppConfig.USER_PKU);
+        })
+        .then(PKU => {
+            identity[AppConfig.USER_PKU] = PKU;
+            return this.get(AppConfig.USER_PRIV_KEY);
+        })
+        .then(privKey => {
+            identity[AppConfig.USER_PRIV_KEY] = privKey;
+            return this.get(AppConfig.PROXY_ADDRESS);
+        })
+        .then(proxy => {
+            identity[AppConfig.PROXY_ADDRESS] = proxy;
+            return identity;
+        });
     }
 
     async setJSON(key: string, value: any) {
