@@ -7,7 +7,7 @@
   "scripts": {
     "start:browser": "ionic cordova plugin add cordova-plugin-secure-storage && ionic cordova run browser --livereload-url",
     "start:android": "ionic cordova run android",
-    "start:android:device": "ionic cordova run android --device",
+    "start:android:device": "ionic cordova run android --device--debug",
     "clean": "ionic-app-scripts clean",
     "build": "ionic-app-scripts build",
     "ionic:build": "ionic-app-scripts build",
@@ -56,6 +56,8 @@
     "cordova-plugin-vibration": "2.1.6",
     "cordova-plugin-whitelist": "1.3.3",
     "cordova-plugin-x-toast": "2.7.2",
+    "eth-crypto": "^1.5.2",
+    "ethereumjs-wallet": "0.6.3",
     "fstream": "1.0.12",
     "ion-affix": "1.1.0",
     "ionic-angular": "3.9.2",

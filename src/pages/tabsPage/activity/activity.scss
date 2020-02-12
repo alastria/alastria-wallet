@@ -16,13 +16,13 @@ ion-segment-button > ion-label.label {
     font-size: 18px !important;
 }
 
-.datetime {
+.activityStatus {
     position: relative;
     float: right;
     color: #8e8e93;
 }
 
-.datetime > ion-icon {
+.activityStatus > ion-icon {
     font-size: 18px !important;
 }
 
@@ -40,3 +40,26 @@ ion-segment-button > ion-label.label {
     margin-top: 50%;
     font-size: xx-large;
 }
+
+.datetime {
+    float: right;
+    margin-right: 25px;
+    color: #8e8e93;
+}
+
+.status-askissuer {
+    color:darkorange;
+}
+
+.status-valid {
+    color: dodgerblue;
+}
+
+.status-revoked {
+    color: blueviolet;
+}
+
+.status-deleted-by-subject {
+    color: grey;
+}
+

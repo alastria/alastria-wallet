@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SecureStorage, SecureStorageObject } from '@ionic-native/secure-storage';
-import { Platform } from 'ionic-angular';
+import { Platform, App } from 'ionic-angular';
 import { AppConfig } from '../app.config';
 
 @Injectable()
@@ -46,6 +46,37 @@ export class IdentitySecuredStorageService {
         return this.securedStorageObject.set(key, value);
     }
 
+    async setDID(DID: string) {
+        return this.set(AppConfig.DID, DID);
+    }
+
+    async getDID() {
+        let hasDID = await this.hasKey(AppConfig.DID);
+        let result = hasDID ? this.get(AppConfig.DID): null;
+        return result;
+    }
+
+    async getIdentityData() {
+        let identity = {};
+        return this.get(AppConfig.USER_DID)
+        .then(DID => {
+            identity[AppConfig.USER_DID] = DID;
+            return this.get(AppConfig.USER_PKU);
+        })
+        .then(PKU => {
+            identity[AppConfig.USER_PKU] = PKU;
+            return this.get(AppConfig.USER_PRIV_KEY);
+        })
+        .then(privKey => {
+            identity[AppConfig.USER_PRIV_KEY] = privKey;
+            return this.get(AppConfig.PROXY_ADDRESS);
+        })
+        .then(proxy => {
+            identity[AppConfig.PROXY_ADDRESS] = proxy;
+            return identity;
+        });
+    }
+
     async setJSON(key: string, value: any) {
         const jsonTmp = JSON.stringify(value);
         return this.securedStorageObject.set(key, jsonTmp);
@@ -55,7 +86,7 @@ export class IdentitySecuredStorageService {
         return this.securedStorageObject.get(key);
     }
 
-    async clearStorage(){
+    async clearStorage() {
         return this.securedStorageObject.clear();
     }
 
@@ -64,7 +95,7 @@ export class IdentitySecuredStorageService {
         let keys = await this.getKeys();
         credentials = keys.filter(key => key.split('_')[0] === 'cred')
             .map(key => {
-                    return this.get(key);
+                return this.get(key);
             });
 
         return Promise.all(credentials);
@@ -79,6 +110,15 @@ export class IdentitySecuredStorageService {
         return this.securedStorageObject.remove(key);
     }
 
+    async removePresentation(jti: string) {
+        let keys = await this.getKeys();
+        let regex = new RegExp(jti);
+
+        let key = keys.filter(key => regex.test(key))
+
+        return this.removeJson(key[0]);
+    }
+
     async matchAndGetJSON(key: string) {
         let regex = new RegExp(key);
         let allKeys;
@@ -89,7 +129,7 @@ export class IdentitySecuredStorageService {
                 allKeys = result;
                 console.log("All storage keys" + allKeys);
                 console.log("All storage keys", allKeys);
-                
+
 
                 for (let i = 0; i < allKeys.length; i++) {
                     if (regex.test(allKeys[i])) {
@@ -99,11 +139,11 @@ export class IdentitySecuredStorageService {
                 let promises = [];
                 for (let z = 0; z < matchingKeys.length; z++) {
                     promises.push(this.securedStorageObject.get(matchingKeys[z])
-                    .then(currentKey => {
-                        let keyObj = JSON.parse(currentKey);
-                        keyObj[AppConfig.REMOVE_KEY] = matchingKeys[z];
-                        return JSON.stringify(keyObj);
-                    }))
+                        .then(currentKey => {
+                            let keyObj = JSON.parse(currentKey);
+                            keyObj[AppConfig.REMOVE_KEY] = matchingKeys[z];
+                            return JSON.stringify(keyObj);
+                        }))
                 }
                 return Promise.all(promises);
             });

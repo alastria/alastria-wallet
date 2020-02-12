@@ -18,6 +18,7 @@ export class ConfirmAccess {
     public dataNumberAccess: number;
     public isPresentationRequest: boolean;
     public issName: string;
+    public entitiyName: string;
     public issDID: string;
 
     private identitySelected: Array<number> = [];
@@ -37,7 +38,8 @@ export class ConfirmAccess {
         private transactionSrv: TransactionService
     ) {
         this.dataNumberAccess = this.navParams.get(AppConfig.DATA_COUNT);
-        this.issName = AppConfig.SERVICE_PROVIDER;
+        this.issName = "Empresa X";
+        this.entitiyName = "Entidad publica Ejemplo";
         this.issDID = this.navParams.get(AppConfig.ISSUER);
         this.credentials = this.navParams.get(AppConfig.CREDENTIALS);
         this.isPresentationRequest = this.navParams.get(AppConfig.IS_PRESENTATION_REQ);
@@ -174,7 +176,7 @@ export class ConfirmAccess {
                 currentCredentialValue = result[credentialKeys[1]];
                 let ret;
                 if (this.credentials[index][credentialKeys[1]] !== currentCredentialValue) {
-                    ret = this.securedStrg.setJSON(currentCredentialKey + "_" + Math.random(), finalCredential);
+                    ret = this.transactionSrv.addSubjectCredential(this.verifiedJWT[index], this.issDID, "www.google.com");
                 }else{
                     ret = Promise.resolve(false);
                 }
@@ -184,7 +186,7 @@ export class ConfirmAccess {
                 console.log(result)
                 let ret;
                 if(result){
-                    ret = this.transactionSrv.addSubjectCredential(this.verifiedJWT[index], this.issDID, "www.google.com");
+                    ret = this.securedStrg.setJSON(currentCredentialKey + "_" + Math.random(), finalCredential);
                 }else{
                     ret = false;
                 }
@@ -193,9 +195,10 @@ export class ConfirmAccess {
     }
 
     private noKeyPromise(currentCredentialKey: string, index: number, finalCredential: any): Promise<any> {
-        return this.securedStrg.setJSON(currentCredentialKey, finalCredential)
+        return this.transactionSrv.addSubjectCredential(this.verifiedJWT[index], this.verifiedJWT[index][AppConfig.PAYLOAD][AppConfig.ISSUER], "www.google.com")
             .then(result => {
-                return this.transactionSrv.addSubjectCredential(this.verifiedJWT[index], this.verifiedJWT[index][AppConfig.PAYLOAD][AppConfig.ISSUER], "www.google.com");
+                finalCredential[AppConfig.PSM_HASH] = result;
+                return this.securedStrg.setJSON(currentCredentialKey, finalCredential);
             });
     }
 

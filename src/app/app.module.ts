@@ -34,6 +34,7 @@ import { Web3Service } from '../services/web3-service';
 import { IdentityService } from '../services/identity-service';
 import { TransactionService } from '../services/transaction-service';
 import { LoginPage } from '../pages/login/login';
+import { MessageManagerService } from '../services/messageManager-service';
 import { EntitiesPage } from '../pages/entities/entities';
 import { EntitiesPageModule } from '../pages/entities/entities.module';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
@@ -96,6 +97,7 @@ import { InAppBrowser } from '@ionic-native/in-app-browser';
         Web3Service,
         IdentityService,
         SessionSecuredStorageService,
+        MessageManagerService,
         IdentitySecuredStorageService,
         TransactionService,
         Activities,

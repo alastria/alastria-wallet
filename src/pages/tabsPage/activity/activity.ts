@@ -220,6 +220,7 @@ export class Activity {
                 this.activities = elements.map(element => {
                     let elementObj = JSON.parse(element);
                     let elementKeys = Object.getOwnPropertyNames(elementObj);
+                    let auxArray = ["Valid", "AskIssuer", "Revoked", "DeletedBySubject"];
                     if (prefix === AppConfig.CREDENTIAL_PREFIX) {
                         return {
                             "activityId": count++,
@@ -228,7 +229,8 @@ export class Activity {
                             "description": elementObj.issuer,
                             "datetime": "",
                             "type": this.type,
-                            "removeKey": elementObj[AppConfig.REMOVE_KEY]
+                            "removeKey": elementObj[AppConfig.REMOVE_KEY],
+                            "status": AppConfig.ActivityStatus[auxArray[Math.round(Math.random() * (3 - 0) + 0)]]
                         }
                     } else {
                         let iat = new Date(elementObj[AppConfig.PAYLOAD][AppConfig.IAT] * 1000);
@@ -240,7 +242,8 @@ export class Activity {
                             "description": elementObj[AppConfig.PAYLOAD][AppConfig.ISSUER],
                             "datetime": iatString,
                             "type": this.type,
-                            "jti": elementObj[AppConfig.PAYLOAD][AppConfig.JTI]
+                            "jti": elementObj[AppConfig.PAYLOAD][AppConfig.JTI],
+                            "status": AppConfig.ActivityStatus[auxArray[Math.round(Math.random() * (3 - 0) + 0)]]
                         }
                     }
                 });
@@ -269,7 +272,7 @@ export class Activity {
             }
         })
             .map(key => {
-                return this.securedStrg.removeJson(key);
+                return this.securedStrg.removePresentation(key);
             });
 
         Promise.all(keysToRemove)

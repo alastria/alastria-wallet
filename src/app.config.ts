@@ -32,6 +32,24 @@ export class AppConfig {
     public static readonly CREDENTIAL_TYPE = "credentials";
     public static readonly PRESENTATION_TYPE = "presentations";
     public static readonly VERIFIED_JWT = "verifiedJWT";
+    public static readonly PSM_HASH = "PSMHash";
+    public static readonly DID = "DID";
+    public static readonly ANI = "ani";
+    public static readonly ALASTRIA_TOKEN = "alastriaToken";
+    public static readonly IDENTITY_SETUP = "identitySetup";
+    public static readonly IS_IDENTITY_CREATED = "isIdentityCreated";
+    public static readonly USER_PKU = "userPublicKey";
+    public static readonly USER_PRIV_KEY = "userPrivateKey";
+    public static readonly USER_DID = "userDID";
+    public static readonly ADDRESS = "address";
+    public static readonly PRIVATE_KEY = "privateKey";
+    public static readonly DID_KEY = "did";
+    public static readonly PROXY_ADDRESS = "proxyAddress";
+
+
+
+
+
 
     public static readonly SECRET = "your-256-bit-secret";
 
@@ -140,6 +158,12 @@ export namespace AppConfig {
         Low = "Low",
         Substantial = "Substantial",
         High = "High"
+    }
+    export enum ActivityStatus {
+        Valid = "Valid",
+        AskIssuer = "AskIssuer",
+        Revoked = "Revoked",
+        DeletedBySubject = "DeletedBySubject"
     }
 }
 
