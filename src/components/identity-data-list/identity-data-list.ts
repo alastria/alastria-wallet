@@ -71,7 +71,6 @@ export class IdentityDataListComponent {
         let iatString: any; 
         let expString: any;
         if (this.isManualSelection) {
-            
             this.credentials = this.allCredentials.map(cred => JSON.parse(cred));
             iat = new Date(this.iat * 1000);
             exp = new Date(this.exp * 1000);
@@ -79,10 +78,6 @@ export class IdentityDataListComponent {
             expString = exp.getDay() + "/" + (exp.getMonth() + 1) + "/" + exp.getFullYear();
         } else {
             this.credentials = this.navParams.get(AppConfig.CREDENTIALS);
-            iat = new Date(this.navParams.get(AppConfig.IAT) * 1000);
-            exp = new Date(this.navParams.get(AppConfig.EXP) * 1000);
-            iatString = iat.getDay() + "/" + (iat.getMonth() + 1) + "/" + iat.getFullYear();
-            expString = exp.getDay() + "/" + (exp.getMonth() + 1) + "/" + exp.getFullYear();
         }
         let count = 0;
         let credentialPromises = this.credentials.map((credential) => {
@@ -182,6 +177,10 @@ export class IdentityDataListComponent {
                         }
                     });
             } else {
+                iat = new Date(credential[AppConfig.IAT] * 1000);
+                exp = new Date(credential[AppConfig.EXP] * 1000);
+                iatString = iat.getDay() + "/" + (iat.getMonth() + 1) + "/" + iat.getFullYear();
+                expString = exp.getDay() + "/" + (exp.getMonth() + 1) + "/" + exp.getFullYear();
                 obj = {
                     id: count++,
                     titleP: propNames[1].toUpperCase().replace(/_/g, " "),
