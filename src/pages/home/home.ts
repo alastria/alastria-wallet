@@ -29,7 +29,7 @@ export class HomePage {
     async handleLogin(isLogged: boolean): Promise<any> {
         this.isLoged = isLogged;
         if (isLogged) {
-            const did = await this.identitySecuredStorageService.get('userDID');
+            const did = await this.identitySecuredStorageService.hasKey('userDID');
             if (did) {
                 this.navCtrl.setRoot(TabsPage);
             } else {
