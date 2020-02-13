@@ -11,6 +11,7 @@ import { TabsModule } from '../../components/tabs/tabs.module';
 // SERVICES
 import { EntityService } from '../../services/entity.service';
 import { CameraModule } from '../tabsPage/camera/camera.module';
+import { MessageManagerService } from '../../services/messageManager-service';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { CameraModule } from '../tabsPage/camera/camera.module';
     CameraModule
   ],
   providers: [
-    EntityService
+    EntityService,
+    MessageManagerService
   ]
 })
 export class EntitiesPageModule {}

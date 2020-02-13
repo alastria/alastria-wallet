@@ -10,7 +10,7 @@ import { HttpClient } from '@angular/common/http';
 import { tokensFactory, transactionFactory, UserIdentity } from "alastria-identity-lib"
 import { Web3Service } from './web3-service';
 import { TransactionService } from './transaction-service';
-import { IdentitySecuredStorageService } from './securedStorage.service';
+import { IdentitySecuredStorageService, SessionSecuredStorageService } from './securedStorage.service';
 import { LoadingService } from './loading-service';
 let Wallet = require('ethereumjs-util');
 
@@ -28,6 +28,7 @@ export class MessageManagerService {
         private web3Srv: Web3Service,
         private transactionSrv: TransactionService,
         private secureStorage: IdentitySecuredStorageService,
+        private sessionSecureStorage: SessionSecuredStorageService,
         private loadingSrv: LoadingService,
         app: App) 
     {
@@ -62,10 +63,14 @@ export class MessageManagerService {
                     this.showConfirmLogin(verifiedToken[AppConfig.ISSUER], AppConfig.SERVICE_PROVIDER, verifiedToken[AppConfig.CBU], alastriaSession);
                     break;
                 case ProtocolTypes.presentation:
-                    let tokenData = this.prepareCredentials(verifiedToken, secret);
-                    let verifiedCredentials = this.prepareVerfiedJWT(verifiedToken[AppConfig.VERIFIABLE_CREDENTIAL], secret)
-                    this.showConfirmAcces(AppConfig.SERVICE_PROVIDER, tokenData[AppConfig.CREDENTIALS_DATA], tokenData[AppConfig.IAT],
-                        tokenData[AppConfig.EXP], false, verifiedCredentials);
+                    this.prepareCredentials(verifiedToken)
+                        .then((tokenData: any) => {
+                            let verifiedCredentials = this.prepareVerfiedJWT(verifiedToken[AppConfig.VERIFIABLE_CREDENTIAL], secret)
+                            this.showConfirmAcces(AppConfig.SERVICE_PROVIDER, tokenData, 0, 0, false, verifiedCredentials);
+                        })
+                        .catch((error) => {
+                            this.showErrorToast('No se han podido crear las credenciales');
+                        })
                     break;
                 case ProtocolTypes.presentationRequest:
                     this.showConfirmAcces(verifiedToken[AppConfig.ISSUER], verifiedToken[AppConfig.PR][AppConfig.DATA], verifiedToken[AppConfig.IAT],
@@ -119,7 +124,6 @@ export class MessageManagerService {
                     }
 
                     this.http.post(callbackUrl, AIC).subscribe(result => {
-                        console.log(result);
                         this.loadingSrv.updateModalState();
                     }, error => {
                         console.log('Error', error);
@@ -192,21 +196,35 @@ export class MessageManagerService {
             });
     }
 
-    private prepareCredentials(verifiedToken: string | object, secret: string) {
-        let iat;
-        let exp;
+    private prepareCredentials(verifiedToken: string | object) {
         let credentialsJWT = verifiedToken[AppConfig.VERIFIABLE_CREDENTIAL];
-        let credentialsData = credentialsJWT.map(credential => {
-            let verifiedJWT = this.tokenSrv.verifyToken(credential, secret);
-            iat = verifiedJWT[AppConfig.IAT];
-            exp = verifiedJWT[AppConfig.EXP];
-            return verifiedJWT[AppConfig.VC][AppConfig.CREDENTIALS_SUBJECT];
+
+        let promises = credentialsJWT.map((credential: any) => {
+            let decodedToken = this.tokenSrv.decodeTokenES(credential)
+            let issuerDID = decodedToken[AppConfig.PAYLOAD][AppConfig.ISSUER];
+            let verifiedJWT = null;
+
+            return this.transactionSrv.getCurrentPublicKey(issuerDID)
+                .then(issuerPKU => {
+                    verifiedJWT = this.tokenSrv.verifyTokenES(credential, `04${issuerPKU}`);
+                    return this.sessionSecureStorage.hasKey('isIdentityCreated');
+                })
+                .then(result => {
+                    if (verifiedJWT && result) {
+                        const credentialSubject = decodedToken[AppConfig.PAYLOAD][AppConfig.VC][AppConfig.CREDENTIALS_SUBJECT];
+                        // credentialSubject[AppConfig.IAT] = decodedToken[AppConfig.PAYLOAD][AppConfig.IAT];
+                        credentialSubject[AppConfig.IAT] = Date.now();
+                        credentialSubject[AppConfig.EXP] = decodedToken[AppConfig.PAYLOAD][AppConfig.EXP];
+                        return Promise.resolve(credentialSubject);
+                    }
+                })
+                .catch(error => {
+                    console.log('error ', error);
+                    throw error;
+                });
         });
-        return {
-            [AppConfig.IAT]: iat,
-            [AppConfig.EXP]: exp,
-            [AppConfig.CREDENTIALS_DATA]: credentialsData
-        };
+
+        return Promise.all(promises);
     }
 
     private prepareVerfiedJWT(verifiedToken: Array<string>, secret: string) {

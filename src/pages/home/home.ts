@@ -1,6 +1,12 @@
 import { Component } from '@angular/core';
 import { NavController, AlertController } from 'ionic-angular';
+
+// Pages
 import { EntitiesPage } from '../entities/entities';
+import { TabsPage } from './../tabsPage/tabsPage';
+
+// Services
+import { IdentitySecuredStorageService } from '../../services/securedStorage.service';
 
 
 @Component({
@@ -15,14 +21,20 @@ export class HomePage {
 
     constructor(
         public navCtrl: NavController,
-        public alertCtrl: AlertController
+        public alertCtrl: AlertController,
+        private identitySecuredStorageService: IdentitySecuredStorageService
     ) { 
     }
 
     async handleLogin(isLogged: boolean): Promise<any> {
         this.isLoged = isLogged;
         if (isLogged) {
-            this.navCtrl.setRoot(EntitiesPage);
+            const did = await this.identitySecuredStorageService.hasKey('userDID');
+            if (did) {
+                this.navCtrl.setRoot(TabsPage);
+            } else {
+                this.navCtrl.setRoot(EntitiesPage);
+            }
         } 
     }
 }

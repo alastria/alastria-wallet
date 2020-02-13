@@ -34,12 +34,13 @@ export class IdentitySecuredStorageService {
 
     async hasKey(key: string) {
         let keyExists = false;
-        return this.securedStorageObject.keys()
-            .then(result => {
-                keyExists = result.some(k => { return k === key });
-                console.log(keyExists);
-                return keyExists;
-            });
+        if (this.securedStorageObject) {
+            return this.securedStorageObject.keys()
+                .then(result => {
+                    keyExists = result.some(k => { return k === key });
+                });
+        }
+        return keyExists;
     }
 
     async set(key: string, value: string) {
