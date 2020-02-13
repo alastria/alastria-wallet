@@ -37,7 +37,9 @@
                     </div>
 
                     <!-- Reviews Star -->
-                    <div style="margin-top: 5px;"><span span-small> {{ item.level }}, {{ item.endDate }}</span>
+                    <div style="margin-top: 5px;">
+                        <span span-small> {{ item.level }} </span>
+                        <span *ngIf="item.endDate"> , {{ item.endDate }} </span>
                     </div>
 
                     <div float-right *ngIf="isManualSelection == undefined">

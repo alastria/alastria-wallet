@@ -212,7 +212,8 @@ export class MessageManagerService {
                 .then(result => {
                     if (verifiedJWT && result) {
                         const credentialSubject = decodedToken[AppConfig.PAYLOAD][AppConfig.VC][AppConfig.CREDENTIALS_SUBJECT];
-                        credentialSubject[AppConfig.IAT] = decodedToken[AppConfig.PAYLOAD][AppConfig.IAT];
+                        // credentialSubject[AppConfig.IAT] = decodedToken[AppConfig.PAYLOAD][AppConfig.IAT];
+                        credentialSubject[AppConfig.IAT] = Date.now();
                         credentialSubject[AppConfig.EXP] = decodedToken[AppConfig.PAYLOAD][AppConfig.EXP];
                         return Promise.resolve(credentialSubject);
                     }

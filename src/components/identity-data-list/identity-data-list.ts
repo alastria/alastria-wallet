@@ -177,10 +177,15 @@ export class IdentityDataListComponent {
                         }
                     });
             } else {
-                iat = new Date(credential[AppConfig.IAT] * 1000);
-                exp = new Date(credential[AppConfig.EXP] * 1000);
-                iatString = iat.getDay() + "/" + (iat.getMonth() + 1) + "/" + iat.getFullYear();
-                expString = exp.getDay() + "/" + (exp.getMonth() + 1) + "/" + exp.getFullYear();
+                if (credential[AppConfig.IAT]) {
+                    iat = new Date(credential[AppConfig.IAT]);
+                    iatString = iat.getDay() + "/" + (iat.getMonth() + 1) + "/" + iat.getFullYear();
+                }
+
+                if (credential[AppConfig.EXP]) {
+                    exp = new Date(credential[AppConfig.EXP]);
+                    expString = exp.getDay() + "/" + (exp.getMonth() + 1) + "/" + exp.getFullYear();
+                }
                 obj = {
                     id: count++,
                     titleP: propNames[1].toUpperCase().replace(/_/g, " "),
