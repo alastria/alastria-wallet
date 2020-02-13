@@ -38,9 +38,9 @@ export class IdentitySecuredStorageService {
             return this.securedStorageObject.keys()
                 .then(result => {
                     keyExists = result.some(k => { return k === key });
+                    return keyExists;
                 });
         }
-        return keyExists;
     }
 
     async set(key: string, value: string) {
