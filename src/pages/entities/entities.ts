@@ -9,6 +9,7 @@ import { Item } from '../../models/item.model';
 
 //Services
 import { EntityService } from '../../services/entity.service';
+import { MessageManagerService } from '../../services/messageManager-service';
 
 // Pages
 import { Camera } from '../tabsPage/camera/camera';
@@ -33,7 +34,8 @@ export class EntitiesPage {
               public navParams: NavParams,
               public entityService: EntityService,
               private sanitize: DomSanitizer,
-              private inAppBrowser: InAppBrowser) {
+              private inAppBrowser: InAppBrowser,
+              private messageManagerService: MessageManagerService) {
     this.getEntities();
   }
 
@@ -65,8 +67,9 @@ export class EntitiesPage {
 
       window.addEventListener('message', event => {
         if (event.origin.startsWith('http://localhost:4200')) { 
-            console.log(event.data); 
+            const alastriaToken = event.data;
             window.removeEventListener('message', function(e){}, false);
+            this.messageManagerService.prepareDataAndInit(alastriaToken);
             externalWeb.close();
         } else {
             return; 
