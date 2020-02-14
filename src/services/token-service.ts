@@ -23,7 +23,7 @@ export class TokenService {
         return this.secureStorage.hasKey(AppConfig.IS_IDENTITY_CREATED).then(result => {
             if (token[this.ATR_CREDENTIAL]) {
                 tokenType = this.TYPE_CREDENTIAL_OFFER
-            } else if (token[this.ATR_PRESENTATION_REQUEST]) {
+            } else if (token[AppConfig.PAYLOAD][this.ATR_PRESENTATION_REQUEST]) {
                 tokenType = this.TYPE_PRESENTATION_REQ;
             } else if (token[AppConfig.PAYLOAD][AppConfig.ANI]) {
                 if (result) {

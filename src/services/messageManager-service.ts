@@ -55,7 +55,6 @@ export class MessageManagerService {
 
     public launchProtocol(protocolType: ProtocolTypes | String, verifiedToken: Array<string>, alastriaToken: string, secret: string) {
         let alastriaSession;
-
         if (verifiedToken) {
             alastriaSession = this.tokenSrv.getSessionToken(verifiedToken);
             switch (protocolType) {
@@ -66,14 +65,14 @@ export class MessageManagerService {
                     this.prepareCredentials(verifiedToken)
                         .then((tokenData: any) => {
                             let verifiedCredentials = this.prepareVerfiedJWT(verifiedToken[AppConfig.VERIFIABLE_CREDENTIAL], secret)
-                            this.showConfirmAcces(AppConfig.SERVICE_PROVIDER, tokenData, 0, 0, false, verifiedCredentials);
+                            this.showConfirmAccess(AppConfig.SERVICE_PROVIDER, tokenData, 0, 0, false, verifiedCredentials);
                         })
                         .catch((error) => {
                             this.showErrorToast('No se han podido crear las credenciales');
                         })
                     break;
                 case ProtocolTypes.presentationRequest:
-                    this.showConfirmAcces(verifiedToken[AppConfig.ISSUER], verifiedToken[AppConfig.PR][AppConfig.DATA], verifiedToken[AppConfig.IAT],
+                    this.showConfirmAccess(verifiedToken[AppConfig.ISSUER], verifiedToken[AppConfig.PAYLOAD][AppConfig.PR][AppConfig.DATA], verifiedToken[AppConfig.IAT],
                         verifiedToken[AppConfig.EXP], true, verifiedToken, verifiedToken[AppConfig.JTI]);
                     break;
                 case ProtocolTypes.alastriaToken:
@@ -93,7 +92,7 @@ export class MessageManagerService {
         alert.present();
     }
 
-    private showConfirmAcces(iss: string, credentials: Array<any>, iat: number, exp: number, isPresentationRequest = false, verifiedJWT = null, jti?: string) {
+    private showConfirmAccess(iss: string, credentials: Array<any>, iat: number, exp: number, isPresentationRequest = false, verifiedJWT = null, jti?: string) {
         const alert = this.modalCtrl.create(ConfirmAccess, {
             [AppConfig.ISSUER]: iss, [AppConfig.DATA_COUNT]: credentials.length, [AppConfig.VERIFIED_JWT]: verifiedJWT,
             [AppConfig.CREDENTIALS]: credentials, [AppConfig.IAT]: iat, [AppConfig.EXP]: exp, [AppConfig.IS_PRESENTATION_REQ]: isPresentationRequest, [AppConfig.JTI]: jti
@@ -115,8 +114,15 @@ export class MessageManagerService {
             }).then(identity => {
                 if (isVerifiedToken) {
                     let privKey = identity[AppConfig.USER_PRIV_KEY];
+                    let pku = {
+                        id: identity[AppConfig.USER_DID],
+                        type: ["CryptographicKey", "EcdsaKoblitzPublicKey"],
+                        curve: "secp256k1",
+                        expires: Date.now() + (3600*1000),
+                        publicKeyHex: identity[AppConfig.USER_PKU]
+                    };
                     let signedAT = tokensFactory.tokens.signJWT(alastriaToken, privKey.substring(2));
-                    let alastriaSession = tokensFactory.tokens.createAlastriaSession("@jwt", identity[AppConfig.USER_DID], identity[AppConfig.USER_PKU].substring(2), signedAT);
+                    let alastriaSession = tokensFactory.tokens.createAlastriaSession("@jwt", issuerDID, pku, signedAT);
                     let signedAS = tokensFactory.tokens.signJWT(alastriaSession, privKey.substring(2));
                     
                     let AIC = {
@@ -169,17 +175,33 @@ export class MessageManagerService {
                         let AIC = {
                             signedAIC: signedToken
                         }
+                        
+                        let DID = null;
 
-                        this.http.post(callbackUrl, AIC).subscribe(result => {
+
+                        this.http.post(callbackUrl, AIC).toPromise()
+                        .then(result => {
                             let proxyAddress = result[AppConfig.PROXY_ADDRESS];
-                            let DID = result[AppConfig.DID_KEY]
+                            DID = result[AppConfig.DID_KEY];
                             this.secureStorage.set(AppConfig.IS_IDENTITY_CREATED, "1");
                             this.secureStorage.set(AppConfig.USER_PKU, pku);
                             this.secureStorage.set(AppConfig.USER_PRIV_KEY, privKey);
                             this.secureStorage.set(AppConfig.USER_DID, DID);
                             this.secureStorage.set(AppConfig.PROXY_ADDRESS, proxyAddress);
+                            return this.secureStorage.get('callbackUrlPut');
+                        })
+                        .then((callbackUrlPut) => {
+                            const userUpdate = {
+                                objectIdentity: {
+                                    did: DID
+                                }
+                            };
+                            return this.http.put(callbackUrlPut, userUpdate).toPromise();
+                        })
+                        .then(() => {
                             this.loadingSrv.updateModalState();
-                        }, error => {
+                        })
+                        .catch(error => {
                             console.log('Error', error);
                             this.showErrorToast();
                         })

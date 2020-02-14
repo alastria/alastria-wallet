@@ -10,6 +10,7 @@ import { Item } from '../../models/item.model';
 //Services
 import { EntityService } from '../../services/entity.service';
 import { MessageManagerService } from '../../services/messageManager-service';
+import { IdentitySecuredStorageService } from './../../services/securedStorage.service';
 
 // Pages
 import { Camera } from '../tabsPage/camera/camera';
@@ -35,7 +36,8 @@ export class EntitiesPage {
               public entityService: EntityService,
               private sanitize: DomSanitizer,
               private inAppBrowser: InAppBrowser,
-              private messageManagerService: MessageManagerService) {
+              private messageManagerService: MessageManagerService,
+              private identitySecureStorage: IdentitySecuredStorageService) {
     this.getEntities();
   }
 
@@ -65,12 +67,18 @@ export class EntitiesPage {
     if (item.entityUrl) {
       const externalWeb = this.inAppBrowser.create(item.entityUrl, '_blank', 'location=no');
 
-      window.addEventListener('message', event => {
+      window.addEventListener('message', (event) => {
         if (event.origin.startsWith('http://localhost:4200')) { 
-            const alastriaToken = event.data;
+            const alastriaToken = event.data.alastriaToken;
             window.removeEventListener('message', function(e){}, false);
-            this.messageManagerService.prepareDataAndInit(alastriaToken);
-            externalWeb.close();
+            this.identitySecureStorage.set('callbackUrlPut', event.data.callbackUrl)
+              .then(() => {
+                this.messageManagerService.prepareDataAndInit(alastriaToken);
+                externalWeb.close();
+              })
+              .catch((error) => {
+                console.error('error ', error);
+              });
         } else {
             return; 
         } 
