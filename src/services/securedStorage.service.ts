@@ -70,12 +70,8 @@ export class IdentitySecuredStorageService {
         })
         .then(privKey => {
             identity[AppConfig.USER_PRIV_KEY] = privKey;
-            return this.get(AppConfig.PROXY_ADDRESS);
-        })
-        .then(proxy => {
-            identity[AppConfig.PROXY_ADDRESS] = proxy;
             return identity;
-        });
+        })
     }
 
     async setJSON(key: string, value: any) {

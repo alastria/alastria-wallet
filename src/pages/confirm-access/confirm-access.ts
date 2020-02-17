@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { ViewController, NavParams, ModalController, NavController } from 'ionic-angular';
 import { ToastService } from '../../services/toast-service';
@@ -35,7 +36,8 @@ export class ConfirmAccess {
         private securedStrg: IdentitySecuredStorageService,
         private loadingSrv: LoadingService,
         private tokenSrv: TokenService,
-        private transactionSrv: TransactionService
+        private transactionSrv: TransactionService,
+        private http: HttpClient
     ) {
         this.dataNumberAccess = this.navParams.get(AppConfig.DATA_COUNT);
         this.issName = "Empresa X";
@@ -64,7 +66,6 @@ export class ConfirmAccess {
     }
 
     private sendPresentation() {
-        console.log("Selected ids: ", this.identitySelected);
         if (this.identitySelected.length === this.credentials.length) {
             let securedCredentials = new Array<any>();
             let pendingIdentities = new Array<number>();
@@ -76,59 +77,61 @@ export class ConfirmAccess {
                     pendingIdentities.push(id);
                 }
             }
-            let credentialExistsPromises = pendingIdentities.map((element) => {
-                let index = element;
-                return this.securedStrg.hasKey(AppConfig.CREDENTIAL_PREFIX + this.credentials[index][AppConfig.FIELD_NAME]);
-            });
+           
+            if (!pendingIdentities.length) {
+                this.showLoading();
 
-            Promise.all(credentialExistsPromises)
-                .then((result) => {
-                    let allCredentialsAssigned = !result.some(element => !element);
-                    return Promise.resolve(allCredentialsAssigned);
-                })
-                .then((result) => {
-                    if (result === true) {
-                        this.showLoading();
-                        let credentialPromises = pendingIdentities.map((element) => {
-                            let index = element;
-                            return this.securedStrg.getJSON(AppConfig.CREDENTIAL_PREFIX + this.credentials[index][AppConfig.FIELD_NAME]);
+                const identityDataSelected = [];
+                this.identityLoaded.forEach((loaded,idx) => {
+                    this.identitySelected.forEach(selected => {
+                        if (idx === selected) {
+                            identityDataSelected.push(loaded);
+                        }
+                    });
+                });
+
+                const callbackUrl = this.verifiedJWT.payload.pr.procUrl;
+                let privKey = ''
+                
+                this.securedStrg.get('userPrivateKey')
+                    .then(result => {
+                        privKey = result;
+                        console.log('privKey --> ', privKey);
+                        return this.securedStrg.getDID();
+                    })
+                    .then((did) => {
+                        console.log('DID ', did);
+                        let signedCredentialJwts = securedCredentials.map(securedCredential => {
+                            let credentialSubject = securedCredential;
+        
+                            let credentialJson = tokensFactory.tokens.createCredential(did, this.verifiedJWT.payload.iss, did,
+                                this.verifiedJWT.payload.pr['@context'], credentialSubject, this.verifiedJWT.payload.exp, this.verifiedJWT.payload.iat, this.navParams.get(AppConfig.JTI));
+        
+                            return this.tokenSrv.signTokenES(JSON.stringify(credentialJson.payload), privKey.substring(2));
                         });
-
-                        Promise.all(credentialPromises)
-                            .then((result) => {
-                                securedCredentials = securedCredentials.concat(result);
-                                let iat = Math.round(Date.now() / 1000);
-                                let exp = this.navParams.get(AppConfig.EXP);
-
-                                let kidCredential = "did:ala:quor:redt:QmeeasCZ9jLbXueBJ7d7csxhb#keys-1";
-                                let didIsssuer = this.issDID;
-                                let subjectAlastriaID = "did:alastria:quorum:testnet1:QmeeasCZ9jLbX...ueBJ7d7csxhb";
-                                let context = ["https://www.w3.org/2018/credentials/v1", "JWT"];
-                                let jti = this.navParams.get(AppConfig.JTI);
-                                let procHash = "H398sjHd...kldjUYn475n";
-                                let procUrl = "https://www.metrovacesa.com/alastria/businessprocess/4583";
-
-                                let signedCredentialJwts = securedCredentials.map(securedCredential => {
-                                    let credentialSubject = securedCredential;
-
-                                    let credentialJson = tokensFactory.tokens.createCredential(kidCredential, didIsssuer, subjectAlastriaID,
-                                        context, credentialSubject, exp, iat, jti);
-
-                                    return this.tokenSrv.signToken(JSON.stringify(credentialJson));
-                                });
-
-                                let presentation = tokensFactory.tokens.createPresentation(kidCredential, didIsssuer, subjectAlastriaID, context, signedCredentialJwts,
-                                    procUrl, procHash, exp, iat, jti);
-
+        
+        
+                        let presentation = tokensFactory.tokens.createPresentation(did, this.verifiedJWT.payload.iss, did, 
+                            this.verifiedJWT.payload.pr['@context'], signedCredentialJwts, callbackUrl, this.verifiedJWT.payload.pr.procHash,
+                            this.verifiedJWT.payload.exp, this.verifiedJWT.payload.iat, this.navParams.get(AppConfig.JTI));
+                        return presentation;  
+                    })
+                    .then((presentation) => {
+                        return this.http.post(callbackUrl, presentation).toPromise()
+                            .then(() => {
                                 this.securedStrg.setJSON(AppConfig.PRESENTATION_PREFIX + this.navParams.get(AppConfig.JTI), presentation)
                                     .then(() => {
-                                        this.showSucces();
+                                        this.showSuccess();
                                     });
-                            });
-                    } else {
-                        this.toastCtrl.presentToast("Uno o mas campos de los solicitados estan vacios", 3000);
-                    }
-                });
+                            })
+                    })
+                    .catch((error) => {
+                        console.log('error ', error);
+                    })
+                
+            } else {
+                this.toastCtrl.presentToast("Uno o mas campos de los solicitados estan vacios", 3000);
+            }
         } else {
             this.toastCtrl.presentToast("Por favor seleccione todas las credenciales solicitadas", 3000);
         }
@@ -163,7 +166,7 @@ export class ConfirmAccess {
                         });
                 });
             }, Promise.resolve()).then(() => {
-                this.showSucces();
+                this.showSuccess();
             });
         } else {
             this.toastCtrl.presentToast("Por favor seleccione al menos una credential para enviar", 3000);
@@ -220,7 +223,7 @@ export class ConfirmAccess {
         this.loadingSrv.showModal();
     }
 
-    public showSucces() {
+    public showSuccess() {
         this.loadingSrv.updateModalState();
         this.viewCtrl.dismiss();
     }
