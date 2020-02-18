@@ -83,6 +83,10 @@ export class IdentitySecuredStorageService {
         return this.securedStorageObject.get(key);
     }
 
+    async remove(key: string) {
+        return this.securedStorageObject.remove(key);
+    }
+
     async clearStorage() {
         return this.securedStorageObject.clear();
     }

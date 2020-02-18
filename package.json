@@ -74,6 +74,7 @@
     "sw-toolbox": "3.6.0",
     "truffle-contract": "3.0.6",
     "web3": "1.2.1",
+    "websocket": "^1.0.31",
     "zone.js": "0.8.18"
   },
   "devDependencies": {

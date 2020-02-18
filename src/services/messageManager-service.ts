@@ -177,35 +177,46 @@ export class MessageManagerService {
                         }
                         
                         let DID = null;
-
+                        let callbackUrlPut = null;
 
                         this.http.post(callbackUrl, AIC).toPromise()
-                        .then(result => {
-                            let proxyAddress = result[AppConfig.PROXY_ADDRESS];
-                            DID = result[AppConfig.DID_KEY];
-                            this.secureStorage.set(AppConfig.IS_IDENTITY_CREATED, "1");
-                            this.secureStorage.set(AppConfig.USER_PKU, pku);
-                            this.secureStorage.set(AppConfig.USER_PRIV_KEY, privKey);
-                            this.secureStorage.set(AppConfig.USER_DID, DID);
-                            this.secureStorage.set(AppConfig.PROXY_ADDRESS, proxyAddress);
-                            return this.secureStorage.get('callbackUrlPut');
-                        })
-                        .then((callbackUrlPut) => {
-                            const userUpdate = {
-                                objectIdentity: {
-                                    did: DID
+                            .then(result => {
+                                let proxyAddress = result[AppConfig.PROXY_ADDRESS];
+                                DID = result[AppConfig.DID_KEY];
+                                this.secureStorage.set(AppConfig.IS_IDENTITY_CREATED, "1");
+                                this.secureStorage.set(AppConfig.USER_PKU, pku);
+                                this.secureStorage.set(AppConfig.USER_PRIV_KEY, privKey);
+                                this.secureStorage.set(AppConfig.USER_DID, DID);
+                                this.secureStorage.set(AppConfig.PROXY_ADDRESS, proxyAddress);
+                                return this.secureStorage.hasKey('callbackUrlPut');
+                            })
+                            .then((hasKey) => {
+                                if (hasKey) {
+                                    return this.secureStorage.get('callbackUrlPut')
+                                        .then((result) => {
+                                            callbackUrlPut = result; 
+                                            const userUpdate = {
+                                                did: DID,
+                                                vinculated: true
+                                            };
+                                            
+                                            return this.http.put(callbackUrlPut, userUpdate).toPromise();
+                                        })
+                                        .then(() => {
+                                            return this.secureStorage.remove('callbackUrlPut');
+                                        });
+                                } else {
+                                    return;
                                 }
-                            };
-                            return this.http.put(callbackUrlPut, userUpdate).toPromise();
-                        })
-                        .then(() => {
-                            this.loadingSrv.updateModalState();
-                        })
-                        .catch(error => {
-                            console.log('Error', error);
-                            this.showErrorToast();
-                        })
-                    });
+                            })
+                            .then(() => {
+                                this.loadingSrv.updateModalState();
+                            })
+                            .catch(error => {
+                                console.log('Error', error);
+                                this.showErrorToast();
+                            })
+                        });
                 } else if (!isVerifiedToken) {
                     this.showErrorToast("Error: No se puede verificar al Service Provider");
                 } else {
