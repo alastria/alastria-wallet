@@ -152,6 +152,12 @@ export class IdentityDataListComponent {
                                         isHidden: false
                                     };
                                     this.identityDisplay.push(obj);
+                                    const credentialSelected: any = {
+                                        credential: this.credentials[obj.id],
+                                        index: obj.id
+                                    }
+                                    credentialSelected.credential[key] = securedCredentials[key];
+                                    this.loadCredential.emit(credentialSelected);
                                     return Promise.resolve();
                                 });
                         } else {
@@ -234,6 +240,7 @@ export class IdentityDataListComponent {
                             resolve
                         })
                     }).then((data: any) => {
+                        console.log('data ', data);
                         if (data.mock && data.credential) {
                             data.mock.isChecked = item.isChecked
                             data.mock.id = item.id;
