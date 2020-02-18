@@ -72,10 +72,19 @@ export class IdentityDataListComponent {
         let expString: any;
         if (this.isManualSelection) {
             this.credentials = this.allCredentials.map(cred => JSON.parse(cred));
-            iat = new Date(this.iat * 1000);
-            exp = new Date(this.exp * 1000);
-            iatString = iat.getDay() + "/" + (iat.getMonth() + 1) + "/" + iat.getFullYear();
-            expString = exp.getDay() + "/" + (exp.getMonth() + 1) + "/" + exp.getFullYear();
+            if (this.iat) {
+                iat = new Date(this.iat * 1000);
+                iatString = iat.getDay() + "/" + (iat.getMonth() + 1) + "/" + iat.getFullYear();
+            } else {
+                iatString = "";
+            }
+
+            if (this.exp) {
+                exp = new Date(this.exp * 1000);
+                expString = exp.getDay() + "/" + (exp.getMonth() + 1) + "/" + exp.getFullYear();
+            } else {
+                expString = "";
+            }
         } else {
             this.credentials = this.navParams.get(AppConfig.CREDENTIALS);
         }
