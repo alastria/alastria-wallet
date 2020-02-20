@@ -50,18 +50,23 @@ export class Camera {
 
             if (httpRegex.test(alastriaToken)) {
                 this.http.get(alastriaToken).subscribe(data => {
-                    this.msgManagerSrv.prepareDataAndInit(data);
+                    this.msgManagerSrv.prepareDataAndInit(data)
+                        .catch((error) => {
+                            throw error;
+                        })
                 }, error => {
-                    console.log('Error', error);
                     this.toastCtrl.presentToast("Error: Contacte con el service provider", 3000);
                     this.navCtrl.setRoot(Index);
                 });
             } else {
-                this.msgManagerSrv.prepareDataAndInit(alastriaToken);
+                this.msgManagerSrv.prepareDataAndInit(alastriaToken)
+                    .catch((error) => {
+                        this.toastCtrl.presentToast("Error: Contacte con el service provider", 3000);
+                        this.navCtrl.setRoot(Index);
+                    });
             }
 
         }).catch(err => {
-            console.log('Error', err);
             this.showErrorToast();
         });
     }
