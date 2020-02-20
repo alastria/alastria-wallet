@@ -68,7 +68,8 @@ export class EntitiesPage {
       const externalWeb = this.inAppBrowser.create(item.entityUrl, '_blank', 'location=no');
 
       window.addEventListener('message', (event) => {
-        if (event.origin.startsWith('http://localhost:4200')) { 
+        console.log('event ', event.origin.startsWith('http://34.244.47.233'));
+        if (event.origin.startsWith('http://34.244.47.233')) { 
             const alastriaToken = event.data.alastriaToken;
             window.removeEventListener('message', function(e){}, false);
             this.identitySecureStorage.set('callbackUrlPut', event.data.callbackUrl)
