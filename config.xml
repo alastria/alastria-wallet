@@ -88,6 +88,7 @@
         <variable name="ANDROID_SUPPORT_V4_VERSION" value="27.+" />
     </plugin>
     <plugin name="cordova-plugin-fingerprint-aio" spec="1.5.0" />
-    <allow-navigation href="http://192.168.1.109:8100" />
+    <access origin="*" />
+    <allow-navigation href="*" />
     <engine name="browser" spec="5.0.4" />
 </widget>
