@@ -12,20 +12,14 @@ export class IdentitySecuredStorageService {
         private securedStorage: SecureStorage,
         private platform: Platform
     ) {
-        this.platform.ready().then(() => {
-            this.initSecureStorage();
-        });
     }
 
-    private initSecureStorage() {
-        this.securedStorage.create('identitySecureStorage')
-            .then(
-                (secStoObj: SecureStorageObject) => {
-                    this.securedStorageObject = secStoObj;
-                    console.log("IdentitySecureStorage ready");
-                }
-
-            );
+    initSecureStorage(): Promise<void> {
+        return this.securedStorage.create('identitySecureStorage').then(
+            (securedStorageObject) => {
+                this.securedStorageObject = securedStorageObject;
+            }
+        );
     }
 
     async getKeys() {
@@ -354,5 +348,9 @@ export class SessionSecuredStorageService {
     async isAuthorized(key: string): Promise<boolean> {
         return this.getAccessKey()
             .then((keyStore) => (parseInt(keyStore) === parseInt(key)));
+    }
+
+    async set(key: string, value: string) {
+        return this.securedStorageObject.set(key, value);
     }
 }

@@ -1,3 +1,4 @@
+import { IdentitySecuredStorageService } from './../../services/securedStorage.service';
 import { Component, OnInit, AfterContentInit, Output, EventEmitter } from '@angular/core';
 import { IonicPage, NavController, NavParams, Platform } from 'ionic-angular';
 import { FingerprintAIO } from '@ionic-native/fingerprint-aio';
@@ -52,6 +53,7 @@ export class LoginPage {
               private platform: Platform,
               private faio: FingerprintAIO,
               private secureStorageService: SessionSecuredStorageService,
+              private identtityStorageService: IdentitySecuredStorageService,
               private fb: FormBuilder) {
     this.platform.registerBackButtonAction(async () => {
       if (this.loginType) {
@@ -62,6 +64,7 @@ export class LoginPage {
     },1);
     this.platform.ready()
       .then(async () => {
+        await this.identtityStorageService.initSecureStorage();
         await this.secureStorageService.initSecureStorage();
         this.hashKey = await this.secureStorageService.hasKey('loginType');
         if (this.hashKey) {
