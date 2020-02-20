@@ -181,8 +181,8 @@ export class MessageManagerService {
 
                         this.http.post(callbackUrl, AIC).toPromise()
                             .then(result => {
-                                let proxyAddress = result[AppConfig.PROXY_ADDRESS];
                                 DID = result[AppConfig.DID_KEY];
+                                let proxyAddress = "0x" + DID.split(":")[4]
                                 this.secureStorage.set(AppConfig.IS_IDENTITY_CREATED, "1");
                                 this.secureStorage.set(AppConfig.USER_PKU, pku);
                                 this.secureStorage.set(AppConfig.USER_PRIV_KEY, privKey);
