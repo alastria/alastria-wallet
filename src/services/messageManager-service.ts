@@ -269,8 +269,10 @@ export class MessageManagerService {
     private showErrorToast(msg?: string) {
         msg = msg ? msg : "Error: Contacte con el service provider";
         this.toastCtrl.presentToast(msg, 3000);
+        if (this.loadingSrv) {
+            this.loadingSrv.hide();
+        }
         this.navCtrl.setRoot(Index);
-        this.loadingSrv.hide();
     }
 }
 

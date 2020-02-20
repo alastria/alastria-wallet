@@ -27,7 +27,13 @@ export class TokenService {
                 tokenType = this.TYPE_PRESENTATION_REQ;
             } else if (token[AppConfig.PAYLOAD][AppConfig.ANI]) {
                 if (result) {
-                    tokenType = AppConfig.IDENTITY_SETUP;
+                    const pathSplit = token[AppConfig.PAYLOAD][AppConfig.CBU].split('/');
+                    const lastPath = pathSplit[pathSplit.length -1];
+                    if (lastPath === 'identity') {
+                        tokenType = AppConfig.ALASTRIA_TOKEN;
+                    } else {
+                        tokenType = AppConfig.IDENTITY_SETUP;
+                    }
                 } else {
                     tokenType = AppConfig.ALASTRIA_TOKEN;
                 }
