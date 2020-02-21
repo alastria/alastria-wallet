@@ -240,7 +240,7 @@ export class MessageManagerService {
             return this.transactionSrv.getCurrentPublicKey(issuerDID)
                 .then(issuerPKU => {
                     verifiedJWT = this.tokenSrv.verifyTokenES(credential, `04${issuerPKU}`);
-                    return this.sessionSecureStorage.hasKey('isIdentityCreated');
+                    return this.secureStorage.hasKey('isIdentityCreated');
                 })
                 .then(result => {
                     if (verifiedJWT && result) {
