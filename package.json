@@ -71,6 +71,7 @@
     "phonegap-plugin-barcodescanner": "8.0.1",
     "promise-polyfill": "6.0.2",
     "rxjs": "5.5.6",
+    "socket.io": "^2.3.0",
     "sw-toolbox": "3.6.0",
     "truffle-contract": "3.0.6",
     "web3": "1.2.1",

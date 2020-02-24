@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { DomSanitizer } from '@angular/platform-browser';
-import { InAppBrowser } from '@ionic-native/in-app-browser';
-
+import { InAppBrowser, InAppBrowserObject } from '@ionic-native/in-app-browser';
+import { Subscription } from 'rxjs';
 
 // Models
 import { Item } from '../../models/item.model';
@@ -11,6 +11,7 @@ import { Item } from '../../models/item.model';
 import { EntityService } from '../../services/entity.service';
 import { MessageManagerService } from '../../services/messageManager-service';
 import { IdentitySecuredStorageService } from './../../services/securedStorage.service';
+import { SocketService } from '../../services/socket.service';
 
 // Pages
 import { Camera } from '../tabsPage/camera/camera';
@@ -30,6 +31,8 @@ import { Camera } from '../tabsPage/camera/camera';
 export class EntitiesPage {
   entities: Array<Item>;
   url: any;
+  externalWeb: InAppBrowserObject;
+  private subscription: Subscription = new Subscription();
 
   constructor(public navCtrl: NavController,
               public navParams: NavParams,
@@ -37,7 +40,8 @@ export class EntitiesPage {
               private sanitize: DomSanitizer,
               private inAppBrowser: InAppBrowser,
               private messageManagerService: MessageManagerService,
-              private identitySecureStorage: IdentitySecuredStorageService) {
+              private identitySecureStorage: IdentitySecuredStorageService,
+              private socketService: SocketService) {
     this.getEntities();
   }
 
@@ -65,25 +69,42 @@ export class EntitiesPage {
 
   openBlank(item: Item) {
     if (item.entityUrl) {
-      const externalWeb = this.inAppBrowser.create(item.entityUrl, '_blank', 'location=no');
+      this.externalWeb = this.inAppBrowser.create(item.entityUrl, '_blank', 'location=no');
+      this.initSocket(); 
+    }
+  }
 
-      window.addEventListener('message', (event) => {
-        console.log('event ', event.origin.startsWith('http://34.244.47.233'));
-        if (event.origin.startsWith('http://34.244.47.233')) { 
-            const alastriaToken = event.data.alastriaToken;
-            window.removeEventListener('message', function(e){}, false);
-            this.identitySecureStorage.set('callbackUrlPut', event.data.callbackUrl)
+  /**
+   * Function for init connection with websocket and subscribe in differents events
+   */
+  private initSocket(): void {
+    this.socketService.initSocket();
+
+    this.subscription.add(this.socketService.onCreateIdentityWv()
+      .subscribe((result) => {
+        this.identitySecureStorage.set('callbackUrlPut', result.callbackUrl)
               .then(() => {
-                this.messageManagerService.prepareDataAndInit(alastriaToken);
-                externalWeb.close();
+                this.messageManagerService.prepareDataAndInit(result.alastriaToken);
+                this.externalWeb.close();
               })
               .catch((error) => {
                 console.error('error ', error);
               });
-        } else {
-            return; 
-        } 
-    }); 
-    }
+
+        this.socketService.sendDisconnect();
+      })
+    );
+
+    this.subscription.add(this.socketService.onEvent('connect')
+      .subscribe(() => {
+        console.log('connected - websocket');
+      })
+    );
+
+    this.subscription.add(this.socketService.onEvent('disconnect')
+      .subscribe(() => {
+        console.log('disconnected - websocket');
+      })
+    );
   }
 }
