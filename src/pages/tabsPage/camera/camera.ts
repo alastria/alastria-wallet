@@ -1,14 +1,17 @@
 import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BarcodeScanner } from '@ionic-native/barcode-scanner';
+import { AlertController, NavController, PopoverController, ModalController } from 'ionic-angular';
+import { AppConfig } from '../../../app.config';
+
+// SERVICE
+import { MessageManagerService } from '../../../services/messageManager-service';
 import { IonicPage } from 'ionic-angular';
 import { ToastService } from '../../../services/toast-service';
 import { TabsService } from '../../../services/tabs-service';
-import { BarcodeScanner } from '@ionic-native/barcode-scanner';
-import { AlertController, NavController, PopoverController, ModalController } from 'ionic-angular';
-import { Index } from '../index';
-import { AppConfig } from '../../../app.config';
-import { HttpClient } from '@angular/common/http';
-import { LoadingService } from '../../../services/loading-service';
-import { MessageManagerService } from '../../../services/messageManager-service';
+
+// COMPONENTS - PAGES
+import { ConfirmError } from '../../confirmError/confirmError';
 let Wallet = require('ethereumjs-util');
 
 @IonicPage()
@@ -23,14 +26,13 @@ export class Camera {
     cameraEnabled = true;
     file: File;
 
-    constructor(private toastCtrl: ToastService,
+    constructor(
         public barcodeScanner: BarcodeScanner,
         public alertCtrl: AlertController,
         public navCtrl: NavController,
         public popoverCtrl: PopoverController,
         public modalCtrl: ModalController,
         private http: HttpClient,
-        private loadingSrv: LoadingService,
         private msgManagerSrv: MessageManagerService) {
         this.data = {
             title: "Cámara",
@@ -55,26 +57,25 @@ export class Camera {
                             throw error;
                         })
                 }, error => {
-                    this.toastCtrl.presentToast("Error: Contacte con el service provider", 3000);
-                    this.navCtrl.setRoot(Index);
+                    this.showConfirmEror("Error: Contacte con el service provider");
                 });
             } else {
                 this.msgManagerSrv.prepareDataAndInit(alastriaToken)
                     .catch((error) => {
-                        this.toastCtrl.presentToast("Error: Contacte con el service provider", 3000);
-                        this.navCtrl.setRoot(Index);
+                        this.showConfirmEror("Error: Contacte con el service provider");
                     });
             }
 
         }).catch(err => {
-            this.showErrorToast();
+            this.showConfirmEror();
         });
     }
 
-    private showErrorToast(msg?: string) {
-        msg = msg ? msg : "Error: Contacte con el service provider";
-        this.toastCtrl.presentToast(msg, 3000);
-        this.navCtrl.setRoot(Index);
-        this.loadingSrv.hide();
+    private showConfirmEror(message?: string) {
+        const error = {
+            message: message ? message : "Error: Contacte con el service provider"
+        };
+        const alert = this.modalCtrl.create(ConfirmError, { 'error': error });
+        alert.present();
     }
 }

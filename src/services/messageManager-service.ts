@@ -5,6 +5,7 @@ import { ConfirmLogin } from '../pages/confirmLogin/confirmLogin';
 import { Index } from '../pages/tabsPage/index/index';
 import { TokenService } from './token-service';
 import { ConfirmAccess } from '../pages/confirm-access/confirm-access';
+import { ConfirmError } from '../pages/confirmError/confirmError';
 import { AppConfig } from '../app.config';
 import { HttpClient } from '@angular/common/http';
 import { tokensFactory, transactionFactory, UserIdentity } from "alastria-identity-lib"
@@ -68,7 +69,7 @@ export class MessageManagerService {
                             this.showConfirmAccess(AppConfig.SERVICE_PROVIDER, tokenData, 0, 0, false, verifiedCredentials);
                         })
                         .catch((error) => {
-                            this.showErrorToast('No se han podido crear las credenciales');
+                            this.showConfirmEror('No se han podido crear las credenciales');
                         })
                     break;
                 case ProtocolTypes.presentationRequest:
@@ -97,6 +98,14 @@ export class MessageManagerService {
             [AppConfig.ISSUER]: iss, [AppConfig.DATA_COUNT]: credentials.length, [AppConfig.VERIFIED_JWT]: verifiedJWT,
             [AppConfig.CREDENTIALS]: credentials, [AppConfig.IAT]: iat, [AppConfig.EXP]: exp, [AppConfig.IS_PRESENTATION_REQ]: isPresentationRequest, [AppConfig.JTI]: jti
         });
+        alert.present();
+    }
+
+    private showConfirmEror(message?: string) {
+        const error = {
+            message: message ? message : "Error: Contacte con el service provider"
+        };
+        const alert = this.modalCtrl.create(ConfirmError, { 'error': error });
         alert.present();
     }
 
@@ -133,12 +142,12 @@ export class MessageManagerService {
                         this.loadingSrv.updateModalState();
                     }, error => {
                         console.log('Error', error);
-                        this.showErrorToast();
+                        this.showConfirmEror();
                     })
                 }
             })
             .catch(error => {
-                this.showErrorToast();
+                this.showConfirmEror();
             });
     }
 
@@ -214,18 +223,18 @@ export class MessageManagerService {
                             })
                             .catch(error => {
                                 console.log('Error', error);
-                                this.showErrorToast();
+                                this.showConfirmEror();
                             })
                         });
                 } else if (!isVerifiedToken) {
-                    this.showErrorToast("Error: No se puede verificar al Service Provider");
+                    this.showConfirmEror("Error: No se puede verificar al Service Provider");
                 } else {
-                    this.showErrorToast("Error: Identidad ya creada");
+                    this.showConfirmEror("Error: Identidad ya creada");
                 }
             })
             .catch(err => {
                 console.log('Error', err);
-                this.showErrorToast();
+                this.showConfirmEror();
             });
     }
 

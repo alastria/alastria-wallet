@@ -38,6 +38,7 @@ import { MessageManagerService } from '../services/messageManager-service';
 import { EntitiesPage } from '../pages/entities/entities';
 import { EntitiesPageModule } from '../pages/entities/entities.module';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
+import { ConfirmError } from '../pages/confirmError/confirmError';
 
 @NgModule({
     declarations: [
@@ -51,7 +52,8 @@ import { InAppBrowser } from '@ionic-native/in-app-browser';
         ConfirmLogin,
         WalkthroughPage,
         ConfirmAccess,
-        SelectIdentity
+        SelectIdentity,
+        ConfirmError
     ],
     imports: [
         BrowserModule,
@@ -85,7 +87,8 @@ import { InAppBrowser } from '@ionic-native/in-app-browser';
         WalkthroughPage,
         ConfirmLogin,
         SelectIdentity,
-        EntitiesPage
+        EntitiesPage,
+        ConfirmError
     ],
     providers: [
         StatusBar,
