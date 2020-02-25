@@ -1,96 +1,65 @@
-<ion-menu [content]="content">
-    <ion-header>
-    </ion-header>
-    <ion-content>
-        <ion-list class="login-menu">
-            <button ion-item (click)="openPage('changeUser')">
-                <div item-start><img src="assets/svg/user.svg" /></div>Cambiar de usuario
-            </button>
-            <button ion-item (click)="openPage('infoPage')">
-                <div item-start><img src="assets/svg/bullhorn.svg" /></div>Información de interés
-            </button>
-            <button ion-item (click)="openPage('reportProblem')">
-                <div item-start><img src="assets/svg/flame.svg" /></div>Reportar Problema
-            </button>
-            <button ion-item (click)="openPage('legal')">
-                <div item-start><img src="assets/svg/info.svg" /></div>Aviso Legal
-            </button>
-        </ion-list>
-        <label class="version-info">Versión AlastriaID 1.1</label>
-    </ion-content>
-</ion-menu>
-
+<ion-header></ion-header>
 <ion-nav class="main" id="nav" #content [root]="Login">
 </ion-nav>
-
-<ion-header>
-    <ion-navbar>
-        <button ion-button menuToggle clear icon-start>
-            <img class="menu" name='menu' src="assets/svg/hamburguer-menu.svg">
-        </button>
-    </ion-navbar>
-</ion-header>
-
-<!-- Themes Login + logo 1 -->
-<ion-content ion-fixed class="mainContent" style="z-index: 1;" *ngIf="data">
-    <div style="display: flex; flex-direction: column; justify-content: space-between; min-height: 100%; align-items: center">
-        <ion-grid *ngIf="data != null">
-            <ion-row style="display: flex; flex-direction: column; align-items: center;">
-                <ion-col>
-                    <img [src]="data.logo">
-                    <br />
-                </ion-col>
-
-                <!-- Login -->
-                <ion-list>
-
-                    <!-- User -->
-                    <div style="display: flex; align-items: flex-end" *ngIf="!data.isRegistered; else login">
-                        <img class="iconLogin" src="assets/images/logo/user.png" />
-                        <ion-item style="background-color: transparent;">
-                            <ion-label floating class="grey">{{data.labelUsername}}</ion-label>
-                            <ion-input class="menu" type="text" [(ngModel)]="user"></ion-input>
-                        </ion-item>
+<ion-content padding class="mainContent">
+    <ion-grid>
+        <ion-row class="row1">
+            <ion-col col-12>
+                <img [src]="logoUrl" id="logo">
+                <br />
+                <h3 *ngIf="loginType !== 'key'"> ¡Hola! </h3>
+                <h3> {{ title }} </h3>
+            </ion-col>
+        </ion-row>
+        <ion-row id="key-form" class="row2" *ngIf="loginType === buttons[0].type">
+            <ion-col col-12>
+                <form [formGroup]="accessKeyForm">
+                    <ion-item *ngFor="let input of inputsKeyForm; let i = index" class="input-key">
+                        <ion-label floating class="grey">{{input.label}}</ion-label>
+                        <ion-input class="menu form-control" type="number" style="-webkit-text-security:disc" [id]="input.key" [formControlName]="input.key">
+                        </ion-input>
+                        <div class="error" *ngIf="accessKeyForm?.controls[input.key].errors?.required && accessKeyForm?.controls[input.key].touched">
+                            Por favor introduce el valor requerido
+                        </div>
+                    </ion-item>
+                    <div class="error" *ngIf="accessKeyForm?.controls['repeatKey']?.errors?.mismatch">
+                        Las claves no coinciden
                     </div>
-                    <ng-template #login>
-                        <ion-label floating class="nameUser">Hola {{ data.userRegister }}, bienvenid@</ion-label>
-                    </ng-template>
-
-
-                    <!-- Password -->
-                    <div style="display: flex; align-items: flex-end">
-                        <img class="iconLogin" src="assets/images/logo/pass.png" />
-                        <ion-item style="background-color: transparent;">
-                            <ion-label floating class="grey">{{data.labelPassword}}</ion-label>
-                            <ion-input class="menu" type="password" [(ngModel)]="pass"></ion-input>
-                        </ion-item>
+                    <div class="error" *ngIf="accessKeyForm?.controls['key']?.errors?.incorrect">
+                        Clave incorrecta
                     </div>
-
-                </ion-list>
-
-                <!-- Boton Login Alastria -->
-                <ion-col style="width: 100%">
-                    <button ion-button block class="btnLogin" (click)="onEvent('onLogin')">{{data.loginalastria}}</button>
-                </ion-col>
-                <ion-col>
-                    <div class="grey" style="padding-top: 5px">
-                        {{data.dontHaveAccount}} <a class="menu" (click)="onEvent('onRegister')"> {{data.newAccount}}
-                        </a>
-                    </div>
-                </ion-col>
-                <!---End Share Section-->
-            </ion-row>
-        </ion-grid>
-        <div>
-            <a class="fingerPrint" (click)="onEvent('regFinger')" style="display: flex; align-items: center">
-                <img width="30px" height="40px" margin-right="5px" src="assets/images/logo/BiometricFinger.png" />
-                {{data.loginFinger}}
-            </a>
-        </div>
-        <div>
-            <div class="grey" style="padding-top: 1rem">
-                {{data.forgotPassword}} <a class="menu" (click)="navegateTo('page-contructions')"> {{data.help}}</a>
-            </div>
-        </div>
-    </div>
+                </form>
+            </ion-col>
+        </ion-row>
+        <ion-row class="row3" *ngIf="!loginType" id="button-select-login"> 
+            <ion-col col-12>
+                <button *ngFor="let button of buttons; let i = index"
+                    ion-button
+                    block class="btnLogin" 
+                    (click)="selectTypeLogin(button.type)">
+                    {{ button.label }}
+                    <ion-icon class="arrow-icon" name="ios-arrow-forward"></ion-icon>
+                </button>
+            </ion-col>
+        </ion-row>
+        <ion-row class="row3" *ngIf="loginType === buttons[0].type"> 
+            <ion-col col-12 class="ion-align-self-end">
+                <button ion-button block class="btnLogin" (click)="createAccessKey()">
+                    Aceptar
+                    <ion-icon class="arrow-icon" name="ios-arrow-forward"></ion-icon>
+                </button>
+            </ion-col>
+        </ion-row>
+        <ion-row class="row3" *ngIf="loginType === buttons[1].type">
+            <ion-col col-12 class="ion-align-self-end">
+                <div class="fingerPrint" (click)="regFinger()">
+                    <img src="assets/images/logo/BiometricFinger.png" />
+                    <p>
+                        Accede con tu huella
+                    </p>
+                </div>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
 </ion-content>
+ 

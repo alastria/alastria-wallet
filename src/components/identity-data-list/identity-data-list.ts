@@ -71,18 +71,22 @@ export class IdentityDataListComponent {
         let iatString: any; 
         let expString: any;
         if (this.isManualSelection) {
-            
             this.credentials = this.allCredentials.map(cred => JSON.parse(cred));
-            iat = new Date(this.iat * 1000);
-            exp = new Date(this.exp * 1000);
-            iatString = iat.getDay() + "/" + (iat.getMonth() + 1) + "/" + iat.getFullYear();
-            expString = exp.getDay() + "/" + (exp.getMonth() + 1) + "/" + exp.getFullYear();
+            if (this.iat) {
+                iat = new Date(this.iat * 1000);
+                iatString = iat.getDay() + "/" + (iat.getMonth() + 1) + "/" + iat.getFullYear();
+            } else {
+                iatString = "";
+            }
+
+            if (this.exp) {
+                exp = new Date(this.exp * 1000);
+                expString = exp.getDay() + "/" + (exp.getMonth() + 1) + "/" + exp.getFullYear();
+            } else {
+                expString = "";
+            }
         } else {
             this.credentials = this.navParams.get(AppConfig.CREDENTIALS);
-            iat = new Date(this.navParams.get(AppConfig.IAT) * 1000);
-            exp = new Date(this.navParams.get(AppConfig.EXP) * 1000);
-            iatString = iat.getDay() + "/" + (iat.getMonth() + 1) + "/" + iat.getFullYear();
-            expString = exp.getDay() + "/" + (exp.getMonth() + 1) + "/" + exp.getFullYear();
         }
         let count = 0;
         let credentialPromises = this.credentials.map((credential) => {
@@ -157,6 +161,12 @@ export class IdentityDataListComponent {
                                         isHidden: false
                                     };
                                     this.identityDisplay.push(obj);
+                                    const credentialSelected: any = {
+                                        credential: this.credentials[obj.id],
+                                        index: obj.id
+                                    }
+                                    credentialSelected.credential[key] = securedCredentials[key];
+                                    this.loadCredential.emit(credentialSelected);
                                     return Promise.resolve();
                                 });
                         } else {
@@ -182,6 +192,15 @@ export class IdentityDataListComponent {
                         }
                     });
             } else {
+                if (credential[AppConfig.IAT]) {
+                    iat = new Date(credential[AppConfig.IAT]);
+                    iatString = iat.getDay() + "/" + (iat.getMonth() + 1) + "/" + iat.getFullYear();
+                }
+
+                if (credential[AppConfig.EXP]) {
+                    exp = new Date(credential[AppConfig.EXP]);
+                    expString = exp.getDay() + "/" + (exp.getMonth() + 1) + "/" + exp.getFullYear();
+                }
                 obj = {
                     id: count++,
                     titleP: propNames[1].toUpperCase().replace(/_/g, " "),
@@ -230,6 +249,7 @@ export class IdentityDataListComponent {
                             resolve
                         })
                     }).then((data: any) => {
+                        console.log('data ', data);
                         if (data.mock && data.credential) {
                             data.mock.isChecked = item.isChecked
                             data.mock.id = item.id;

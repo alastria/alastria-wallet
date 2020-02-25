@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { SecureStorage, SecureStorageObject } from '@ionic-native/secure-storage';
-import { Platform } from 'ionic-angular';
+import { Platform, App } from 'ionic-angular';
 import { AppConfig } from '../app.config';
-import { PROP_METADATA } from '@angular/core/src/util/decorators';
 
 @Injectable()
 export class IdentitySecuredStorageService {
@@ -13,20 +12,14 @@ export class IdentitySecuredStorageService {
         private securedStorage: SecureStorage,
         private platform: Platform
     ) {
-        this.platform.ready().then(() => {
-            this.initSecureStorage();
-        });
     }
 
-    private initSecureStorage() {
-        this.securedStorage.create('identitySecureStorage')
-            .then(
-                (secStoObj: SecureStorageObject) => {
-                    this.securedStorageObject = secStoObj;
-                    console.log("IdentitySecureStorage ready");
-                }
-
-            );
+    initSecureStorage(): Promise<void> {
+        return this.securedStorage.create('identitySecureStorage').then(
+            (securedStorageObject) => {
+                this.securedStorageObject = securedStorageObject;
+            }
+        );
     }
 
     async getKeys() {
@@ -35,12 +28,13 @@ export class IdentitySecuredStorageService {
 
     async hasKey(key: string) {
         let keyExists = false;
-        return this.securedStorageObject.keys()
-            .then(result => {
-                keyExists = result.some(k => { return k === key });
-                console.log(keyExists);
-                return keyExists;
-            });
+        if (this.securedStorageObject) {
+            return this.securedStorageObject.keys()
+                .then(result => {
+                    keyExists = result.some(k => { return k === key });
+                    return keyExists;
+                });
+        }
     }
 
     async set(key: string, value: string) {
@@ -57,6 +51,23 @@ export class IdentitySecuredStorageService {
         return result;
     }
 
+    async getIdentityData() {
+        let identity = {};
+        return this.get(AppConfig.USER_DID)
+        .then(DID => {
+            identity[AppConfig.USER_DID] = DID;
+            return this.get(AppConfig.USER_PKU);
+        })
+        .then(PKU => {
+            identity[AppConfig.USER_PKU] = PKU;
+            return this.get(AppConfig.USER_PRIV_KEY);
+        })
+        .then(privKey => {
+            identity[AppConfig.USER_PRIV_KEY] = privKey;
+            return identity;
+        })
+    }
+
     async setJSON(key: string, value: any) {
         const jsonTmp = JSON.stringify(value);
         return this.securedStorageObject.set(key, jsonTmp);
@@ -64,6 +75,10 @@ export class IdentitySecuredStorageService {
 
     async get(key: string) {
         return this.securedStorageObject.get(key);
+    }
+
+    async remove(key: string) {
+        return this.securedStorageObject.remove(key);
     }
 
     async clearStorage() {
@@ -196,17 +211,12 @@ export class SessionSecuredStorageService {
     promiseState: Promise<any>;
 
     constructor(
-        private securedStorage: SecureStorage,
-        private platform: Platform
+        private securedStorage: SecureStorage
     ) {
-        this.platform.ready().then(() => {
-            this.initSecureStorage();
-            console.log("SessionSecureStorage ready");
-        });
     }
 
-    private initSecureStorage() {
-        this.securedStorage.create('sessionSecureStorage').then(
+    initSecureStorage() {
+        return this.securedStorage.create('sessionSecureStorage').then(
             (securedStorageObject) => {
                 this.securedStorageObject = securedStorageObject;
             }
@@ -215,7 +225,7 @@ export class SessionSecuredStorageService {
 
     async isRegistered() {
         return new Promise(
-            (resolve, reject) => {
+            async (resolve, reject) =>  {
                 if (!this.securedStorageObject) {
                     this.securedStorage.create('sessionSecureStorage').then(
                         (securedStorageObject) => {
@@ -233,16 +243,21 @@ export class SessionSecuredStorageService {
                         }
                     )
                 } else {
-                    this.getUsername().then(
-                        (result) => {
-                            if (result) {
-                                resolve(result);
+                    const keys: any = await this.securedStorageObject.keys();
+                    if (keys.includes('accessKey')) {
+                        resolve(this.securedStorageObject.get('accessKey'));
+                    } else {
+                        this.getUsername().then(
+                            (result) => {
+                                if (result) {
+                                    resolve(result);
+                                }
+                                else {
+                                    reject('No esta registrado, hay que crear una cuenta nueva');
+                                }
                             }
-                            else {
-                                reject('No esta registrado, hay que crear una cuenta nueva');
-                            }
-                        }
-                    );
+                        );
+                    }
                 }
             }
         )
@@ -303,5 +318,39 @@ export class SessionSecuredStorageService {
                 );
             }
         )
+    }
+
+    async hasKey(key: string) {
+        let keyExists = false;
+        return this.securedStorageObject.keys()
+            .then(result => {
+                keyExists = result.some(k => { return k === key });
+                return keyExists;
+            });
+    }
+
+    setAccessKey(key: string): Promise<any> {
+        return this.securedStorageObject.set('accessKey', key);
+    }
+
+    getAccessKey(): Promise<any> {
+        return this.securedStorageObject.get('accessKey');
+    }
+
+    setLoginType(type: string) {
+        return this.securedStorageObject.set('loginType', type);
+    }
+
+    getLoginType() {
+        return this.securedStorageObject.get('loginType');
+    }
+
+    async isAuthorized(key: string): Promise<boolean> {
+        return this.getAccessKey()
+            .then((keyStore) => (parseInt(keyStore) === parseInt(key)));
+    }
+
+    async set(key: string, value: string) {
+        return this.securedStorageObject.set(key, value);
     }
 }

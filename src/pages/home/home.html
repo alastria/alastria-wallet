@@ -1,7 +1,6 @@
 <ion-content padding>
-  <login
+  <login-page
     *ngIf="!isLoged"
-    [data]="login.data"
-    [events]="login.events">
-  </login>
+    (handleLogin)="handleLogin($event)">
+  </login-page>
 </ion-content>

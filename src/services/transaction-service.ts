@@ -22,7 +22,7 @@ export class TransactionService {
 
 
     public createAndAddSubjectCredential(kidCredential, didIsssuer, subjectAlastriaID, context, credentialSubject, tokenExpTime, tokenActivationDate, jti, uri): Promise<any> {
-        let credential = tokensFactory.tokens.createCredential(kidCredential, didIsssuer, 
+        let credential = tokensFactory.tokens.createCredential(kidCredential, didIsssuer,
             subjectAlastriaID, context, credentialSubject, tokenExpTime, tokenActivationDate, jti);
         console.log("The credential1 is: " + credential);
 
@@ -45,10 +45,10 @@ export class TransactionService {
 
     public addSubjectCredential(credential, didIsssuer, uri): Promise<any> {
         this.identitySrv.setUserDID(credential[AppConfig.PAYLOAD][AppConfig.SUBJECT]);
-        return this.createAndAddSubjectCredential(credential[AppConfig.HEADER][AppConfig.KID],didIsssuer,
-            credential[AppConfig.PAYLOAD][AppConfig.SUBJECT],credential[AppConfig.PAYLOAD][AppConfig.VC][AppConfig.context], 
-            credential[AppConfig.PAYLOAD][AppConfig.VC][AppConfig.CREDENTIALS_SUBJECT],credential[AppConfig.PAYLOAD][AppConfig.EXP],
-            credential[AppConfig.PAYLOAD][AppConfig.NBF],credential[AppConfig.PAYLOAD][AppConfig.JTI],uri);
+        return this.createAndAddSubjectCredential(credential[AppConfig.HEADER][AppConfig.KID], didIsssuer,
+            credential[AppConfig.PAYLOAD][AppConfig.SUBJECT], credential[AppConfig.PAYLOAD][AppConfig.VC][AppConfig.context],
+            credential[AppConfig.PAYLOAD][AppConfig.VC][AppConfig.CREDENTIALS_SUBJECT], credential[AppConfig.PAYLOAD][AppConfig.EXP],
+            credential[AppConfig.PAYLOAD][AppConfig.NBF], credential[AppConfig.PAYLOAD][AppConfig.JTI], uri);
     }
 
     public getSubjectCredentialList(subject: string): Promise<any> {
@@ -112,14 +112,33 @@ export class TransactionService {
         });
     }
 
+    public getCurrentPublicKey(DID: string): Promise<any> {
+        DID = DID.split(":")[4];
+        let currentPubKey = transactionFactory.publicKeyRegistry.getCurrentPublicKey(this.web3, DID)
+
+        return this.web3.eth.call(currentPubKey)
+            .then(result => {
+                // We add this replace to find only the alphanumeric substring (the rest of null/void characters are not important)
+                /* let publicKey = this.web3.utils.hexToAscii(result).replace(/[^0-9A-Z]+/gi, "")
+                return publicKey; */
+
+                let pubKey = this.web3.eth.abi.decodeParameters(['string'], result)
+                let publicKey = pubKey[0]
+                return publicKey;
+            })
+            .catch(error => {
+                console.log('Error -------->', error)
+            })
+    }
+
     private sendSigned(subjectCredentialSigned: string): Promise<any> { //:Promise<void | TransactionReceipt>
         return this.web3.eth.sendSignedTransaction(subjectCredentialSigned).
-        then(transactionHash => {
-            console.log("Hash transaction" + transactionHash);
-            return transactionHash;
-        }).catch(e => {
-            console.log("Error in transaction (sendTx function): " + e);
-            throw e;
-        });
+            then(transactionHash => {
+                console.log("Hash transaction" + transactionHash);
+                return transactionHash;
+            }).catch(e => {
+                console.log("Error in transaction (sendTx function): " + e);
+                throw e;
+            });
     }
 }

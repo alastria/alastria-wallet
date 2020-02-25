@@ -17,7 +17,7 @@ export class TabsPage {
 
     constructor(public navCtrl: NavController, private sessionSecuredStorageService: SessionSecuredStorageService) {
 
-        this.sessionSecuredStorageService.isRegistered().then(
+        this.sessionSecuredStorageService.hasKey('loginType').then(
             (result) => {
                 this.isLoged = true;
             }
