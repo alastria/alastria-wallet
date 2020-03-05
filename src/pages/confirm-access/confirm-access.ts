@@ -4,17 +4,22 @@ import { ViewController, NavParams, ModalController, NavController } from 'ionic
 import { ToastService } from '../../services/toast-service';
 import { IdentitySecuredStorageService } from '../../services/securedStorage.service';
 import { LoadingService } from '../../services/loading-service';
+import { IdentityService } from "../../services/identity-service";
+import { Web3Service } from "../../services/web3-service";
 import { TabsPage } from '../tabsPage/tabsPage';
 import { TokenService } from '../../services/token-service';
-import { tokensFactory } from "alastria-identity-lib"
+import { tokensFactory, transactionFactory } from "alastria-identity-lib";
 import { AppConfig } from '../../app.config';
 import { TransactionService } from '../../services/transaction-service';
+import * as Web3 from "web3";
 
 @Component({
     selector: 'confirm-access',
     templateUrl: 'confirm-access.html'
 })
 export class ConfirmAccess {
+
+    private web3: Web3;
 
     public dataNumberAccess: number;
     public isPresentationRequest: boolean;
@@ -33,12 +38,16 @@ export class ConfirmAccess {
         public navCtrl: NavController,
         public modalCtrl: ModalController,
         public toastCtrl: ToastService,
+        private secureStorage: IdentitySecuredStorageService,
         private securedStrg: IdentitySecuredStorageService,
         private loadingSrv: LoadingService,
         private tokenSrv: TokenService,
         private transactionSrv: TransactionService,
-        private http: HttpClient
+        private http: HttpClient,
+        private web3Srv: Web3Service,
+        private identitySrv: IdentityService
     ) {
+        this.web3 = web3Srv.getWeb3();
         this.dataNumberAccess = this.navParams.get(AppConfig.DATA_COUNT);
         this.issName = "Empresa X";
         this.entitiyName = "Entidad publica Ejemplo";
@@ -91,6 +100,7 @@ export class ConfirmAccess {
                 });
 
                 const callbackUrl = this.verifiedJWT.payload.pr.procUrl;
+                const uri = 'www.google.com'
                 let privKey = ''
                 
                 this.securedStrg.get('userPrivateKey')
@@ -114,7 +124,20 @@ export class ConfirmAccess {
                         let presentation = tokensFactory.tokens.createPresentation(did, this.verifiedJWT.payload.iss, did, 
                             this.verifiedJWT.payload.pr['@context'], signedCredentialJwts, callbackUrl, this.verifiedJWT.payload.pr.procHash,
                             this.verifiedJWT.payload.exp, this.verifiedJWT.payload.iat, this.navParams.get(AppConfig.JTI));
-                        return presentation;  
+                        let signedPresentation = this.tokenSrv.signTokenES(JSON.stringify(presentation.payload), privKey.substring(2))
+                        let presentationPSMHash = tokensFactory.tokens.PSMHash(this.web3, signedPresentation, did.split(':')[4]);
+                        let addPresentationTx = transactionFactory.presentationRegistry.addSubjectPresentation(this.web3, presentationPSMHash, uri)
+                        return this.identitySrv.init().then(subjectidentity => {
+                            return this.identitySrv.getKnownTransaction(addPresentationTx).then((subjectPresentationSigned: string) => {
+                                return this.transactionSrv.sendSigned(subjectPresentationSigned);
+                            }).then(receipt => {
+                                console.log("RECEIPT:" + receipt);
+                                presentation.payload.vp.procHash = presentationPSMHash
+                                return this.transactionSrv.getSubjectPresentationStatus(did.split(':')[4], presentationPSMHash).then(status => {
+                                    return presentation;  
+                                })
+                            })
+                        })
                     })
                     .then((presentation) => {
                         return this.http.post(callbackUrl, presentation).toPromise()

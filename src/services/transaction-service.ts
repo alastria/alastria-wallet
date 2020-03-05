@@ -2,7 +2,6 @@ import { Injectable } from "@angular/core";
 import { transactionFactory, tokensFactory } from "alastria-identity-lib"
 import { Web3Service } from "./web3-service";
 import { IdentityService } from "./identity-service";
-import { SubjectCredential } from "../models/subject-credential.model";
 import * as Web3 from "web3";
 import { CredentialStatus } from "../models/credential-status.model";
 import { AppConfig } from "../app.config";
@@ -131,8 +130,8 @@ export class TransactionService {
             })
     }
 
-    private sendSigned(subjectCredentialSigned: string): Promise<any> { //:Promise<void | TransactionReceipt>
-        return this.web3.eth.sendSignedTransaction(subjectCredentialSigned).
+    public sendSigned(subjectObjectSigned: string): Promise<any> { //:Promise<void | TransactionReceipt>
+        return this.web3.eth.sendSignedTransaction(subjectObjectSigned).
             then(transactionHash => {
                 console.log("Hash transaction" + transactionHash);
                 return transactionHash;

@@ -12,6 +12,7 @@ import { tokensFactory, transactionFactory, UserIdentity } from "alastria-identi
 import { Web3Service } from './web3-service';
 import { TransactionService } from './transaction-service';
 import { IdentitySecuredStorageService, SessionSecuredStorageService } from './securedStorage.service';
+import { IdentityService } from './identity-service';
 import { LoadingService } from './loading-service';
 let Wallet = require('ethereumjs-util');
 
@@ -30,6 +31,7 @@ export class MessageManagerService {
         private transactionSrv: TransactionService,
         private secureStorage: IdentitySecuredStorageService,
         private sessionSecureStorage: SessionSecuredStorageService,
+        private identityService: IdentityService,
         private loadingSrv: LoadingService,
         app: App) 
     {
@@ -169,34 +171,36 @@ export class MessageManagerService {
                     let address = account[AppConfig.ADDRESS];
                     let privKey = account[AppConfig.PRIVATE_KEY];
                     let pku = "0x" + Wallet.privateToPublic(privKey).toString('hex');
-
+                    
                     let subjectIdentity = new UserIdentity(this.web3Srv.getWeb3(), address, privKey.substring(2), 0);
-
+                    
                     let createTx = transactionFactory.identityManager.createAlastriaIdentity(this.web3Srv.getWeb3(), pku.substring(2));
-
+                    
                     subjectIdentity.getKnownTransaction(createTx).then(signedCreateTx => {
                         let alastriaTokenSigned = tokensFactory.tokens.signJWT(alastriaToken, privKey.substring(2));
-
+                        
                         let alastriaAIC = tokensFactory.tokens.createAIC(signedCreateTx, alastriaTokenSigned, pku.substring(2));
-
+                        
                         let signedToken = tokensFactory.tokens.signJWT(alastriaAIC, privKey.substring(2));
-
+                        
                         let AIC = {
                             signedAIC: signedToken
                         }
                         
                         let DID = null;
                         let callbackUrlPut = null;
-
+                        
                         this.http.post(callbackUrl, AIC).toPromise()
-                            .then(result => {
+                        .then(result => {
                                 DID = result[AppConfig.DID_KEY];
                                 let proxyAddress = "0x" + DID.split(":")[4]
                                 this.secureStorage.set(AppConfig.IS_IDENTITY_CREATED, "1");
+                                this.secureStorage.set('ethAddress', address)
                                 this.secureStorage.set(AppConfig.USER_PKU, pku);
                                 this.secureStorage.set(AppConfig.USER_PRIV_KEY, privKey);
                                 this.secureStorage.set(AppConfig.USER_DID, DID);
                                 this.secureStorage.set(AppConfig.PROXY_ADDRESS, proxyAddress);
+                                this.identityService.init()
                                 return this.secureStorage.hasKey('callbackUrlPut');
                             })
                             .then((hasKey) => {
