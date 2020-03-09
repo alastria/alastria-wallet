@@ -8,7 +8,7 @@ import { EntitiesPage } from '../entities/entities';
 import { TabsPage } from './../tabsPage/tabsPage';
 
 // Services
-import { IdentitySecuredStorageService, SessionSecuredStorageService } from '../../services/securedStorage.service';
+import { IdentitySecuredStorageService } from '../../services/securedStorage.service';
 
 
 @Component({
@@ -28,7 +28,6 @@ export class HomePage {
         public navParams: NavParams,
         public alertCtrl: AlertController,
         private identitySecuredStorageService: IdentitySecuredStorageService,
-        private sessionSecuredStorageService: SessionSecuredStorageService,
         private deeplinks: Deeplinks
     ) { 
 
@@ -39,11 +38,9 @@ export class HomePage {
                 '/createAI': LoginPage
             }).subscribe(
                 (match) => {
-                    console.log('match ', match);
                     if (match && match.$args && match.$args.alastriaToken) {
                     this.identitySecuredStorageService.hasKey('userDID')
                         .then((DID) => {
-                            console.log(DID);
                             if(!DID) {
                                 this.token = match.$args.alastriaToken;
                                 this.navCtrl.setRoot(HomePage, { token: this.token});
