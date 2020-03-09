@@ -39,6 +39,7 @@ import { EntitiesPage } from '../pages/entities/entities';
 import { EntitiesPageModule } from '../pages/entities/entities.module';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
 import { ConfirmError } from '../pages/confirmError/confirmError';
+import { Deeplinks } from '@ionic-native/deeplinks';
 
 @NgModule({
     declarations: [
@@ -107,7 +108,8 @@ import { ConfirmError } from '../pages/confirmError/confirmError';
         { provide: ErrorHandler, useClass: IonicErrorHandler },
         ToastService,
         TokenService,
-        InAppBrowser
+        InAppBrowser,
+        Deeplinks
     ]
 })
 export class AppModule { }
