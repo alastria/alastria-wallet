@@ -42,7 +42,7 @@
                 </button>
             </ion-col>
         </ion-row>
-        <ion-row class="row3" *ngIf="loginType === buttons[0].type"> 
+        <ion-row class="row3" *ngIf="buttons[0] && loginType === buttons[0].type"> 
             <ion-col col-12 class="ion-align-self-end">
                 <button ion-button block class="btnLogin" (click)="createAccessKey()">
                     Aceptar
@@ -50,7 +50,7 @@
                 </button>
             </ion-col>
         </ion-row>
-        <ion-row class="row3" *ngIf="loginType === buttons[1].type">
+        <ion-row class="row4" *ngIf="buttons[1] && loginType === buttons[1].type">
             <ion-col col-12 class="ion-align-self-end">
                 <div class="fingerPrint" (click)="regFinger()">
                     <img src="assets/images/logo/BiometricFinger.png" />
