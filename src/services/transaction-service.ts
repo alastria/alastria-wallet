@@ -6,6 +6,7 @@ import * as Web3 from "web3";
 import { CredentialStatus } from "../models/credential-status.model";
 import { AppConfig } from "../app.config";
 import { PresentationStatus } from "../models/presentation-status.model";
+import { IdentitySecuredStorageService } from "./securedStorage.service";
 
 @Injectable()
 export class TransactionService {
@@ -14,7 +15,8 @@ export class TransactionService {
 
     constructor(
         private web3Srv: Web3Service,
-        private identitySrv: IdentityService
+        private identitySrv: IdentityService,
+        private secureStorage: IdentitySecuredStorageService
     ) {
         this.web3 = web3Srv.getWeb3();
     }
@@ -23,23 +25,19 @@ export class TransactionService {
     public createAndAddSubjectCredential(kidCredential, didIsssuer, subjectAlastriaID, context, credentialSubject, tokenExpTime, tokenActivationDate, jti, uri): Promise<any> {
         let credential = tokensFactory.tokens.createCredential(kidCredential, didIsssuer,
             subjectAlastriaID, context, credentialSubject, tokenExpTime, tokenActivationDate, jti);
-        console.log("The credential1 is: " + credential);
-
-        let signedJWTCredential = tokensFactory.tokens.signJWT(credential, this.identitySrv.getPrivateKey());
-        console.log("The signed token is: " + signedJWTCredential);
-
-        let credentialHash = tokensFactory.tokens.PSMHash(this.web3, signedJWTCredential, didIsssuer);
-        console.log("The PSMHash is:" + credentialHash);
-
-        let subjectCredential = transactionFactory.credentialRegistry.addSubjectCredential(this.web3, credentialHash, uri); //aqui no funciona
-
-        return this.identitySrv.getKnownTransaction(subjectCredential).then((subjectCredentialSigned: string) => {
-            console.log("(addSubjectCredential)The transaction bytes data is: " + subjectCredentialSigned);
-            return this.sendSigned(subjectCredentialSigned);
-        }).then(receipt => {
-            console.log("RECEIPT:" + receipt);
-            return credentialHash;
-        })
+  
+        return this.secureStorage.get('userPrivateKey').then( privateKey => {
+            let signedJWTCredential = tokensFactory.tokens.signJWT(credential, privateKey);
+    
+            let credentialHash = tokensFactory.tokens.PSMHash(this.web3, signedJWTCredential, didIsssuer);
+    
+            let subjectCredential = transactionFactory.credentialRegistry.addSubjectCredential(this.web3, credentialHash, uri); //aqui no funciona
+            return this.identitySrv.getKnownTransaction(subjectCredential).then((subjectCredentialSigned: string) => {
+                return this.sendSigned(subjectCredentialSigned);
+            }).then(receipt => {
+                return credentialHash;
+            });
+        });
     }
 
     public addSubjectCredential(credential, didIsssuer, uri): Promise<any> {

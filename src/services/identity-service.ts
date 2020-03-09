@@ -24,7 +24,10 @@ export class IdentityService {
         return this.subjectPrivateKey;
     }
 
-    public getKnownTransaction(subjectCredential): Promise<string> {
+    public async getKnownTransaction(subjectCredential): Promise<string> {
+        if (!this.subjectIdentity) {
+            await this.init();
+        }
         return this.subjectIdentity.getKnownTransaction(subjectCredential);
     }
 
@@ -45,7 +48,7 @@ export class IdentityService {
 
     public init(): Promise<any> {
         return this.secureStorage.get('ethAddress').then( address => {
-            this.secureStorage.get('userPrivateKey').then( privateKey => {
+            return this.secureStorage.get('userPrivateKey').then( privateKey => {
                 this.subjectPrivateKey = privateKey;
                 this.subjectIdentity = new UserIdentity(this.web3, address, privateKey.substr(2), null);
                 this.secureStorage.getDID().then(DID => this.userDID = DID);
