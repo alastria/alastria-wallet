@@ -24,7 +24,7 @@ export class LoginPage {
   @Output() handleLogin = new EventEmitter<boolean>();
   accessKeyForm: FormGroup;
   title: string = 'Accede para gestionar tu identidad de Alastria.';
-  logoUrl: string = 'assets/images/logo/logo.png';
+  logoUrl: string = 'assets/images/logo/letter-alastria-white.png';
   loginType: string; // key = key access; patron = patron access; fingerprint
   buttons: Array<any> = [
     {
