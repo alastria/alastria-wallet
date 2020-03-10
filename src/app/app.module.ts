@@ -1,5 +1,5 @@
 import { IdentityDataListModule } from './../components/identity-data-list/identity-data-list.module';
-import { Activities } from './../services/activities/activities.service';
+import { Activities } from '../services/activities.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';

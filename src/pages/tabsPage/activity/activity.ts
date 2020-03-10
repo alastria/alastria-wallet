@@ -2,7 +2,7 @@ import { ModalController, App } from 'ionic-angular';
 import { Component, ViewChild } from '@angular/core';
 import { IonicPage, AlertController } from 'ionic-angular';
 import { ToastService } from '../../../services/toast-service';
-import { Activities } from './../../../services/activities/activities.service';
+import { Activities } from '../../../services/activities.service';
 import { ActivityM } from './../../../models/activity.model';
 import { OptionsComponent } from './options/options';
 import { IdentitySecuredStorageService } from '../../../services/securedStorage.service';
