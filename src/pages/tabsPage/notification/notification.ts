@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
 import { IonicPage, ItemSliding } from 'ionic-angular';
 import { ToastService } from '../../../services/toast-service';
-import { TabsService } from '../../../services/tabs-service';
 
 @IonicPage()
 @Component({
   templateUrl: 'notification.html',
-  providers: [TabsService, ToastService]
+  providers: [ToastService]
 })
 export class Notification {
 

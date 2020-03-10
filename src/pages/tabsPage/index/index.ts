@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { ToastService } from '../../../services/toast-service';
-import { TabsService } from '../../../services/tabs-service';
 import { IonicPage } from 'ionic-angular/umd';
 import { ScrollHideConfig } from '../../../components/parallax/parallax.directive';
 
@@ -9,7 +8,7 @@ import { ScrollHideConfig } from '../../../components/parallax/parallax.directiv
 })
 @Component({
     templateUrl: 'index.html',
-    providers: [TabsService, ToastService]
+    providers: [ToastService]
 })
 export class Index {
 

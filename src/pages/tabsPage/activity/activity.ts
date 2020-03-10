@@ -2,7 +2,6 @@ import { ModalController, App } from 'ionic-angular';
 import { Component, ViewChild } from '@angular/core';
 import { IonicPage, AlertController } from 'ionic-angular';
 import { ToastService } from '../../../services/toast-service';
-import { TabsService } from '../../../services/tabs-service';
 import { Activities } from './../../../services/activities/activities.service';
 import { ActivityM } from './../../../models/activity.model';
 import { OptionsComponent } from './options/options';
@@ -12,7 +11,7 @@ import { AppConfig } from '../../../app.config';
 @IonicPage()
 @Component({
     templateUrl: 'activity.html',
-    providers: [TabsService, ToastService]
+    providers: [ToastService]
 })
 
 export class Activity {

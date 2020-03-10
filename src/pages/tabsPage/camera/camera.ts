@@ -8,7 +8,6 @@ import { AppConfig } from '../../../app.config';
 import { MessageManagerService } from '../../../services/messageManager-service';
 import { IonicPage } from 'ionic-angular';
 import { ToastService } from '../../../services/toast-service';
-import { TabsService } from '../../../services/tabs-service';
 
 // COMPONENTS - PAGES
 import { ConfirmError } from '../../confirmError/confirmError';
@@ -17,7 +16,7 @@ let Wallet = require('ethereumjs-util');
 @IonicPage()
 @Component({
     templateUrl: 'camera.html',
-    providers: [TabsService, ToastService]
+    providers: [ToastService]
 })
 
 export class Camera {

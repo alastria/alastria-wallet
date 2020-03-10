@@ -1,13 +1,12 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, App } from 'ionic-angular';
 import { ToastService } from '../../../services/toast-service';
-import { TabsService } from '../../../services/tabs-service';
 import { MyApp } from '../../../app/app.component';
 
 @IonicPage()
 @Component({
     templateUrl: 'options.html',
-    providers: [TabsService, ToastService]
+    providers: [ToastService]
 })
 export class Options {
 
