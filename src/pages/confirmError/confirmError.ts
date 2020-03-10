@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { NavController, NavParams, ModalController, ViewController } from 'ionic-angular';
 
 import { AppConfig } from './../../app.config';
-import { IdentitySecuredStorageService } from './../../services/securedStorage.service';
+import { SecuredStorageService } from './../../services/securedStorage.service';
 
 import { EntitiesPage } from './../entities/entities';
 import { TabsPage } from '../tabsPage/tabsPage';
@@ -20,7 +20,7 @@ export class ConfirmError {
         public navParams: NavParams, 
         public modalCtrl: ModalController,
         public viewCtrl: ViewController,
-        private identitySecuredStorageService: IdentitySecuredStorageService
+        private securedStrg: SecuredStorageService
     ) {
         this.error = this.navParams.get('error');
         console.log('error ', this.error);
@@ -33,7 +33,7 @@ export class ConfirmError {
     async dismiss(){
         this.viewCtrl.dismiss();
         try {
-            const DID = await this.identitySecuredStorageService.hasKey(AppConfig.USER_DID);
+            const DID = await this.securedStrg.hasKey(AppConfig.USER_DID);
 
             if (DID) {
                 this.navCtrl.setRoot(TabsPage);

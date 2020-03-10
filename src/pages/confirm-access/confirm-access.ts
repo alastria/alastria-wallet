@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { ViewController, NavParams, ModalController, NavController } from 'ionic-angular';
 import { ToastService } from '../../services/toast-service';
-import { IdentitySecuredStorageService } from '../../services/securedStorage.service';
+import { SecuredStorageService } from '../../services/securedStorage.service';
 import { LoadingService } from '../../services/loading-service';
 import { IdentityService } from "../../services/identity-service";
 import { Web3Service } from "../../services/web3-service";
@@ -38,8 +38,7 @@ export class ConfirmAccess {
         public navCtrl: NavController,
         public modalCtrl: ModalController,
         public toastCtrl: ToastService,
-        private secureStorage: IdentitySecuredStorageService,
-        private securedStrg: IdentitySecuredStorageService,
+        private securedStrg: SecuredStorageService,
         private loadingSrv: LoadingService,
         private tokenSrv: TokenService,
         private transactionSrv: TransactionService,

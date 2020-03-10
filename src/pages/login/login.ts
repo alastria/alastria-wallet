@@ -1,11 +1,10 @@
-import { IdentitySecuredStorageService } from './../../services/securedStorage.service';
 import { Component, OnInit, AfterContentInit, Output, EventEmitter } from '@angular/core';
 import { IonicPage, NavController, NavParams, Platform } from 'ionic-angular';
 import { FingerprintAIO } from '@ionic-native/fingerprint-aio';
 
 
 // SERVICES
-import { SessionSecuredStorageService } from '../../services/securedStorage.service';
+import { SecuredStorageService } from '../../services/securedStorage.service';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 
 /**
@@ -48,8 +47,7 @@ export class LoginPage {
               public navParams: NavParams,
               private platform: Platform,
               private faio: FingerprintAIO,
-              private secureStorageService: SessionSecuredStorageService,
-              private identtityStorageService: IdentitySecuredStorageService,
+              private securedStrg: SecuredStorageService,
               private fb: FormBuilder) {
     this.platform.registerBackButtonAction(async () => {
       if (this.loginType) {
@@ -60,12 +58,12 @@ export class LoginPage {
     },1);
     this.platform.ready()
       .then(async () => {
-        await this.identtityStorageService.initSecureStorage();
-        await this.secureStorageService.initSecureStorage();
-        this.hashKey = await this.secureStorageService.hasKey('loginType');
+        await this.securedStrg.initSecureStorage();
+        await this.securedStrg.initSecureStorage();
+        this.hashKey = await this.securedStrg.hasKey('loginType');
 
         if (this.hashKey) {
-          const loginTypeRes = await this.secureStorageService.getLoginType();
+          const loginTypeRes = await this.securedStrg.getLoginType();
           this.selectTypeLogin(loginTypeRes);
         } else {
           this.faio.isAvailable()
@@ -102,12 +100,12 @@ export class LoginPage {
 
   async createAccessKey() {
     if (this.accessKeyForm && this.accessKeyForm.status === "VALID") {
-      await this.secureStorageService.setLoginType(this.loginType);
-      const hasKey = await this.secureStorageService.hasKey('accessKey');
+      await this.securedStrg.setLoginType(this.loginType);
+      const hasKey = await this.securedStrg.hasKey('accessKey');
       if (!hasKey) {
-        await this.secureStorageService.setAccessKey(this.accessKeyForm.get('key').value);
+        await this.securedStrg.setAccessKey(this.accessKeyForm.get('key').value);
       }
-      const isAuthorized = await this.secureStorageService.isAuthorized(this.accessKeyForm.get('key').value);
+      const isAuthorized = await this.securedStrg.isAuthorized(this.accessKeyForm.get('key').value);
       if (!isAuthorized) {
         this.accessKeyForm.get('key').setErrors({incorrect: true});
       }
@@ -166,7 +164,7 @@ export class LoginPage {
             })
             .then(result => {
               console.log('faio ', result);
-              this.secureStorageService.setLoginType(this.loginType)
+              this.securedStrg.setLoginType(this.loginType)
                 .then(result => {
                   this.handleLogin.emit(true);
                 });

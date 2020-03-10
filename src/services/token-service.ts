@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { verify, sign, decode } from "jsonwebtoken";
 import { tokensFactory } from "alastria-identity-lib";
 import { AppConfig } from '../app.config';
-import { IdentitySecuredStorageService } from "./securedStorage.service";
+import { SecuredStorageService } from "./securedStorage.service";
 
 @Injectable()
 export class TokenService {
@@ -14,13 +14,13 @@ export class TokenService {
     private readonly TYPE_PRESENTATION_REQ = "presentationRequest";
     private readonly SECRET = "your-256-bit-secret";
 
-    constructor(private secureStorage: IdentitySecuredStorageService) {
+    constructor(private securedStrg: SecuredStorageService) {
         console.log("TokenService initialized");
     }
 
     public async getTokenType(token: string | object) {
         let tokenType: string;
-        return this.secureStorage.hasKey(AppConfig.IS_IDENTITY_CREATED).then(result => {
+        return this.securedStrg.hasKey(AppConfig.IS_IDENTITY_CREATED).then(result => {
             if (token[this.ATR_CREDENTIAL]) {
                 tokenType = this.TYPE_CREDENTIAL_OFFER
             } else if (token[AppConfig.PAYLOAD][this.ATR_PRESENTATION_REQUEST]) {

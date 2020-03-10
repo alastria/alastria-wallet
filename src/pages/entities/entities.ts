@@ -10,7 +10,7 @@ import { Item } from '../../models/item.model';
 //Services
 import { EntityService } from '../../services/entity.service';
 import { MessageManagerService } from '../../services/messageManager-service';
-import { IdentitySecuredStorageService } from './../../services/securedStorage.service';
+import { SecuredStorageService } from './../../services/securedStorage.service';
 import { SocketService } from '../../services/socket.service';
 
 // Pages
@@ -41,7 +41,7 @@ export class EntitiesPage {
               private sanitize: DomSanitizer,
               private inAppBrowser: InAppBrowser,
               private messageManagerService: MessageManagerService,
-              private identitySecureStorage: IdentitySecuredStorageService,
+              private securedStrg: SecuredStorageService,
               private socketService: SocketService) {
     this.getEntities();
     this.token = this.navParams.get('token');
@@ -88,7 +88,7 @@ export class EntitiesPage {
 
     this.subscription.add(this.socketService.onCreateIdentityWv()
       .subscribe((result) => {
-        this.identitySecureStorage.set('callbackUrlPut', result.callbackUrl)
+        this.securedStrg.set('callbackUrlPut', result.callbackUrl)
               .then(() => {
                 this.messageManagerService.prepareDataAndInit(result.alastriaToken);
                 this.externalWeb.close();

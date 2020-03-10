@@ -19,7 +19,7 @@ import { ContructionsPageModule } from './../pages/contructions/contructions.mod
 import { SuccessPageModule } from '../pages/success/success.module';
 import { ProfilePage } from '../pages/profile/profile';
 import { DetailProfilePage } from '../pages/detail-profile/detail-profile';
-import { SessionSecuredStorageService, IdentitySecuredStorageService } from '../services/securedStorage.service';
+import { SecuredStorageService } from '../services/securedStorage.service';
 import { ConfirmLogin } from '../pages/confirmLogin/confirmLogin';
 import { TermsConditionsPageModule } from '../pages/terms-conditions/terms-conditions.module';
 import { ConfirmAccess } from '../pages/confirm-access/confirm-access';
@@ -90,9 +90,8 @@ import { Deeplinks } from '@ionic-native/deeplinks';
         SecureStorage,
         Web3Service,
         IdentityService,
-        SessionSecuredStorageService,
+        SecuredStorageService,
         MessageManagerService,
-        IdentitySecuredStorageService,
         TransactionService,
         Activities,
         { provide: ErrorHandler, useClass: IonicErrorHandler },

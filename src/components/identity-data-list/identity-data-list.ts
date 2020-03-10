@@ -1,7 +1,7 @@
 import { DetailProfilePage } from './../../pages/detail-profile/detail-profile';
 import { Component, Input, EventEmitter, Output } from '@angular/core';
 import { NavParams, NavController } from 'ionic-angular';
-import { IdentitySecuredStorageService } from '../../services/securedStorage.service';
+import { SecuredStorageService } from '../../services/securedStorage.service';
 import { SelectIdentity } from '../../pages/confirm-access/select-identity/select-identity';
 import { TokenService } from '../../services/token-service';
 import { AppConfig } from '../../app.config';
@@ -58,7 +58,7 @@ export class IdentityDataListComponent {
     constructor(
         public navCtrl: NavController,
         public navParams: NavParams,
-        private securedStrg: IdentitySecuredStorageService,
+        private securedStrg: SecuredStorageService,
         private tokenSrv: TokenService
     ) {
 

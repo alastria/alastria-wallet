@@ -5,7 +5,7 @@ import { ToastService } from '../../../services/toast-service';
 import { Activities } from '../../../services/activities.service';
 import { ActivityM } from './../../../models/activity.model';
 import { OptionsComponent } from './options/options';
-import { IdentitySecuredStorageService } from '../../../services/securedStorage.service';
+import { SecuredStorageService } from '../../../services/securedStorage.service';
 import { AppConfig } from '../../../app.config';
 
 @IonicPage()
@@ -29,7 +29,7 @@ export class Activity {
         private activitiesService: Activities,
         public alertCtrl: AlertController,
         public modalCtrl: ModalController,
-        private securedStrg: IdentitySecuredStorageService
+        private securedStrg: SecuredStorageService
     ) {
         this.type = AppConfig.CREDENTIAL_TYPE;
         this.getActivities();

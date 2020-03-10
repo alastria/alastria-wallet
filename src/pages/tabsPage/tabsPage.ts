@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { NavController, IonicPage } from 'ionic-angular';
 
 import { HomePage } from '../home/home';
-import { SessionSecuredStorageService } from '../../services/securedStorage.service';
+import { SecuredStorageService } from '../../services/securedStorage.service';
 
 @IonicPage()
 @Component({
@@ -15,9 +15,9 @@ export class TabsPage {
     tabs: any = {};
     isLoged: Boolean;
 
-    constructor(public navCtrl: NavController, private sessionSecuredStorageService: SessionSecuredStorageService) {
+    constructor(public navCtrl: NavController, private securedStrg: SecuredStorageService) {
 
-        this.sessionSecuredStorageService.hasKey('loginType').then(
+        this.securedStrg.hasKey('loginType').then(
             (result) => {
                 this.isLoged = true;
             }

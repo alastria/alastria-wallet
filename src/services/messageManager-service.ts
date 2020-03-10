@@ -11,7 +11,7 @@ import { HttpClient } from '@angular/common/http';
 import { tokensFactory, transactionFactory, UserIdentity } from "alastria-identity-lib"
 import { Web3Service } from './web3-service';
 import { TransactionService } from './transaction-service';
-import { IdentitySecuredStorageService, SessionSecuredStorageService } from './securedStorage.service';
+import { SecuredStorageService } from './securedStorage.service';
 import { IdentityService } from './identity-service';
 import { LoadingService } from './loading-service';
 let Wallet = require('ethereumjs-util');
@@ -29,8 +29,7 @@ export class MessageManagerService {
         private http: HttpClient,
         private web3Srv: Web3Service,
         private transactionSrv: TransactionService,
-        private secureStorage: IdentitySecuredStorageService,
-        private sessionSecureStorage: SessionSecuredStorageService,
+        private securedStrg: SecuredStorageService,
         private identityService: IdentityService,
         private loadingSrv: LoadingService,
         app: App) 
@@ -121,7 +120,7 @@ export class MessageManagerService {
         this.transactionSrv.getCurrentPublicKey(issuerDID)
             .then(issuerPKU => {
                 isVerifiedToken = this.tokenSrv.verifyTokenES(alastriaToken, `04${issuerPKU}`);
-                return this.secureStorage.getIdentityData();
+                return this.securedStrg.getIdentityData();
             }).then(identity => {
                 if (isVerifiedToken) {
                     let privKey = identity[AppConfig.USER_PRIV_KEY];
@@ -162,7 +161,7 @@ export class MessageManagerService {
         this.transactionSrv.getCurrentPublicKey(issuerDID)
             .then(issuerPKU => {
                 isVerifiedToken = this.tokenSrv.verifyTokenES(alastriaToken, `04${issuerPKU}`);
-                return this.secureStorage.hasKey(AppConfig.IS_IDENTITY_CREATED)
+                return this.securedStrg.hasKey(AppConfig.IS_IDENTITY_CREATED)
             })
             .then(result => {
                 if (isVerifiedToken && !result) {
@@ -194,18 +193,18 @@ export class MessageManagerService {
                         .then(result => {
                                 DID = result[AppConfig.DID_KEY];
                                 let proxyAddress = "0x" + DID.split(":")[4]
-                                this.secureStorage.set(AppConfig.IS_IDENTITY_CREATED, "1");
-                                this.secureStorage.set('ethAddress', address)
-                                this.secureStorage.set(AppConfig.USER_PKU, pku);
-                                this.secureStorage.set(AppConfig.USER_PRIV_KEY, privKey);
-                                this.secureStorage.set(AppConfig.USER_DID, DID);
-                                this.secureStorage.set(AppConfig.PROXY_ADDRESS, proxyAddress);
+                                this.securedStrg.set(AppConfig.IS_IDENTITY_CREATED, "1");
+                                this.securedStrg.set('ethAddress', address)
+                                this.securedStrg.set(AppConfig.USER_PKU, pku);
+                                this.securedStrg.set(AppConfig.USER_PRIV_KEY, privKey);
+                                this.securedStrg.set(AppConfig.USER_DID, DID);
+                                this.securedStrg.set(AppConfig.PROXY_ADDRESS, proxyAddress);
                                 this.identityService.init()
-                                return this.secureStorage.hasKey('callbackUrlPut');
+                                return this.securedStrg.hasKey('callbackUrlPut');
                             })
                             .then((hasKey) => {
                                 if (hasKey) {
-                                    return this.secureStorage.get('callbackUrlPut')
+                                    return this.securedStrg.get('callbackUrlPut')
                                         .then((result) => {
                                             callbackUrlPut = result; 
                                             const userUpdate = {
@@ -216,7 +215,7 @@ export class MessageManagerService {
                                             return this.http.put(callbackUrlPut, userUpdate).toPromise();
                                         })
                                         .then(() => {
-                                            return this.secureStorage.remove('callbackUrlPut');
+                                            return this.securedStrg.remove('callbackUrlPut');
                                         });
                                 } else {
                                     return;
@@ -253,7 +252,7 @@ export class MessageManagerService {
             return this.transactionSrv.getCurrentPublicKey(issuerDID)
                 .then(issuerPKU => {
                     verifiedJWT = this.tokenSrv.verifyTokenES(credential, `04${issuerPKU}`);
-                    return this.secureStorage.hasKey('isIdentityCreated');
+                    return this.securedStrg.hasKey('isIdentityCreated');
                 })
                 .then(result => {
                     if (verifiedJWT && result) {

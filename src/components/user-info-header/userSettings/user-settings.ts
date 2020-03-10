@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { IonicPage, ModalController, NavController } from 'ionic-angular';
-import { SessionSecuredStorageService } from '../../../services/securedStorage.service';
+import { SecuredStorageService } from '../../../services/securedStorage.service';
 
 @IonicPage()
 @Component({
@@ -16,9 +16,9 @@ export class UserSettings {
     constructor(
         public modalCtrl: ModalController,
         private navCtrl: NavController,
-        public sessionSecuredStorageService: SessionSecuredStorageService
+        public securedStrg: SecuredStorageService
     ) {
-        this.sessionSecuredStorageService.getUsername().then(
+        this.securedStrg.getUsername().then(
             (result) => {
                 this.userName = result;
             }

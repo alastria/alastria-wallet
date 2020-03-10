@@ -8,7 +8,7 @@ import { EntitiesPage } from '../entities/entities';
 import { TabsPage } from './../tabsPage/tabsPage';
 
 // Services
-import { IdentitySecuredStorageService } from '../../services/securedStorage.service';
+import { SecuredStorageService } from '../../services/securedStorage.service';
 
 
 @Component({
@@ -27,7 +27,7 @@ export class HomePage {
         public navCtrl: NavController,
         public navParams: NavParams,
         public alertCtrl: AlertController,
-        private identitySecuredStorageService: IdentitySecuredStorageService,
+        private securedStrg: SecuredStorageService,
         private deeplinks: Deeplinks
     ) { 
 
@@ -39,7 +39,7 @@ export class HomePage {
             }).subscribe(
                 (match) => {
                     if (match && match.$args && match.$args.alastriaToken) {
-                    this.identitySecuredStorageService.hasKey('userDID')
+                    this.securedStrg.hasKey('userDID')
                         .then((DID) => {
                             if(!DID) {
                                 this.token = match.$args.alastriaToken;
@@ -59,7 +59,7 @@ export class HomePage {
     async handleLogin(isLogged: boolean): Promise<any> {
         this.isLoged = isLogged;
         if (isLogged) {
-            const did = await this.identitySecuredStorageService.hasKey('userDID');
+            const did = await this.securedStrg.hasKey('userDID');
             if (did) {
                 this.navCtrl.setRoot(TabsPage);
             } else {

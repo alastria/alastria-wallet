@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { IonicPage, NavController } from 'ionic-angular';
 import { UserSettings } from './userSettings/user-settings';
 import { ProfilePage } from '../../pages/profile/profile';
-import { SessionSecuredStorageService } from '../../services/securedStorage.service';
+import { SecuredStorageService } from '../../services/securedStorage.service';
 
 @IonicPage()
 @Component({
@@ -19,8 +19,8 @@ export class UserInfoHeader {
     @Input() fixed: boolean;
 
     constructor(public navController: NavController,
-        public sessionSecuredStorageService: SessionSecuredStorageService) {
-        this.sessionSecuredStorageService.getUsername().then(
+        public securedStrg: SecuredStorageService) {
+        this.securedStrg.getUsername().then(
             (result) => {
                 this.userName = result;
             }

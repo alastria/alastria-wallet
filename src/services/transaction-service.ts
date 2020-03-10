@@ -6,7 +6,7 @@ import * as Web3 from "web3";
 import { CredentialStatus } from "../models/credential-status.model";
 import { AppConfig } from "../app.config";
 import { PresentationStatus } from "../models/presentation-status.model";
-import { IdentitySecuredStorageService } from "./securedStorage.service";
+import { SecuredStorageService } from "./securedStorage.service";
 
 @Injectable()
 export class TransactionService {
@@ -16,7 +16,7 @@ export class TransactionService {
     constructor(
         private web3Srv: Web3Service,
         private identitySrv: IdentityService,
-        private secureStorage: IdentitySecuredStorageService
+        private securedStrg: SecuredStorageService
     ) {
         this.web3 = web3Srv.getWeb3();
     }
@@ -26,7 +26,7 @@ export class TransactionService {
         let credential = tokensFactory.tokens.createCredential(kidCredential, didIsssuer,
             subjectAlastriaID, context, credentialSubject, tokenExpTime, tokenActivationDate, jti);
   
-        return this.secureStorage.get('userPrivateKey').then( privateKey => {
+        return this.securedStrg.get('userPrivateKey').then( privateKey => {
             let signedJWTCredential = tokensFactory.tokens.signJWT(credential, privateKey);
     
             let credentialHash = tokensFactory.tokens.PSMHash(this.web3, signedJWTCredential, didIsssuer);
