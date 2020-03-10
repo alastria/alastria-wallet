@@ -22,7 +22,6 @@ import { SuccessPageModule } from '../pages/success/success.module';
 import { ProfilePage } from '../pages/profile/profile';
 import { DetailProfilePage } from '../pages/detail-profile/detail-profile';
 import { SessionSecuredStorageService, IdentitySecuredStorageService } from '../services/securedStorage.service';
-import { WalkthroughPage } from '../pages/walkthrough/walkthrough';
 import { ConfirmLogin } from '../pages/confirmLogin/confirmLogin';
 import { TermsConditionsPageModule } from '../pages/terms-conditions/terms-conditions.module';
 import { ConfirmAccess } from '../pages/confirm-access/confirm-access';
@@ -49,9 +48,7 @@ import { Deeplinks } from '@ionic-native/deeplinks';
         ProfilePage,
         DetailProfilePage,
         RegisterHub,
-        WalkthroughPage,
         ConfirmLogin,
-        WalkthroughPage,
         ConfirmAccess,
         SelectIdentity,
         ConfirmError
@@ -83,9 +80,7 @@ import { Deeplinks } from '@ionic-native/deeplinks';
         ProfilePage,
         DetailProfilePage,
         RegisterHub,
-        WalkthroughPage,
         ConfirmAccess,
-        WalkthroughPage,
         ConfirmLogin,
         SelectIdentity,
         EntitiesPage,
