@@ -11,8 +11,6 @@ import { HomePage } from '../pages/home/home';
 import { LoadingService } from '../services/loading-service';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner';
 import { NgxQRCodeModule } from 'ngx-qrcode2';
-import { RegisterHub } from '../pages/register/register-hub/register-hub';
-import { RegisterFormModule } from '../pages/register/register-hub/register-form/register-form.module';
 import { TabsPageModule } from '../pages/tabsPage/tabsPage.module';
 import { UserInfoHeaderModule } from '../components/user-info-header/user-info-header.module';
 import { SecureStorage } from '@ionic-native/secure-storage';
@@ -47,7 +45,6 @@ import { Deeplinks } from '@ionic-native/deeplinks';
         LoginPage,
         ProfilePage,
         DetailProfilePage,
-        RegisterHub,
         ConfirmLogin,
         ConfirmAccess,
         SelectIdentity,
@@ -60,7 +57,6 @@ import { Deeplinks } from '@ionic-native/deeplinks';
             backButtonIcon: 'ios-arrow-back'
         }
         ),
-        RegisterFormModule,
         TabsPageModule,
         NgxQRCodeModule,
         ContructionsPageModule,
@@ -79,7 +75,6 @@ import { Deeplinks } from '@ionic-native/deeplinks';
         LoginPage,
         ProfilePage,
         DetailProfilePage,
-        RegisterHub,
         ConfirmAccess,
         ConfirmLogin,
         SelectIdentity,
