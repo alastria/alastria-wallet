@@ -13,7 +13,7 @@ import { MessageManagerService } from '../../services/messageManager-service';
 import { SecuredStorageService } from './../../services/securedStorage.service';
 import { SocketService } from '../../services/socket.service';
 
-// Pages
+// Pages - Component
 import { Camera } from '../tabsPage/camera/camera';
 
 /**
@@ -59,11 +59,6 @@ export class EntitiesPage {
     }
   }
 
-  urlpaste(){
-    this.url = 'https://34.244.47.233';
-    return this.sanitize.bypassSecurityTrustResourceUrl(this.url);
-  }
-
   onSearch(event: any) {
     const searchTerm = event.target.value;
     this.getEntities(searchTerm);
@@ -89,13 +84,13 @@ export class EntitiesPage {
     this.subscription.add(this.socketService.onCreateIdentityWv()
       .subscribe((result) => {
         this.securedStrg.set('callbackUrlPut', result.callbackUrl)
-              .then(() => {
-                this.messageManagerService.prepareDataAndInit(result.alastriaToken);
-                this.externalWeb.close();
-              })
-              .catch((error) => {
-                console.error('error ', error);
-              });
+          .then(() => {
+            this.messageManagerService.prepareDataAndInit(result.alastriaToken);
+            this.externalWeb.close();
+          })
+          .catch((error) => {
+            console.error('error ', error);
+          });
 
         this.socketService.sendDisconnect();
       })
