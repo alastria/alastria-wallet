@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterContentInit, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { IonicPage, NavController, NavParams, Platform } from 'ionic-angular';
 import { FingerprintAIO } from '@ionic-native/fingerprint-aio';
 
@@ -24,7 +24,7 @@ export class LoginPage {
   accessKeyForm: FormGroup;
   title: string = 'Accede para gestionar tu identidad de Alastria.';
   logoUrl: string = 'assets/images/logo/letter-alastria-white.png';
-  loginType: string; // key = key access; patron = patron access; fingerprint
+  loginType: string; // key = key access; fingerprint
   buttons: Array<any> = [
     {
       type: 'key',
@@ -41,7 +41,7 @@ export class LoginPage {
       key: 'repeatKey'
     }
   ];
-  hashKey: boolean;
+  hashKeyLoginType: boolean;
 
   constructor(public navCtrl: NavController, 
               public navParams: NavParams,
@@ -51,18 +51,18 @@ export class LoginPage {
               private fb: FormBuilder) {
     this.platform.registerBackButtonAction(async () => {
       if (this.loginType) {
-        if (!this.hashKey) {
+        if (!this.hashKeyLoginType) {
           this.loginType = null;
         }
       }
     },1);
+
     this.platform.ready()
       .then(async () => {
         await this.securedStrg.initSecureStorage();
-        await this.securedStrg.initSecureStorage();
-        this.hashKey = await this.securedStrg.hasKey('loginType');
+        this.hashKeyLoginType = await this.securedStrg.hasKey('loginType');
 
-        if (this.hashKey) {
+        if (this.hashKeyLoginType) {
           const loginTypeRes = await this.securedStrg.getLoginType();
           this.selectTypeLogin(loginTypeRes);
         } else {
@@ -77,7 +77,7 @@ export class LoginPage {
             })
             .catch( () => {
               this.selectTypeLogin(this.buttons[0].type);
-            })
+            });
         }
       });
   }
@@ -117,7 +117,7 @@ export class LoginPage {
   * Generate accessKeyForm with inputsForm
   */
   generateForm(): void {
-    if (this.hashKey) {
+    if (this.hashKeyLoginType) {
       this.inputsKeyForm.splice(1,1);
       this.accessKeyForm = this.fb.group({
         key: [null, Validators.required]
@@ -155,30 +155,28 @@ export class LoginPage {
       (next, reject) => {
         this.faio.isAvailable()
           .then(result => {
-            console.log('faio ', result);
             this.faio.show({
                 clientId: "AlastriaID",
                 clientSecret: "NddAHBODmhACXHITWJTU",
                 disableBackup: true,
                 localizedFallbackTitle: 'Touch ID for AlastriaID', //Only for iOS
             })
-            .then(result => {
-              console.log('faio ', result);
+            .then(() => {
               this.securedStrg.setLoginType(this.loginType)
-                .then(result => {
+                .then(() => {
                   this.handleLogin.emit(true);
                 });
             })
-            .catch(err => {
-                console.log('err show ', err);              
+            .catch(() => {            
                 this.handleLogin.emit(false);
                 reject('Error in fingerprint');
             });
         }).catch(err => {
-            console.log('err finger ', err);
             this.handleLogin.emit(false);
             if (err === "cordova_not_available") {
               reject('Cordova not aviable');
+            } else {
+              reject(err);
             }
         });
       }
