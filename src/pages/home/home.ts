@@ -1,4 +1,3 @@
-import { LoginPage } from './../login/login';
 import { Component } from '@angular/core';
 import { NavController, AlertController, NavParams, Platform } from 'ionic-angular';
 import { Deeplinks } from '@ionic-native/deeplinks';
@@ -6,6 +5,7 @@ import { Deeplinks } from '@ionic-native/deeplinks';
 // Pages
 import { EntitiesPage } from '../entities/entities';
 import { TabsPage } from './../tabsPage/tabsPage';
+import { LoginPage } from './../login/login';
 
 // Services
 import { SecuredStorageService } from '../../services/securedStorage.service';
@@ -17,8 +17,6 @@ import { SecuredStorageService } from '../../services/securedStorage.service';
 })
 export class HomePage {
 
-    login: any = {};
-    tabs: any = {};
     isLoged: Boolean;
     token: string;
 
