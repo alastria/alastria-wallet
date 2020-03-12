@@ -37,12 +37,12 @@ export class MessageManagerService {
         this.navCtrl = app.getActiveNav();
     }
 
-    public async prepareDataAndInit(alastriaToken) {
-        let parsedToken;
+    public async prepareDataAndInit(alastriaToken: any): Promise<any> {
+        let parsedToken: object;
         try {
             parsedToken = JSON.parse(alastriaToken);
         } catch (error) { }
-        let verifiedJWT;
+        let verifiedJWT: any;
 
         if (!parsedToken) {
             verifiedJWT = this.tokenSrv.decodeTokenES(alastriaToken);
@@ -52,24 +52,24 @@ export class MessageManagerService {
 
         let tokenType = await this.tokenSrv.getTokenType(verifiedJWT);
 
-        this.launchProtocol(tokenType, verifiedJWT, alastriaToken, AppConfig.SECRET);
+        this.launchProtocol(tokenType, verifiedJWT, alastriaToken);
     }
 
-    public launchProtocol(protocolType: ProtocolTypes | String, verifiedToken: Array<string>, alastriaToken: string, secret: string) {
-        let alastriaSession;
+    public launchProtocol(protocolType: ProtocolTypes | String, verifiedToken: Array<string>, alastriaToken: string): void {
         if (verifiedToken) {
-            alastriaSession = this.tokenSrv.getSessionToken(verifiedToken);
             switch (protocolType) {
                 case ProtocolTypes.authentication:
+                    let alastriaSession: object;
+                    alastriaSession = this.tokenSrv.getSessionToken(verifiedToken);
                     this.showConfirmLogin(verifiedToken[AppConfig.ISSUER], AppConfig.SERVICE_PROVIDER, verifiedToken[AppConfig.CBU], alastriaSession);
                     break;
                 case ProtocolTypes.presentation:
                     this.prepareCredentials(verifiedToken)
                         .then((tokenData: any) => {
-                            let verifiedCredentials = this.prepareVerfiedJWT(verifiedToken[AppConfig.VERIFIABLE_CREDENTIAL], secret)
+                            let verifiedCredentials = this.prepareVerfiedJWT(verifiedToken[AppConfig.VERIFIABLE_CREDENTIAL])
                             this.showConfirmAccess(AppConfig.SERVICE_PROVIDER, tokenData, 0, 0, false, verifiedCredentials);
                         })
-                        .catch((error) => {
+                        .catch(() => {
                             this.showConfirmEror('No se han podido crear las credenciales');
                         })
                     break;
@@ -152,93 +152,77 @@ export class MessageManagerService {
             });
     }
 
-    private createAndSendAlastriaAIC(alastriaToken: string) {
+    private async createAndSendAlastriaAIC(alastriaToken: string) {
         let decodedToken = this.tokenSrv.decodeTokenES(alastriaToken)
         let issuerDID = decodedToken[AppConfig.PAYLOAD][AppConfig.ISSUER];
         let callbackUrl = decodedToken[AppConfig.PAYLOAD][AppConfig.CBU];
-        let isVerifiedToken;
+        let isVerifiedToken: any;
 
-        this.transactionSrv.getCurrentPublicKey(issuerDID)
-            .then(issuerPKU => {
-                isVerifiedToken = this.tokenSrv.verifyTokenES(alastriaToken, `04${issuerPKU}`);
-                return this.securedStrg.hasKey(AppConfig.IS_IDENTITY_CREATED)
-            })
-            .then(result => {
-                if (isVerifiedToken && !result) {
-                    this.loadingSrv.showModal();
-                    let account = this.web3Srv.getWeb3().eth.accounts.create();
-                    let address = account[AppConfig.ADDRESS];
-                    let privKey = account[AppConfig.PRIVATE_KEY];
-                    let pku = "0x" + Wallet.privateToPublic(privKey).toString('hex');
-                    
-                    let subjectIdentity = new UserIdentity(this.web3Srv.getWeb3(), address, privKey.substring(2), 0);
-                    
-                    let createTx = transactionFactory.identityManager.createAlastriaIdentity(this.web3Srv.getWeb3(), pku.substring(2));
-                    
-                    subjectIdentity.getKnownTransaction(createTx).then(signedCreateTx => {
-                        let alastriaTokenSigned = tokensFactory.tokens.signJWT(alastriaToken, privKey.substring(2));
-                        
-                        let alastriaAIC = tokensFactory.tokens.createAIC(signedCreateTx, alastriaTokenSigned, pku.substring(2));
-                        
-                        let signedToken = tokensFactory.tokens.signJWT(alastriaAIC, privKey.substring(2));
-                        
-                        let AIC = {
-                            signedAIC: signedToken
-                        }
-                        
-                        let DID = null;
-                        let callbackUrlPut = null;
-                        
-                        this.http.post(callbackUrl, AIC).toPromise()
-                        .then(result => {
-                                DID = result[AppConfig.DID_KEY];
-                                let proxyAddress = "0x" + DID.split(":")[4]
-                                this.securedStrg.set(AppConfig.IS_IDENTITY_CREATED, "1");
-                                this.securedStrg.set('ethAddress', address)
-                                this.securedStrg.set(AppConfig.USER_PKU, pku);
-                                this.securedStrg.set(AppConfig.USER_PRIV_KEY, privKey);
-                                this.securedStrg.set(AppConfig.USER_DID, DID);
-                                this.securedStrg.set(AppConfig.PROXY_ADDRESS, proxyAddress);
-                                this.identityService.init()
-                                return this.securedStrg.hasKey('callbackUrlPut');
-                            })
-                            .then((hasKey) => {
-                                if (hasKey) {
-                                    return this.securedStrg.get('callbackUrlPut')
-                                        .then((result) => {
-                                            callbackUrlPut = result; 
-                                            const userUpdate = {
-                                                did: DID,
-                                                vinculated: true
-                                            };
-                                            
-                                            return this.http.put(callbackUrlPut, userUpdate).toPromise();
-                                        })
-                                        .then(() => {
-                                            return this.securedStrg.remove('callbackUrlPut');
-                                        });
-                                } else {
-                                    return;
-                                }
-                            })
-                            .then(() => {
-                                this.loadingSrv.updateModalState();
-                            })
-                            .catch(error => {
-                                console.log('Error', error);
-                                this.showConfirmEror();
-                            })
-                        });
-                } else if (!isVerifiedToken) {
-                    this.showConfirmEror("Error: No se puede verificar al Service Provider");
-                } else {
-                    this.showConfirmEror("Error: Identidad ya creada");
+        try {
+
+            const issuerPKU = await this.transactionSrv.getCurrentPublicKey(issuerDID);
+
+            isVerifiedToken = this.tokenSrv.verifyTokenES(alastriaToken, `04${issuerPKU}`);
+            const isIdentityCreated = await this.securedStrg.hasKey(AppConfig.IS_IDENTITY_CREATED);
+
+            if (isVerifiedToken && !isIdentityCreated) {
+                this.loadingSrv.showModal();
+                const account = this.web3Srv.getWeb3().eth.accounts.create();
+                const address = account[AppConfig.ADDRESS];
+                const privKey = account[AppConfig.PRIVATE_KEY];
+                const pku = "0x" + Wallet.privateToPublic(privKey).toString('hex');
+                const subjectIdentity = new UserIdentity(this.web3Srv.getWeb3(), address, privKey.substring(2), 0);
+                const createTx = transactionFactory.identityManager.createAlastriaIdentity(this.web3Srv.getWeb3(), pku.substring(2));
+
+                const signedCreateTx = await subjectIdentity.getKnownTransaction(createTx);
+
+                const alastriaTokenSigned = tokensFactory.tokens.signJWT(alastriaToken, privKey.substring(2));      
+                const alastriaAIC = tokensFactory.tokens.createAIC(signedCreateTx, alastriaTokenSigned, pku.substring(2));
+                const signedToken = tokensFactory.tokens.signJWT(alastriaAIC, privKey.substring(2));
+                const AIC = {
+                    signedAIC: signedToken
                 }
-            })
-            .catch(err => {
-                console.log('Error', err);
-                this.showConfirmEror();
-            });
+                let DID = null;
+                const resultCallbackUrl = await this.http.post(callbackUrl, AIC).toPromise();
+
+                DID = resultCallbackUrl[AppConfig.DID_KEY];
+                const proxyAddress = "0x" + DID.split(":")[4]
+
+                await this.securedStrg.set(AppConfig.IS_IDENTITY_CREATED, "1");
+                await this.securedStrg.set('ethAddress', address)
+                await this.securedStrg.set(AppConfig.USER_PKU, pku);
+                await this.securedStrg.set(AppConfig.USER_PRIV_KEY, privKey);
+                await this.securedStrg.set(AppConfig.USER_DID, DID);
+                await this.securedStrg.set(AppConfig.PROXY_ADDRESS, proxyAddress);
+                const hasKeycallbackUrlPut = await this.securedStrg.hasKey('callbackUrlPut');
+                
+                if (hasKeycallbackUrlPut) {
+                    const callbackUrlPut = await this.securedStrg.get('callbackUrlPut');
+
+                    const userUpdate = {
+                        did: DID,
+                        vinculated: true
+                    };
+
+                    await this.http.put(callbackUrlPut, userUpdate).toPromise();
+                    await this.securedStrg.remove('callbackUrlPut');
+
+                    this.loadingSrv.updateModalState();
+
+                } else {
+                    this.loadingSrv.updateModalState();
+                }
+
+            } else if (!isVerifiedToken) {
+                this.showConfirmEror("Error: No se puede verificar al Service Provider");
+            } else {
+                this.showConfirmEror("Error: Identidad ya creada");
+            }
+        } catch (error) {
+            console.log('Error', error);
+            this.showConfirmEror();
+        }
+
     }
 
     private prepareCredentials(verifiedToken: string | object) {
@@ -254,10 +238,9 @@ export class MessageManagerService {
                     verifiedJWT = this.tokenSrv.verifyTokenES(credential, `04${issuerPKU}`);
                     return this.securedStrg.hasKey('isIdentityCreated');
                 })
-                .then(result => {
-                    if (verifiedJWT && result) {
+                .then(isIdentityCreated => {
+                    if (verifiedJWT && isIdentityCreated) {
                         const credentialSubject = decodedToken[AppConfig.PAYLOAD][AppConfig.VC][AppConfig.CREDENTIALS_SUBJECT];
-                        // credentialSubject[AppConfig.IAT] = decodedToken[AppConfig.PAYLOAD][AppConfig.IAT];
                         credentialSubject[AppConfig.IAT] = Date.now();
                         credentialSubject[AppConfig.EXP] = decodedToken[AppConfig.PAYLOAD][AppConfig.EXP];
                         return Promise.resolve(credentialSubject);
@@ -272,9 +255,9 @@ export class MessageManagerService {
         return Promise.all(promises);
     }
 
-    private prepareVerfiedJWT(verifiedToken: Array<string>, secret: string) {
+    private prepareVerfiedJWT(verifiedToken: Array<string>): Array<any> {
         return verifiedToken.map(token => {
-            return this.tokenSrv.decodeToken(token);
+            return this.tokenSrv.decodeTokenES(token);
         });
     }
 
