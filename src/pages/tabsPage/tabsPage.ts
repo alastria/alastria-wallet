@@ -15,10 +15,11 @@ export class TabsPage {
     tabs: any = {};
     isLoged: Boolean;
 
-    constructor(public navCtrl: NavController, private securedStrg: SecuredStorageService) {
+    constructor(public navCtrl: NavController, 
+                private securedStrg: SecuredStorageService) {
 
         this.securedStrg.hasKey('loginType').then(
-            (result) => {
+            () => {
                 this.isLoged = true;
             }
         ).catch(
@@ -39,12 +40,6 @@ export class TabsPage {
             { page: "Notification", icon: "bell", title: "Avisos" },
             { page: "Options", icon: "more", title: "Mas" }
         ];
-
-        this.tabs.events = {
-            'onItemClick': function (item: any) {
-
-            }
-        };
     }
 
 }
