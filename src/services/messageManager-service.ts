@@ -12,7 +12,6 @@ import { tokensFactory, transactionFactory, UserIdentity } from "alastria-identi
 import { Web3Service } from './web3-service';
 import { TransactionService } from './transaction-service';
 import { SecuredStorageService } from './securedStorage.service';
-import { IdentityService } from './identity-service';
 import { LoadingService } from './loading-service';
 let Wallet = require('ethereumjs-util');
 
@@ -30,7 +29,6 @@ export class MessageManagerService {
         private web3Srv: Web3Service,
         private transactionSrv: TransactionService,
         private securedStrg: SecuredStorageService,
-        private identityService: IdentityService,
         private loadingSrv: LoadingService,
         app: App) 
     {
