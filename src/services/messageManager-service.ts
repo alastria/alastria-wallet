@@ -110,46 +110,47 @@ export class MessageManagerService {
         alert.present();
     }
 
-    private createAndSendAlastriaSession(alastriaToken: string) {
-        let decodedToken = this.tokenSrv.decodeTokenES(alastriaToken)
-        let issuerDID = decodedToken[AppConfig.PAYLOAD][AppConfig.ISSUER];
-        let callbackUrl = decodedToken[AppConfig.PAYLOAD][AppConfig.CBU];
-        let isVerifiedToken;
-
+    private async createAndSendAlastriaSession(alastriaToken: string): Promise<any> {
+        const decodedToken = this.tokenSrv.decodeTokenES(alastriaToken)
+        const issuerDID = decodedToken[AppConfig.PAYLOAD][AppConfig.ISSUER];
+        const callbackUrl = decodedToken[AppConfig.PAYLOAD][AppConfig.CBU];
+        let isVerifiedToken: string | object;
         this.loadingSrv.showModal();
-        this.transactionSrv.getCurrentPublicKey(issuerDID)
-            .then(issuerPKU => {
-                isVerifiedToken = this.tokenSrv.verifyTokenES(alastriaToken, `04${issuerPKU}`);
-                return this.securedStrg.getIdentityData();
-            }).then(identity => {
-                if (isVerifiedToken) {
-                    let privKey = identity[AppConfig.USER_PRIV_KEY];
-                    let pku = {
-                        id: identity[AppConfig.USER_DID],
-                        type: ["CryptographicKey", "EcdsaKoblitzPublicKey"],
-                        curve: "secp256k1",
-                        expires: Date.now() + (3600*1000),
-                        publicKeyHex: identity[AppConfig.USER_PKU]
-                    };
-                    let signedAT = tokensFactory.tokens.signJWT(alastriaToken, privKey.substring(2));
-                    let alastriaSession = tokensFactory.tokens.createAlastriaSession("@jwt", issuerDID, pku, signedAT);
-                    let signedAS = tokensFactory.tokens.signJWT(alastriaSession, privKey.substring(2));
-                    
-                    let AIC = {
-                        signedAIC: signedAS
-                    }
 
-                    this.http.post(callbackUrl, AIC).subscribe(result => {
-                        this.loadingSrv.updateModalState();
-                    }, error => {
-                        console.log('Error', error);
-                        this.showConfirmEror();
-                    })
+        try {
+
+            const issuerPKU = await this.transactionSrv.getCurrentPublicKey(issuerDID);
+ 
+            isVerifiedToken = this.tokenSrv.verifyTokenES(alastriaToken, `04${issuerPKU}`);
+            
+            if (isVerifiedToken) {
+                const identity = await this.securedStrg.getIdentityData();
+
+                const privKey = identity[AppConfig.USER_PRIV_KEY];
+                const pku = {
+                    id: identity[AppConfig.USER_DID],
+                    type: ["CryptographicKey", "EcdsaKoblitzPublicKey"],
+                    curve: "secp256k1",
+                    expires: Date.now() + (3600*1000),
+                    publicKeyHex: identity[AppConfig.USER_PKU]
+                };
+                const signedAT = tokensFactory.tokens.signJWT(alastriaToken, privKey.substring(2));
+                const alastriaSession = tokensFactory.tokens.createAlastriaSession("@jwt", issuerDID, pku, signedAT);
+                const signedAS = tokensFactory.tokens.signJWT(alastriaSession, privKey.substring(2));
+                const AIC = {
+                    signedAIC: signedAS
                 }
-            })
-            .catch(error => {
-                this.showConfirmEror();
-            });
+
+                await this.http.post(callbackUrl, AIC).toPromise();
+                this.loadingSrv.updateModalState();
+
+            }
+
+        } catch(error) {
+
+            this.showConfirmEror();
+
+        }
     }
 
     private async createAndSendAlastriaAIC(alastriaToken: string) {
@@ -259,15 +260,6 @@ export class MessageManagerService {
         return verifiedToken.map(token => {
             return this.tokenSrv.decodeTokenES(token);
         });
-    }
-
-    private showErrorToast(msg?: string) {
-        msg = msg ? msg : "Error: Contacte con el service provider";
-        this.toastCtrl.presentToast(msg, 3000);
-        if (this.loadingSrv) {
-            this.loadingSrv.hide();
-        }
-        this.navCtrl.setRoot(Index);
     }
 }
 
