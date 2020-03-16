@@ -32,6 +32,7 @@ export class EntitiesPage {
   entities: Array<Item>;
   url: any;
   externalWeb: InAppBrowserObject;
+  token: string;
   private subscription: Subscription = new Subscription();
 
   constructor(public navCtrl: NavController,
@@ -43,6 +44,11 @@ export class EntitiesPage {
               private identitySecureStorage: IdentitySecuredStorageService,
               private socketService: SocketService) {
     this.getEntities();
+    this.token = this.navParams.get('token');
+    
+    if (this.token) {
+      this.messageManagerService.prepareDataAndInit(this.token);
+    }
   }
 
   async getEntities(searchItem?: string) {

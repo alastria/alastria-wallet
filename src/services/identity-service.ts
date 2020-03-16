@@ -1,13 +1,8 @@
 import { Injectable } from "@angular/core";
-import * as keythereum from "keythereum"
 import { UserIdentity } from "alastria-identity-lib";
-import { SubjectCredential } from "../models/subject-credential.model";
-import { KeyStore } from "../keystore";
-import { AppConfig } from "../app.config";
 import { Web3Service } from "./web3-service";
 import * as Web3 from "web3";
 import { IdentitySecuredStorageService } from "./securedStorage.service";
-import { THIS_EXPR } from "@angular/compiler/src/output/output_ast";
 
 @Injectable()
 export class IdentityService {
@@ -23,14 +18,16 @@ export class IdentityService {
         private secureStorage: IdentitySecuredStorageService
     ) {
         this.web3 = web3Srv.getWeb3();
-        this.init();
     }
 
     public getPrivateKey(): string {
         return this.subjectPrivateKey;
     }
 
-    public getKnownTransaction(subjectCredential): Promise<string> {
+    public async getKnownTransaction(subjectCredential): Promise<string> {
+        if (!this.subjectIdentity) {
+            await this.init();
+        }
         return this.subjectIdentity.getKnownTransaction(subjectCredential);
     }
 
@@ -49,14 +46,14 @@ export class IdentityService {
         return this.userDID
     }
 
-    private init() {
-        let identityKeystore = KeyStore.identityKeystore;
-        try {
-            this.subjectPrivateKey = keythereum.recover(AppConfig.addressPassword, identityKeystore)
-        } catch (error) {
-            console.log("ERROR: ", error)
-        }
-        this.subjectIdentity = new UserIdentity(this.web3, `0x${identityKeystore.address}`, this.subjectPrivateKey, null);
-        this.secureStorage.getDID().then(DID => this.userDID = DID);
+    public init(): Promise<any> {
+        return this.secureStorage.get('ethAddress').then( address => {
+            return this.secureStorage.get('userPrivateKey').then( privateKey => {
+                this.subjectPrivateKey = privateKey;
+                this.subjectIdentity = new UserIdentity(this.web3, address, privateKey.substr(2), null);
+                this.secureStorage.getDID().then(DID => this.userDID = DID);
+                return this.subjectIdentity
+            })
+        })
     }
 }

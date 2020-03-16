@@ -21,7 +21,8 @@ export interface mockCredential {
     iconsStars: Array<any>,
     credentialAssigned: boolean,
     isExpanded: boolean,
-    isHidden: boolean
+    isHidden: boolean,
+    isChecked: boolean;
 }
 
 @Component({
@@ -158,7 +159,8 @@ export class IdentityDataListComponent {
                                         iconsStars: stars,
                                         credentialAssigned: true,
                                         isExpanded: false,
-                                        isHidden: false
+                                        isHidden: false,
+                                        isChecked: true
                                     };
                                     this.identityDisplay.push(obj);
                                     const credentialSelected: any = {
@@ -185,7 +187,8 @@ export class IdentityDataListComponent {
                                 iconsStars: stars,
                                 credentialAssigned: false,
                                 isExpanded: false,
-                                isHidden: false
+                                isHidden: false,
+                                isChecked: true
                             };
                             this.identityDisplay.push(obj);
                             return Promise.resolve();
@@ -216,7 +219,8 @@ export class IdentityDataListComponent {
                     iconsStars: stars,
                     credentialAssigned: true,
                     isExpanded: false,
-                    isHidden: false
+                    isHidden: false,
+                    isChecked: true
                 };
                 this.identityDisplay.push(obj);
                 return Promise.resolve();
@@ -228,6 +232,12 @@ export class IdentityDataListComponent {
         Promise.all(credentialPromises)
             .then(() => {
                 this.isDataSetted = true;
+                this.identityDisplay.map(identity => {
+                    const event = {
+                        checked: true
+                    };
+                    this.changeIdentitySelect(event, identity.id);
+                });
             });
     }
 

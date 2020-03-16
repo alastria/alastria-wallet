@@ -30,10 +30,6 @@ export class LoginPage {
     {
       type: 'key',
       label: 'CREA CLAVE DE ACCESO '
-    },
-    {
-      type: 'fingerprint',
-      label: 'ACCEDE CON HUELLA'
     }
   ];
   inputsKeyForm: Array<any> = [
@@ -67,9 +63,23 @@ export class LoginPage {
         await this.identtityStorageService.initSecureStorage();
         await this.secureStorageService.initSecureStorage();
         this.hashKey = await this.secureStorageService.hasKey('loginType');
+
         if (this.hashKey) {
           const loginTypeRes = await this.secureStorageService.getLoginType();
           this.selectTypeLogin(loginTypeRes);
+        } else {
+          this.faio.isAvailable()
+            .then( () => {
+              this.buttons.push(
+                {
+                  type: 'fingerprint',
+                  label: 'ACCEDE CON HUELLA'
+                }
+              )
+            })
+            .catch( () => {
+              this.selectTypeLogin(this.buttons[0].type);
+            })
         }
       });
   }
