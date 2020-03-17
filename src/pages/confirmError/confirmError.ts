@@ -41,7 +41,7 @@ export class ConfirmError {
                 this.navCtrl.setRoot(EntitiesPage);
             }
         } catch(error) {
-
+            console.error(error);
         }
     }
 }
