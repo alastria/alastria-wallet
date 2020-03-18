@@ -188,7 +188,7 @@ export class MessageManagerService {
                 const proxyAddress = "0x" + DID.split(":")[4]
 
                 await this.securedStrg.set(AppConfig.IS_IDENTITY_CREATED, "1");
-                await this.securedStrg.set('ethAddress', address)
+                await this.securedStrg.set('ethAddress', address);
                 await this.securedStrg.set(AppConfig.USER_PKU, pku);
                 await this.securedStrg.set(AppConfig.USER_PRIV_KEY, privKey);
                 await this.securedStrg.set(AppConfig.USER_DID, DID);
