@@ -73,6 +73,7 @@ export class IdentityDataListComponent {
         let expString: any;
         if (this.isManualSelection) {
             this.credentials = this.allCredentials.map(cred => JSON.parse(cred));
+            console.log('Credentals in identity list --> ', this.credentials);
             if (this.iat) {
                 iat = new Date(this.iat * 1000);
                 iatString = iat.getDay() + "/" + (iat.getMonth() + 1) + "/" + iat.getFullYear();
