@@ -216,10 +216,8 @@ export class Activity {
                     text: 'Eliminar',
                     handler: () => {
                         if (type.toLowerCase() === deleteType.toLowerCase()) {
-                            console.log('deleteActivities');
                             this.deleteActivities(this.activitiesSelected);
                         } else {
-                            console.log('backupActivities');
                             this.backupActivities(this.activitiesSelected);
                         }
                     }
