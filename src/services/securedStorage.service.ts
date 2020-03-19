@@ -13,8 +13,8 @@ export class SecuredStorageService {
     ) {
     }
 
-    initSecureStorage(): void {
-        this.securedStorage.create('sessionSecureStorage').then(
+    initSecureStorage(): Promise<void> {
+        return this.securedStorage.create('identitySecureStorage').then(
             (securedStorageObject) => {
                 this.securedStorageObject = securedStorageObject;
             }
