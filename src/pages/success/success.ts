@@ -19,7 +19,6 @@ export class SuccessPage {
         public viewCtrl: ViewController
     ) {
         this.data = {
-            'cerrar': "assets/images/alastria/ic_close.png",
             'titleSuccess': this.navParams.get('titleSuccess'),
             'textSuccess': this.navParams.get('textSuccess'),
             'imgPrincipal': this.navParams.get('imgPrincipal'),
