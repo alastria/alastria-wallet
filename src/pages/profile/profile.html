@@ -13,4 +13,7 @@
         isManualSelection=true>
     </identity-data-list>
 
+    <div *ngIf="!credentials || !credentials.length" class="without-credentials">
+        No se han encontrado credenciales
+    </div>
 </ion-content>
