@@ -29,7 +29,6 @@ export class ProfilePage {
 
         try {
             await this.getAllCredentials();
-            console.log('filter ');
             if (searchTerm) {
                 this.credentials = this.credentials.filter(credential => {
                     const credentialJson = JSON.parse(credential);
@@ -40,16 +39,14 @@ export class ProfilePage {
                         return credential;
                     }
                 });
-
             }
-
-            console.log('this.credentials ', this.credentials);
         } catch (err) {
             console.log(err);
         }
     }
 
     private async getAllCredentials(): Promise<void> {
+        this.credentials = [];
         this.credentials = await this.securedStrg.getAllCredentials()
     }
 }
