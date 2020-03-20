@@ -32,16 +32,21 @@ export class ProfilePage {
             if (searchTerm) {
                 this.credentials = this.credentials.filter(credential => {
                     const credentialJson = JSON.parse(credential);
-                    const coincidenceKeys = Object.keys(credentialJson).filter(key => key.indexOf(searchTerm.toLowerCase()) !== -1);
-                    const coincidenceValues = Object.values(credentialJson).filter(value => (value) ? value.toString().indexOf(searchTerm.toLowerCase()) !== -1 : null);
+                    const coincidence = Object.keys(credentialJson).filter(key => {
+                        if (key !== 'levelOfAssurance' && key !== 'iat' && key !== 'exp' && key !== 'issuer' && key !== 'PSMHash') {
+                            if (key.indexOf(searchTerm.toLowerCase()) !== -1 || credentialJson[key].indexOf(searchTerm.toLowerCase()) !== -1) {
+                                return credential;
+                            }
+                        }
+                    });
 
-                    if ((coincidenceKeys && coincidenceKeys.length) || (coincidenceValues && coincidenceValues.length)) {
+                    if (coincidence && coincidence.length) {
                         return credential;
                     }
                 });
             }
         } catch (err) {
-            console.log(err);
+            console.error(err);
         }
     }
 
