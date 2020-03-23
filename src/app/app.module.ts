@@ -18,7 +18,7 @@ import { FingerprintAIO } from '@ionic-native/fingerprint-aio';
 import { ContructionsPageModule } from './../pages/contructions/contructions.module'
 import { SuccessPageModule } from '../pages/success/success.module';
 import { ProfilePage } from '../pages/profile/profile';
-import { DetailProfilePage } from '../pages/detail-profile/detail-profile';
+import { CredentialDetailPage } from '../pages/credential-detail/credential-detail';
 import { SecuredStorageService } from '../services/securedStorage.service';
 import { ConfirmLogin } from '../pages/confirmLogin/confirmLogin';
 import { TermsConditionsPageModule } from '../pages/terms-conditions/terms-conditions.module';
@@ -44,7 +44,7 @@ import { Deeplinks } from '@ionic-native/deeplinks';
         HomePage,
         LoginPage,
         ProfilePage,
-        DetailProfilePage,
+        CredentialDetailPage,
         ConfirmLogin,
         ConfirmAccess,
         SelectIdentity,
@@ -74,7 +74,7 @@ import { Deeplinks } from '@ionic-native/deeplinks';
         HomePage,
         LoginPage,
         ProfilePage,
-        DetailProfilePage,
+        CredentialDetailPage,
         ConfirmAccess,
         ConfirmLogin,
         SelectIdentity,

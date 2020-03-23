@@ -3,10 +3,10 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
 @IonicPage()
 @Component({
-  selector: 'page-detail-profile',
-  templateUrl: 'detail-profile.html',
+  selector: 'credential-detail-page',
+  templateUrl: 'credential-detail.html',
 })
-export class DetailProfilePage {
+export class CredentialDetailPage {
 
     data: any;
 
@@ -15,7 +15,6 @@ export class DetailProfilePage {
 
   ngOnInit(){
     this.data = this.navParams.get('item');
-    console.log('Curro2 -->', this.data);
   }
 
   ionViewDidLoad() {

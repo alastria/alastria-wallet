@@ -1,4 +1,4 @@
-import { DetailProfilePage } from './../../pages/detail-profile/detail-profile';
+import { CredentialDetailPage } from '../../pages/credential-detail/credential-detail';
 import { Component, Input, EventEmitter, Output } from '@angular/core';
 import { NavParams, NavController } from 'ionic-angular';
 import { SecuredStorageService } from '../../services/securedStorage.service';
@@ -274,7 +274,7 @@ export class IdentityDataListComponent {
                     });
                 });
         } else {
-            this.navCtrl.push(DetailProfilePage, { item });
+            this.navCtrl.push(CredentialDetailPage, { item });
         }
     }
 
