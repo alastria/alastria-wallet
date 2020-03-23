@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
-import { IonicPage } from 'ionic-angular';
+import { IonicPage, NavController, App } from 'ionic-angular';
 import { SecuredStorageService } from '../../services/securedStorage.service';
+import { EntitiesPage } from '../entities/entities';
+import { TabsPage } from '../tabsPage/tabsPage';
 
 @IonicPage()
 @Component({
@@ -11,8 +13,11 @@ export class ProfilePage {
 
     credentials: Array<any> = [];
     searchTerm: string;
+    isHaveCredentials: boolean;
 
-    constructor(private securedStrg: SecuredStorageService) {
+    constructor(private securedStrg: SecuredStorageService,
+                private navCtrl: NavController,
+                public app: App) {
         this.getAllCredentials();
     }
 
@@ -50,8 +55,13 @@ export class ProfilePage {
         }
     }
 
+    async goToEntitiesList(): Promise<any> {
+        this.app.getRootNav().setRoot(EntitiesPage);
+    }
+
     private async getAllCredentials(): Promise<void> {
         this.credentials = [];
-        this.credentials = await this.securedStrg.getAllCredentials()
+        this.credentials = await this.securedStrg.getAllCredentials();
+        this.isHaveCredentials = (this.credentials && this.credentials.length) ? true : false;
     }
 }
