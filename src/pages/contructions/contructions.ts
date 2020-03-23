@@ -11,14 +11,6 @@ export class ContructionsPage {
     text: string;
     img: string;
 
-    //TODO borrar cuando sea necesario
-    // Datos para el modal de Succes
-    titleSuccess: string;
-    textSuccess: string;
-    imgPrincipal: string;
-    imgSuccess: string;
-    page: string;
-
     constructor(public navCtrl: NavController, public navParams: NavParams, public modalCtrl: ModalController) {
 
         this.text = 'Página en construcción'
@@ -26,40 +18,41 @@ export class ContructionsPage {
 
     }
 
-    ionViewDidLoad() {
+    ionViewDidLoad(): void {
         console.log('ionViewDidLoad ContructionsPage');
     }
 
-    closeModal() {
+    closeModal(): void {
         this.navCtrl.pop();
     }
 
-
-    // TODO: Quitar, esto es para probar
-    navegateTo(text: string) {
-        // Para pagina de Success
+    navegateTo(text: string): void {
+        let titleSuccess = '';
+        let textSuccess = '';
+        let imgPrincipal = '';
+        let imgSuccess = '';
+        let page = '';
         if (text === 'page-success') {
-            this.titleSuccess = '¡Hecho!';
-            this.textSuccess = 'Recuerda que puedes ver todos tus movimientos de AlastriaID en la opción de "Actividad".';
-            this.imgPrincipal = 'assets/images/alastria/success.png';
-            this.imgSuccess = 'assets/images/tabIcon/act.png';
-            this.page = "success";
+            titleSuccess = '¡Hecho!';
+            textSuccess = 'Recuerda que puedes ver todos tus movimientos de AlastriaID en la opción de "Actividad".';
+            imgPrincipal = 'assets/images/alastria/success.png';
+            imgSuccess = 'assets/images/tabIcon/act.png';
+            page = "success";
 
-            let modal = this.modalCtrl.create(SuccessPage, { titleSuccess: this.titleSuccess, textSuccess: this.textSuccess, imgPrincipal: this.imgPrincipal, imgSuccess: this.imgSuccess, page: this.page });
+            let modal = this.modalCtrl.create(SuccessPage, { titleSuccess: titleSuccess, textSuccess: textSuccess, imgPrincipal: imgPrincipal, imgSuccess: imgSuccess, page: page });
             modal.present();
         }
         // Para pagina de Loading
         else if (text === 'page-loading') {
-            this.titleSuccess = 'Estamos actualizando tu AlastriaID';
-            this.textSuccess = 'Solo será un momento';
-            this.imgPrincipal = 'assets/images/alastria/loading.png';
-            this.imgSuccess = '';
-            this.page = "loading";
+            titleSuccess = 'Estamos actualizando tu AlastriaID';
+            textSuccess = 'Solo será un momento';
+            imgPrincipal = 'assets/images/alastria/loading.png';
+            imgSuccess = '';
+            page = "loading";
 
-            let modal = this.modalCtrl.create(SuccessPage, { titleSuccess: this.titleSuccess, textSuccess: this.textSuccess, imgPrincipal: this.imgPrincipal, imgSuccess: this.imgSuccess, page: this.page });
+            let modal = this.modalCtrl.create(SuccessPage, { titleSuccess: titleSuccess, textSuccess: textSuccess, imgPrincipal: imgPrincipal, imgSuccess: imgSuccess, page: page });
             modal.present();
         }
-        console.log('Navigating to page: ' + text);
     }
 
 }
