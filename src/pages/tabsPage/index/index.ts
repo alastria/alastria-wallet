@@ -20,7 +20,6 @@ export class Index {
     headerScrollConfig: ScrollHideConfig = { cssProperty: 'margin-top', maxValue: 80 };
 
     constructor(private toastCtrl: ToastService) {
-        console.log("[Debug] Index enter");
     }
 
     ngOnInit(){

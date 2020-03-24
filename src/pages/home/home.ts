@@ -21,6 +21,7 @@ export class HomePage {
     tabs: any = {};
     isLoged: Boolean;
     token: string;
+    credentials: string;
 
     constructor(
         platform: Platform,
@@ -35,17 +36,30 @@ export class HomePage {
             this.token = this.navParams.get('token');
             this.deeplinks.route({
                 '/': LoginPage,
-                '/createAI': LoginPage
+                '/createAI': LoginPage,
+                '/createCredentials': LoginPage
             }).subscribe(
                 (match) => {
-                    if (match && match.$args && match.$args.alastriaToken) {
-                    this.identitySecuredStorageService.hasKey('userDID')
-                        .then((DID) => {
-                            if(!DID) {
-                                this.token = match.$args.alastriaToken;
-                                this.navCtrl.setRoot(HomePage, { token: this.token});
-                            }
-                        });
+                    if (match && match.$args) {
+                        if (match.$args.alastriaToken) {
+                            this.identitySecuredStorageService.hasKey('userDID')
+                                .then((DID) => {
+                                    if(!DID) {
+                                        this.token = match.$args.alastriaToken;
+                                        this.navCtrl.setRoot(HomePage, { token: this.token});
+                                    }
+                                });
+                        } else if (match.$args.credentials) {
+                            this.identitySecuredStorageService.hasKey('userDID')
+                                .then((DID) => {
+                                    if(DID) {
+                                        this.credentials = this.parseCredentials(match.$args.credentials);
+                                        if (this.isLoged) {
+                                            this.navCtrl.setRoot(TabsPage, { credentials: this.credentials });
+                                        }
+                                    }
+                                });
+                        }
                     }
                 },
                 (noMatch) => {
@@ -61,11 +75,18 @@ export class HomePage {
         if (isLogged) {
             const did = await this.identitySecuredStorageService.hasKey('userDID');
             if (did) {
-                this.navCtrl.setRoot(TabsPage);
+                this.navCtrl.setRoot(TabsPage, { credentials: this.credentials });
             } else {
                 this.navCtrl.setRoot(EntitiesPage, { token: this.token });
             }
         } 
     }
 
+    private parseCredentials(credentials: string): string {
+        let result = {
+            verifiableCredential: credentials.split(',')
+        }
+
+        return JSON.stringify(result);
+    }
 }

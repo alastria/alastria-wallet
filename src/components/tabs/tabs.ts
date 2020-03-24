@@ -1,5 +1,6 @@
+import { MessageManagerService } from './../../services/messageManager-service';
 import { Component, Input, ViewChild } from '@angular/core';
-import { IonicPage } from 'ionic-angular';
+import { IonicPage, NavParams } from 'ionic-angular';
 
 @IonicPage()
 @Component({
@@ -11,6 +12,15 @@ export class Tabs {
     @Input('events') events: any;
     @ViewChild('tabs') tabRef: any;
     
-    constructor() {
-     }
+    constructor(private messageManagerService: MessageManagerService,
+                public navParams: NavParams) {
+        this.checkCredentials(this.navParams.get('credentials'));
+    }
+
+    checkCredentials(credentials) {
+        if (credentials) {
+            this.messageManagerService.prepareDataAndInit(credentials);
+            this.navParams.data = null
+        }
+    }
 }
