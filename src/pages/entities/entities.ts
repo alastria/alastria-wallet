@@ -81,7 +81,7 @@ export class EntitiesPage {
   private initSocket(): void {
     this.socketService.initSocket();
 
-    this.subscription.add(this.socketService.onCreateIdentityWv()
+    this.subscription.add(this.socketService.onCreateIdentityWs()
       .subscribe((result) => {
         this.securedStrg.set('callbackUrlPut', result.callbackUrl)
           .then(() => {
@@ -92,6 +92,14 @@ export class EntitiesPage {
             console.error('error ', error);
           });
 
+        this.socketService.sendDisconnect();
+      })
+    );
+
+    this.subscription.add(this.socketService.onFillYourProfileWs()
+      .subscribe((result) => {
+        this.messageManagerService.prepareDataAndInit(result);
+        this.externalWeb.close();
         this.socketService.sendDisconnect();
       })
     );

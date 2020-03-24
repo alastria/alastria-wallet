@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, App } from 'ionic-angular';
+import { IonicPage, NavController, App, NavControllerBase } from 'ionic-angular';
 import { SecuredStorageService } from '../../services/securedStorage.service';
 import { EntitiesPage } from '../entities/entities';
-import { TabsPage } from '../tabsPage/tabsPage';
+import { getNav } from '../../utils';
 
 @IonicPage()
 @Component({
@@ -56,7 +56,8 @@ export class ProfilePage {
     }
 
     async goToEntitiesList(): Promise<any> {
-        this.app.getRootNav().setRoot(EntitiesPage);
+        const nav = getNav(this.app);
+        nav.setRoot(EntitiesPage);
     }
 
     private async getAllCredentials(): Promise<void> {

@@ -35,9 +35,15 @@ export class SocketService {
       });
   }
 
-  public onCreateIdentityWv(): Observable<any> {
+  public onCreateIdentityWs(): Observable<any> {
     return new Observable<any>(observer => {
         this.socket.on('createIdentityWs', (data: any) => observer.next(data));
+    });
+  }
+
+  public onFillYourProfileWs(): Observable<any> {
+    return new Observable<any>(observer => {
+        this.socket.on('fillYourProfileWs', (data: any) => observer.next(data));
     });
   }
 
