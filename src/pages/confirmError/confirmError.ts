@@ -23,7 +23,6 @@ export class ConfirmError {
         private securedStrg: SecuredStorageService
     ) {
         this.error = this.navParams.get('error');
-        console.log('error ', this.error);
     }
 
     ionViewDidLoad() {
@@ -31,7 +30,7 @@ export class ConfirmError {
     }
 
     async dismiss(){
-        this.viewCtrl.dismiss();
+        await this.viewCtrl.dismiss();
         try {
             const DID = await this.securedStrg.hasKey(AppConfig.USER_DID);
 
