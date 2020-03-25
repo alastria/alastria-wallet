@@ -50,15 +50,11 @@ export class HomePage {
                                     }
                                 });
                         } else if (match.$args.credentials) {
-                            this.identitySecuredStorageService.hasKey('userDID')
-                                .then((DID) => {
-                                    if(DID) {
-                                        this.credentials = this.parseCredentials(match.$args.credentials);
-                                        if (this.isLoged) {
-                                            this.navCtrl.setRoot(TabsPage, { credentials: this.credentials });
-                                        }
-                                    }
-                                });
+                            this.credentials = this.parseCredentials(match.$args.credentials);
+
+                            if (this.isLoged) {
+                                    this.navCtrl.setRoot(TabsPage, { credentials: this.credentials });
+                            }
                         }
                     }
                 },
