@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ToastService } from './toast-service';
 import { AlertController, NavController, PopoverController, ModalController, App } from 'ionic-angular';
-import { ConfirmLogin } from '../pages/confirmLogin/confirmLogin';
 import { Index } from '../pages/tabsPage/index/index';
 import { TokenService } from './token-service';
 import { ConfirmAccess } from '../pages/confirm-access/confirm-access';
@@ -56,11 +55,6 @@ export class MessageManagerService {
     public launchProtocol(protocolType: ProtocolTypes | String, verifiedToken: Array<string>, alastriaToken: string): void {
         if (verifiedToken) {
             switch (protocolType) {
-                case ProtocolTypes.authentication:
-                    let alastriaSession: object;
-                    alastriaSession = this.tokenSrv.getSessionToken(verifiedToken);
-                    this.showConfirmLogin(verifiedToken[AppConfig.ISSUER], AppConfig.SERVICE_PROVIDER, verifiedToken[AppConfig.CBU], alastriaSession);
-                    break;
                 case ProtocolTypes.presentation:
                     this.prepareCredentials(verifiedToken)
                         .then((tokenData: any) => {
@@ -85,11 +79,6 @@ export class MessageManagerService {
         } else {
             this.toastCtrl.presentToast("Error: Contacte con el service provider", 1000);
         }
-    }
-
-    private showConfirmLogin(iss: string, issName: string, cbu: string, as: string | object) {
-        const alert = this.modalCtrl.create(ConfirmLogin, { [AppConfig.ISSUER]: iss, [AppConfig.ISSUER_NAME]: issName, [AppConfig.CBU]: cbu, [AppConfig.AS]: as });
-        alert.present();
     }
 
     private showConfirmAccess(iss: string, credentials: Array<any>, iat: number, exp: number, isPresentationRequest = false, verifiedJWT = null, jti?: string) {

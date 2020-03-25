@@ -20,7 +20,6 @@ import { SuccessPageModule } from '../pages/success/success.module';
 import { ProfilePage } from '../pages/profile/profile';
 import { CredentialDetailPage } from '../pages/credential-detail/credential-detail';
 import { SecuredStorageService } from '../services/securedStorage.service';
-import { ConfirmLogin } from '../pages/confirmLogin/confirmLogin';
 import { TermsConditionsPageModule } from '../pages/terms-conditions/terms-conditions.module';
 import { ConfirmAccess } from '../pages/confirm-access/confirm-access';
 import { SelectIdentity } from './../pages/confirm-access/select-identity/select-identity';
@@ -45,7 +44,6 @@ import { Deeplinks } from '@ionic-native/deeplinks';
         LoginPage,
         ProfilePage,
         CredentialDetailPage,
-        ConfirmLogin,
         ConfirmAccess,
         SelectIdentity,
         ConfirmError
@@ -76,7 +74,6 @@ import { Deeplinks } from '@ionic-native/deeplinks';
         ProfilePage,
         CredentialDetailPage,
         ConfirmAccess,
-        ConfirmLogin,
         SelectIdentity,
         EntitiesPage,
         ConfirmError
