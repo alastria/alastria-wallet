@@ -15,7 +15,7 @@
                     </ion-col>
                 </ion-row>
                 <div>
-                    <p [class.description-position]="isSelectable">
+                    <p [class.description-selectable]="isSelectable" [class.description-notSelectable]="!isSelectable">
                         {{ item.value }}
                     </p>
                     <div [class.star-position]="isSelectable" [class.star-notSelectable]="!isSelectable">
