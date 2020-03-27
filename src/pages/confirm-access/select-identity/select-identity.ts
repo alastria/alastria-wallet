@@ -12,31 +12,23 @@ export class SelectIdentity {
 
     @Output() handleSelectNewCredential = new EventEmitter();
 
-    public searchTerm = "";
-    private selectedMockCredential: any;
-    private allCredentials: any[];
-    private iat: any;
-    private exp: any;
+    searchTerm = "";
+    selectedMockCredential: any;
+    allCredentials: any[];
+    iat: any;
+    exp: any;
 
     constructor(
         public navParams: NavParams,
         public navCtrl: NavController,
     ) {
+        console.log('------- Select identity --------');
         this.allCredentials = navParams.get("allCredentials");
-        
         this.iat = this.navParams.get("iat");
         this.exp = this.navParams.get("exp");
     }
 
-    onStarClass(items: any, index: number, e: any) {
-        for (var i = 0; i < items.length; i++) {
-            items[i].isActive = i <= index;
-        }
-    }
-
     onSearch(event?: any) {
-        console.log('Event ', event);
-        console.log('searchTerm', this.searchTerm);
         for (let credential of this.identityDataList.identityDisplay) {
             if (credential.titleP.toLowerCase().indexOf(this.searchTerm.toLowerCase()) !== -1
                 || credential.value.toLowerCase().indexOf(this.searchTerm.toLowerCase()) !== -1) {
@@ -53,7 +45,6 @@ export class SelectIdentity {
         } else {
             this.selectedMockCredential = undefined;
         }
-        console.log('Selected Credential: ', this.selectedMockCredential);
     }
 
     sortCredentials() {
