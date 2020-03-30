@@ -3,10 +3,10 @@ import { IonicPage } from 'ionic-angular';
 
 @IonicPage()
 @Component({
-    selector: 'parallax-layout-1',
+    selector: 'parallax',
     templateUrl: 'parallax.html'
 })
-export class ParallaxLayout1 {
+export class Parallax {
     @Input() data: any;
     @Input() events: any;
 
@@ -14,7 +14,8 @@ export class ParallaxLayout1 {
     headerImage: any = "";
 
     constructor() {
-     }
+        console.log('-------- Paralax -------');
+    }
 
     onEvent(event: string, item: any, e: any) {
         if (e) {
