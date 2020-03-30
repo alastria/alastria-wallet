@@ -39,4 +39,5 @@ export class UserInfoHeader {
             this.navController.push(ProfilePage);
         }
     }
+
 }
