@@ -1,7 +1,11 @@
 import { Component, Input } from '@angular/core';
 import { IonicPage, NavController } from 'ionic-angular';
+
+// Components
 import { UserSettings } from './userSettings/user-settings';
 import { ProfilePage } from '../../pages/profile/profile';
+
+// Services
 import { SecuredStorageService } from '../../services/securedStorage.service';
 
 @IonicPage()
@@ -33,7 +37,6 @@ export class UserInfoHeader {
     }
 
     profilePage() {
-        // Si estoy en la pagina de Profile no la vuelvo a cargar
         let p = this.navController.getActive();
         if (p.component.name !== 'ProfilePage') {
             this.navController.push(ProfilePage);

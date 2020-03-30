@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, ModalController, NavController } from 'ionic-angular';
+
+// Services
 import { SecuredStorageService } from '../../../services/securedStorage.service';
 
 @IonicPage()
