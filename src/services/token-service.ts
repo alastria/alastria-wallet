@@ -2,6 +2,8 @@ import { Injectable } from "@angular/core";
 import { verify, sign, decode } from "jsonwebtoken";
 import { tokensFactory } from "alastria-identity-lib";
 import { AppConfig } from '../app.config';
+
+// Services
 import { SecuredStorageService } from "./securedStorage.service";
 
 @Injectable()
@@ -15,7 +17,6 @@ export class TokenService {
     private readonly SECRET = "your-256-bit-secret";
 
     constructor(private securedStrg: SecuredStorageService) {
-        console.log("TokenService initialized");
     }
 
     public async getTokenType(token: string | object) {
@@ -46,45 +47,6 @@ export class TokenService {
         });
     }
 
-    public getSessionToken(verifiedToken: string | object): object {
-        let alastriaSession;
-        let currDate: any = new Date();
-        currDate = currDate.getTime();
-
-        let iss = verifiedToken["iss"];
-        let issName;
-        let cbu;
-
-        if (iss) {
-            issName = "SERVICE PROVIDER";
-            cbu = verifiedToken["cbu"];
-
-            alastriaSession = {
-                "@context": "https://w3id.org/did/v1",
-                "iss": "did:ala:quor:telsius:0x123ABC",
-                "pku": this.SECRET,
-                "iat": currDate,
-                "exp": currDate + 5 * 60 * 1000,
-                "nbf ": currDate,
-                "data": verifiedToken
-            };
-        } else {
-            alastriaSession = null;
-        }
-        return alastriaSession;
-    }
-
-    public verifyToken(token: string, secret: string): string | object {
-        return verify(token, secret, { algorithms: ["HS256"] });
-    }
-
-    public decodeToken(token: string): string | object {
-        let decodedToken = decode(token, { complete: true })
-        delete decodedToken["signature"];
-        decodedToken["header"]["alg"] = "ES256K"
-        return decodedToken;
-    }
-
     public decodeTokenES(token: string): string | object {
         let decodedToken = tokensFactory.tokens.decodeJWT(token);
         return decodedToken;
@@ -98,18 +60,5 @@ export class TokenService {
     public signTokenES(token: string, privateKey: string) {
         let signedToken = tokensFactory.tokens.signJWT(token, privateKey);
         return signedToken;
-    }
-
-    public signToken(payload: string, secret?: string): string | object {
-        secret = secret ? secret : this.SECRET;
-        return sign(payload, secret);
-    }
-
-    public verifyAndGetCredentialData(tokens: Array<string>, secret?: string): Array<any> {
-        secret = secret ? secret : this.SECRET;
-        return tokens.map(token => {
-            let data = this.verifyToken(token, secret);
-            return data["vc"]["credentialSubject"];
-        });
     }
 }

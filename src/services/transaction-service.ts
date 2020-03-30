@@ -1,12 +1,15 @@
 import { Injectable } from "@angular/core";
-import { transactionFactory, tokensFactory } from "alastria-identity-lib"
+import * as Web3 from "web3";
+import { AppConfig } from "../app.config";
+import { transactionFactory, tokensFactory } from "alastria-identity-lib";
+
+// Services
 import { Web3Service } from "./web3-service";
 import { IdentityService } from "./identity-service";
-import * as Web3 from "web3";
-import { CredentialStatus } from "../models/credential-status.model";
-import { AppConfig } from "../app.config";
-import { PresentationStatus } from "../models/presentation-status.model";
 import { SecuredStorageService } from "./securedStorage.service";
+
+// Models
+import { PresentationStatus } from './../models/presentation-status.model';
 
 @Injectable()
 export class TransactionService {
@@ -34,7 +37,7 @@ export class TransactionService {
             let subjectCredential = transactionFactory.credentialRegistry.addSubjectCredential(this.web3, credentialHash, uri); //aqui no funciona
             return this.identitySrv.getKnownTransaction(subjectCredential).then((subjectCredentialSigned: string) => {
                 return this.sendSigned(subjectCredentialSigned);
-            }).then(receipt => {
+            }).then(() => {
                 return credentialHash;
             });
         });
@@ -48,30 +51,31 @@ export class TransactionService {
             credential[AppConfig.PAYLOAD][AppConfig.NBF], credential[AppConfig.PAYLOAD][AppConfig.JTI], uri);
     }
 
-    public getSubjectCredentialList(subject: string): Promise<any> {
-        console.log("Getting Creedential List for subject " + subject);
-        let credentialList = transactionFactory.credentialRegistry.getSubjectCredentialList(this.web3, subject)
-        return this.web3.eth.call(credentialList).then(subjectCredentialList => {
-            console.log("(subjectCredentialList) Transaction ------->", subjectCredentialList);
-            let resultList = this.web3.eth.abi.decodeParameters(["uint256", "bytes32[]"], subjectCredentialList);
-            let credentialList = {
-                "uint": resultList[0],
-                "bytes32[]": resultList[1]
-            }
-            console.log("(subjectCredentialList) TransactionList: ", credentialList);
-            return credentialList;
-        });
+
+
+    public getCurrentPublicKey(DID: string): Promise<any> {
+        DID = DID.split(":")[4];
+        let currentPubKey = transactionFactory.publicKeyRegistry.getCurrentPublicKey(this.web3, DID)
+
+        return this.web3.eth.call(currentPubKey)
+            .then(result => {
+                let pubKey = this.web3.eth.abi.decodeParameters(['string'], result)
+                let publicKey = pubKey[0]
+                return publicKey;
+            })
+            .catch(error => {
+                console.error('Error -------->', error)
+            })
     }
 
-    public getSubjectCredentialStatus(subject: string, credentialHash: string): Promise<CredentialStatus> {
-        console.log("Getting Creedential status for: " + credentialHash);
-        let subjectCredentialTransaction = transactionFactory.credentialRegistry.getSubjectCredentialStatus(this.web3, subject, credentialHash);
-        return this.web3.eth.call(subjectCredentialTransaction).then(SubjectCredentialStatus => {
-            let result = this.web3.eth.abi.decodeParameters(["bool", "uint8"], SubjectCredentialStatus);
-            let credentialStatus: CredentialStatus = result;
-            console.log("(SubjectCredentialStatus) -----> " + credentialStatus);
-            return credentialStatus;
-        });
+    public sendSigned(subjectObjectSigned: string): Promise<any> { //:Promise<void | TransactionReceipt>
+        return this.web3.eth.sendSignedTransaction(subjectObjectSigned).
+            then(transactionHash => {
+                return transactionHash;
+            }).catch(e => {
+                console.error("Error in transaction (sendTx function): " + e);
+                throw e;
+            });
     }
 
     public getSubjectPresentationStatus(subject: string, presentationHash: string): Promise<PresentationStatus> {
@@ -84,58 +88,4 @@ export class TransactionService {
         })
     }
 
-    public getSubjectPresentationList(subject: string): Promise<any> {
-        let presentationList = transactionFactory.presentationRegistry.getSubjectPresentationList(this.web3, subject);
-        return this.web3.eth.call(presentationList).then(subjectPresentationList => {
-            console.log('(subjectPresentationList) Transaction ------->', subjectPresentationList);
-            let resultList = this.web3.eth.abi.decodeParameters(["uint256", "bytes32[]"], subjectPresentationList);
-            let presentationListresult = {
-                "uint": resultList[0],
-                "bytes32[]": resultList[1]
-            };
-            return presentationListresult;
-        })
-    }
-
-    public updateSubjectPresentation(subject: string, presentationHash: string, updateTo: number): Promise<PresentationStatus> {
-        let updateSubjectPresentation = transactionFactory.presentationRegistry.updateSubjectPresentation(this.web3, presentationHash, updateTo);
-        return this.identitySrv.getKnownTransaction(updateSubjectPresentation).then(res => {
-            let presentationStatus = transactionFactory.presentationRegistry.getSubjectPresentationStatus(this.web3, subject, presentationHash);
-            return this.web3.eth.call(presentationStatus);
-        }).then(result => {
-            let resultStatus = this.web3.eth.abi.decodeParameters(["bool", "uint8"], result)
-            let presentationStatus: PresentationStatus = resultStatus;
-            return presentationStatus;
-        });
-    }
-
-    public getCurrentPublicKey(DID: string): Promise<any> {
-        DID = DID.split(":")[4];
-        let currentPubKey = transactionFactory.publicKeyRegistry.getCurrentPublicKey(this.web3, DID)
-
-        return this.web3.eth.call(currentPubKey)
-            .then(result => {
-                // We add this replace to find only the alphanumeric substring (the rest of null/void characters are not important)
-                /* let publicKey = this.web3.utils.hexToAscii(result).replace(/[^0-9A-Z]+/gi, "")
-                return publicKey; */
-
-                let pubKey = this.web3.eth.abi.decodeParameters(['string'], result)
-                let publicKey = pubKey[0]
-                return publicKey;
-            })
-            .catch(error => {
-                console.log('Error -------->', error)
-            })
-    }
-
-    public sendSigned(subjectObjectSigned: string): Promise<any> { //:Promise<void | TransactionReceipt>
-        return this.web3.eth.sendSignedTransaction(subjectObjectSigned).
-            then(transactionHash => {
-                console.log("Hash transaction" + transactionHash);
-                return transactionHash;
-            }).catch(e => {
-                console.log("Error in transaction (sendTx function): " + e);
-                throw e;
-            });
-    }
 }
