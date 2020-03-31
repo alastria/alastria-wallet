@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
-import { DomSanitizer } from '@angular/platform-browser';
+import { IonicPage, NavController, NavParams, Platform } from 'ionic-angular';
 import { InAppBrowser, InAppBrowserObject } from '@ionic-native/in-app-browser';
 import { Subscription } from 'rxjs';
 
@@ -38,11 +37,18 @@ export class EntitiesPage {
   constructor(public navCtrl: NavController,
               public navParams: NavParams,
               public entityService: EntityService,
-              private sanitize: DomSanitizer,
+              private platform: Platform,
               private inAppBrowser: InAppBrowser,
               private messageManagerService: MessageManagerService,
               private securedStrg: SecuredStorageService,
               private socketService: SocketService) {
+    this.platform.registerBackButtonAction(async () => {
+      const currentStack = this.navCtrl.getViews();
+
+      if (currentStack &&  currentStack.length > 1) {
+          this.navCtrl.pop();
+      }
+    },1);
     this.getEntities();
     this.token = this.navParams.get('token');
     
@@ -65,14 +71,20 @@ export class EntitiesPage {
   }
 
   readQr(){
-    this.navCtrl.setRoot(Camera);
+    const pageName = this.getPageName();
+    this.navCtrl.push(Camera, { pageName: pageName});
   }
 
   openBlank(item: Item) {
     if (item.entityUrl) {
       this.externalWeb = this.inAppBrowser.create(item.entityUrl, '_blank', 'location=no');
-      this.initSocket(); 
+      this.initSocket();
     }
+  }
+
+  private getPageName() {
+    const currentStack = this.navCtrl.getViews();
+    return (currentStack.length) ? (currentStack[currentStack.length - 1]) ? currentStack[currentStack.length - 1].name : (currentStack[0]) ? currentStack[0].name  : '' : '';
   }
 
   /**

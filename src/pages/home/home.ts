@@ -29,7 +29,6 @@ export class HomePage {
         private securedStrg: SecuredStorageService,
         private deeplinks: Deeplinks
     ) { 
-
         platform.ready().then(() => {
             this.token = this.navParams.get('token');
             this.deeplinks.route({

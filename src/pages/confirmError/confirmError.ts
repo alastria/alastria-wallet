@@ -1,10 +1,6 @@
-import { Component } from '@angular/core';
-import { NavController, NavParams, ModalController, ViewController } from 'ionic-angular';
-
-import { AppConfig } from './../../app.config';
-import { SecuredStorageService } from './../../services/securedStorage.service';
-
 import { EntitiesPage } from './../entities/entities';
+import { Component } from '@angular/core';
+import { NavController, NavParams, ModalController, ViewController, Platform } from 'ionic-angular';
 import { TabsPage } from '../tabsPage/tabsPage';
 
 @Component({
@@ -13,16 +9,17 @@ import { TabsPage } from '../tabsPage/tabsPage';
 })
 export class ConfirmError {
 
-    public error: any;
+    error: any;
+    pageName: string;
 
     constructor(
         public navCtrl: NavController, 
         public navParams: NavParams, 
         public modalCtrl: ModalController,
-        public viewCtrl: ViewController,
-        private securedStrg: SecuredStorageService
+        public viewCtrl: ViewController
     ) {
         this.error = this.navParams.get('error');
+        this.pageName = this.navParams.get('pageName');
     }
 
     ionViewDidLoad() {
@@ -30,14 +27,14 @@ export class ConfirmError {
     }
 
     async dismiss(){
-        await this.viewCtrl.dismiss();
         try {
-            const DID = await this.securedStrg.hasKey(AppConfig.USER_DID);
-
-            if (DID) {
+            if(this.pageName === 'TabsPage' || this.pageName === 'Camera' || this.pageName === 'Index') {
                 this.navCtrl.setRoot(TabsPage);
+            } else if (this.pageName === 'EntitiesPage') {
+                this.navCtrl.setRoot(TabsPage);
+                this.navCtrl.push(EntitiesPage);
             } else {
-                this.navCtrl.setRoot(EntitiesPage);
+                this.navCtrl.pop();
             }
         } catch(error) {
             console.error(error);

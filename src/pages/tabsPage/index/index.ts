@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ToastService } from '../../../services/toast-service';
-import { IonicPage } from 'ionic-angular/umd';
+import { IonicPage, Platform, NavController } from 'ionic-angular';
 import { ScrollHideConfig } from '../../../components/parallax/parallax.directive';
 import { ArticleService } from '../../../services/article.service';
 
@@ -19,8 +19,16 @@ export class Index {
     headerScrollConfig: ScrollHideConfig = { cssProperty: 'margin-top', maxValue: 80 };
 
     constructor(private toastCtrl: ToastService,
-                private articleService: ArticleService) {
+                private articleService: ArticleService,
+                private platform: Platform,
+                private navCtrl: NavController) {
         console.log("[Debug] Index enter");
+        this.platform.registerBackButtonAction(async () => {
+            const currentStack = this.navCtrl.getViews();
+            if (currentStack &&  currentStack.length > 1 && currentStack[currentStack.length - 1] && currentStack[currentStack.length - 1].name !== 'Index') {
+                this.navCtrl.pop();
+            }
+        },1);
     }
 
     ngOnInit(){

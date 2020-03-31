@@ -1,7 +1,8 @@
+import { TabsPage } from './../tabsPage';
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner';
-import { ModalController, NavController } from 'ionic-angular';
+import { ModalController, NavController, NavParams } from 'ionic-angular';
 import { AppConfig } from '../../../app.config';
 
 // SERVICE
@@ -34,9 +35,10 @@ export class Camera {
         public barcodeScanner: BarcodeScanner,
         public modalCtrl: ModalController,
         public navCtrl: NavController,
-        private securedStrg: SecuredStorageService,
+        private navParams: NavParams,
         private http: HttpClient,
         private messageManagerService: MessageManagerService) {
+        let pageName = this.navParams.get('pageName');
         let options = {
             prompt: "Situe el código Qr en el interior del rectángulo.",
             formats: AppConfig.QR_CODE
@@ -52,24 +54,22 @@ export class Camera {
                                 throw error;
                             })
                     }, (error) => {
-                        console.error(error);
-                        this.showConfirmEror("Error: Contacte con el service provider");
+                        this.showConfirmEror("Error: Contacte con el service provider", pageName);
                     });
                 } else {
                     this.messageManagerService.prepareDataAndInit(alastriaToken)
                         .catch((error) => {
-                            console.error(error);
-                            this.showConfirmEror("Error: Contacte con el service provider");
+                            console.error('2 ---> ', error);
+                            this.showConfirmEror("Error: Contacte con el service provider", pageName);
                         });
                 }
             } else {
                 try {
-                    const DID = await this.securedStrg.hasKey(AppConfig.USER_DID);
-        
-                    if (DID) {
-                        this.showConfirmEror("Error: Contacte con el service provider");
-                    } else {
-                        this.navCtrl.setRoot(EntitiesPage);
+                    if (!pageName) {
+                        pageName = this.getPageName();
+                    }
+                    if (pageName === 'TabsPage' || pageName === 'Camera' || pageName === 'Index') {
+                        this.showConfirmEror("Error: Contacte con el service provider", pageName);
                     }
                 } catch(error) {
                     console.error(error);
@@ -80,11 +80,19 @@ export class Camera {
         });
     }
 
-    private showConfirmEror(message?: string) {
+    private showConfirmEror(message?: string, pageName?: string) {
         const error = {
             message: message ? message : "Error: Contacte con el service provider"
         };
-        const alert = this.modalCtrl.create(ConfirmError, { 'error': error });
+        if (!pageName) {
+            pageName = this.getPageName();
+        }
+        const alert = this.modalCtrl.create(ConfirmError, { 'error': error, 'pageName': pageName });
         alert.present();
+    }
+
+    private getPageName() {
+        const currentStack = this.navCtrl.getViews();
+        return (currentStack.length) ? (currentStack[currentStack.length - 1]) ? currentStack[currentStack.length - 1].name : (currentStack[0]) ? currentStack[0].name  : '' : '';
     }
 }
