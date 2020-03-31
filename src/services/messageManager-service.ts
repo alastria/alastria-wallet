@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ToastService } from './toast-service';
-import { AlertController, NavController, PopoverController, ModalController, App } from 'ionic-angular';
-import { Index } from '../pages/tabsPage/index/index';
+import { AlertController, PopoverController, ModalController } from 'ionic-angular';
 import { TokenService } from './token-service';
 import { ConfirmAccess } from '../pages/confirm-access/confirm-access';
 import { ConfirmError } from '../pages/confirmError/confirmError';
@@ -17,8 +16,6 @@ let Wallet = require('ethereumjs-util');
 @Injectable()
 export class MessageManagerService {
 
-    public navCtrl: NavController;
-
     constructor(private toastCtrl: ToastService,
         public alertCtrl: AlertController,
         public popoverCtrl: PopoverController,
@@ -28,10 +25,8 @@ export class MessageManagerService {
         private web3Srv: Web3Service,
         private transactionSrv: TransactionService,
         private securedStrg: SecuredStorageService,
-        private loadingSrv: LoadingService,
-        app: App) 
+        private loadingSrv: LoadingService) 
     {
-        this.navCtrl = app.getActiveNav();
     }
 
     public async prepareDataAndInit(alastriaToken: any): Promise<any> {

@@ -38,6 +38,7 @@ export class Camera {
         private navParams: NavParams,
         private http: HttpClient,
         private messageManagerService: MessageManagerService) {
+            console.log('------ CAMERA ------')
         let pageName = this.navParams.get('pageName');
         let options = {
             prompt: "Situe el código Qr en el interior del rectángulo.",
@@ -47,7 +48,7 @@ export class Camera {
         this.barcodeScanner.scan(options).then(async barcodeData => {
             let alastriaToken = barcodeData.text;
             if (barcodeData.text && !barcodeData.cancelled) {
-                if (alastriaToken.match(/(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/gi)) {
+        if (alastriaToken.match(/(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/gi)) {
                     this.http.get(alastriaToken).subscribe(data => {
                         this.messageManagerService.prepareDataAndInit(data)
                             .catch((error) => {
@@ -59,20 +60,15 @@ export class Camera {
                 } else {
                     this.messageManagerService.prepareDataAndInit(alastriaToken)
                         .catch((error) => {
-                            console.error('2 ---> ', error);
                             this.showConfirmEror("Error: Contacte con el service provider", pageName);
                         });
                 }
             } else {
-                try {
-                    if (!pageName) {
-                        pageName = this.getPageName();
-                    }
-                    if (pageName === 'TabsPage' || pageName === 'Camera' || pageName === 'Index') {
-                        this.showConfirmEror("Error: Contacte con el service provider", pageName);
-                    }
-                } catch(error) {
-                    console.error(error);
+                if (!pageName) {
+                    pageName = this.getPageName();
+                }
+                if (pageName === 'TabsPage' || pageName === 'Camera' || pageName === 'Index') {
+                    this.showConfirmEror("Error: Contacte con el service provider", pageName);
                 }
             }
         }).catch((error) => {

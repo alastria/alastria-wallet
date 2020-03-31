@@ -25,7 +25,9 @@ export class Index {
         console.log("[Debug] Index enter");
         this.platform.registerBackButtonAction(async () => {
             const currentStack = this.navCtrl.getViews();
+            console.log('current stack ', currentStack);
             if (currentStack &&  currentStack.length > 1 && currentStack[currentStack.length - 1] && currentStack[currentStack.length - 1].name !== 'Index') {
+                console.log('current stack 2 ->', currentStack);
                 this.navCtrl.pop();
             }
         },1);

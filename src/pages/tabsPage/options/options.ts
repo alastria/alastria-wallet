@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, App } from 'ionic-angular';
+import { IonicPage, App } from 'ionic-angular';
 import { ToastService } from '../../../services/toast-service';
 import { MyApp } from '../../../app/app.component';
 
@@ -41,11 +41,10 @@ export class Options {
         }
     ];
 
-    constructor(public navCtrl: NavController, public app: App) {
+    constructor(private app: App) {
     }
 
     goToRoot() {
-        //this.navCtrl.setRoot(HomePage);
         this.app.getRootNav().setRoot(MyApp);
     }
 }

@@ -43,8 +43,7 @@ export class LoginPage {
   ];
   hashKeyLoginType: boolean;
 
-  constructor(public navCtrl: NavController, 
-              public navParams: NavParams,
+  constructor(public navParams: NavParams,
               private platform: Platform,
               private faio: FingerprintAIO,
               private securedStrg: SecuredStorageService,

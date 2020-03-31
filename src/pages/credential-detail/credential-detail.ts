@@ -10,15 +10,11 @@ export class CredentialDetailPage {
 
     data: any;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(public navParams: NavParams) {
   }
 
   ngOnInit(){
     this.data = this.navParams.get('item');
-  }
-
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad DetailProfilePage');
   }
 
 }

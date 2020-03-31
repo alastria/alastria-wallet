@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, AlertController, NavParams, Platform } from 'ionic-angular';
+import { NavController, AlertController, NavParams, Platform, App } from 'ionic-angular';
 import { Deeplinks } from '@ionic-native/deeplinks';
 
 // Pages
@@ -27,7 +27,8 @@ export class HomePage {
         public navParams: NavParams,
         public alertCtrl: AlertController,
         private securedStrg: SecuredStorageService,
-        private deeplinks: Deeplinks
+        private deeplinks: Deeplinks,
+        private app: App
     ) { 
         platform.ready().then(() => {
             this.token = this.navParams.get('token');
@@ -43,14 +44,16 @@ export class HomePage {
                                 .then((DID) => {
                                     if(!DID) {
                                         this.token = match.$args.alastriaToken;
-                                        this.navCtrl.setRoot(HomePage, { token: this.token});
+                                        // this.navCtrl.setRoot(HomePage, { token: this.token});
+                                        this.app.getRootNav().setRoot(HomePage, { token: this.token});
                                     }
                                 });
                         } else if (match.$args.credentials) {
                             this.credentials = this.parseCredentials(match.$args.credentials);
 
                             if (this.isLoged) {
-                                    this.navCtrl.setRoot(TabsPage, { credentials: this.credentials });
+                                // this.navCtrl.setRoot(TabsPage, { credentials: this.credentials });
+                                this.app.getRootNav().setRoot(HomePage, { token: this.token});
                             }
                         }
                     }

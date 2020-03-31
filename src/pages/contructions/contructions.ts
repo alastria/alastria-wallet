@@ -11,7 +11,9 @@ export class ContructionsPage {
     text: string;
     img: string;
 
-    constructor(public navCtrl: NavController, public navParams: NavParams, public modalCtrl: ModalController) {
+    constructor(public navCtrl: NavController,
+                public navParams: NavParams,
+                public modalCtrl: ModalController) {
 
         this.text = 'Página en construcción'
         this.img = 'assets/images/alastria/underConstruction.jpg'

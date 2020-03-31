@@ -28,10 +28,6 @@ export class SuccessPage {
         }
     }
 
-    ionViewDidLoad() {
-        console.log('ionViewDidLoad SuccessPage');
-    }
-
     public closeModal() {
         this.navCtrl.setRoot(TabsPage);
     }

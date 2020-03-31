@@ -16,7 +16,7 @@ export class ProfilePage {
     isHaveCredentials: boolean;
 
     constructor(private securedStrg: SecuredStorageService,
-                public app: App) {
+                private app: App) {
         this.getAllCredentials();
     }
 
