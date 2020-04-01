@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivityM } from '../models/activity.model';
 
 @Injectable()
-export class Activities {
+export class ActivitiesService {
 
     constructor() {
 

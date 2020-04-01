@@ -2,7 +2,7 @@ import { ModalController } from 'ionic-angular';
 import { Component, ViewChild } from '@angular/core';
 import { IonicPage, AlertController } from 'ionic-angular';
 import { ToastService } from '../../../services/toast-service';
-import { Activities } from '../../../services/activities.service';
+import { ActivitiesService } from '../../../services/activities.service';
 import { ActivityM } from './../../../models/activity.model';
 import { OptionsComponent } from './options/options';
 import { SecuredStorageService } from '../../../services/securedStorage.service';
@@ -26,7 +26,7 @@ export class Activity {
     public selection: boolean = false;
 
     constructor(private toastCtrl: ToastService,
-        private activitiesService: Activities,
+        private activitiesService: ActivitiesService,
         private securedStrg: SecuredStorageService,
         public alertCtrl: AlertController,
         public modalCtrl: ModalController

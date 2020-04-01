@@ -1,7 +1,13 @@
+import { TokenService } from './../../../services/token-service';
 import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
-import { Camera } from './camera';
 import { NgxQRCodeModule } from '../../../../node_modules/ngx-qrcode2';
+
+// PAGES
+import { Camera } from './camera';
+
+// SERVICES
+import { MessageManagerService } from './../../../services/messageManager-service';
 
 @NgModule({
     declarations: [
@@ -13,6 +19,10 @@ import { NgxQRCodeModule } from '../../../../node_modules/ngx-qrcode2';
     ],
     exports:[
         Camera
+    ],
+    providers: [
+        MessageManagerService,
+        TokenService
     ]
 })
 
