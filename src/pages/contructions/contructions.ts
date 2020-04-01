@@ -20,10 +20,6 @@ export class ContructionsPage {
 
     }
 
-    ionViewDidLoad(): void {
-        console.log('ionViewDidLoad ContructionsPage');
-    }
-
     closeModal(): void {
         this.navCtrl.pop();
     }

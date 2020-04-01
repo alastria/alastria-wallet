@@ -22,13 +22,8 @@ export class ConfirmError {
         this.pageName = this.navParams.get('pageName');
     }
 
-    ionViewDidLoad() {
-        console.log('ionViewDidLoad ConfirmErrorPage');
-    }
-
     async dismiss(){
         try {
-            console.log('pageName ', this.pageName);
             if(this.pageName === 'TabsPage' || this.pageName === 'Camera' || this.pageName === 'Index') {
                 this.app.getRootNav().setRoot(TabsPage);
                 this.viewCtrl.dismiss();

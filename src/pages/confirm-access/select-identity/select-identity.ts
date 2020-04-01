@@ -22,7 +22,6 @@ export class SelectIdentity {
         public navParams: NavParams,
         public navCtrl: NavController,
     ) {
-        console.log('------- Select identity --------');
         this.allCredentials = navParams.get("allCredentials");
         this.iat = this.navParams.get("iat");
         this.exp = this.navParams.get("exp");

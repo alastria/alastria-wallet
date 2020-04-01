@@ -202,7 +202,7 @@ export class MessageManagerService {
                 this.showConfirmEror("Error: Identidad ya creada");
             }
         } catch (error) {
-            console.log('Error', error);
+            console.error('Error', error);
             this.showConfirmEror();
         }
 
@@ -230,7 +230,7 @@ export class MessageManagerService {
                     }
                 })
                 .catch(error => {
-                    console.log('error ', error);
+                    console.error('error ', error);
                     throw error;
                 });
         });

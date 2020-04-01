@@ -49,7 +49,6 @@ export class Activity {
         return this.securedStrg.matchAndGetJSON(prefix)
             .then((elements) => {
                 let count = 0;
-                console.log('elements ', elements);
                 this.activities = elements.map(element => {
                     let elementObj = JSON.parse(element);
                     let elementKeys = Object.getOwnPropertyNames(elementObj);
@@ -98,7 +97,7 @@ export class Activity {
                 });
             }
         } catch (err) {
-            console.log(err);
+            console.error(err);
         }
     }
 

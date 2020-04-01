@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, ItemSliding } from 'ionic-angular';
+import { IonicPage } from 'ionic-angular';
 
 // Services
 import { ToastService } from '../../../services/toast-service';

@@ -21,7 +21,7 @@ export class TransactionService {
         private identitySrv: IdentityService,
         private securedStrg: SecuredStorageService
     ) {
-        this.web3 = web3Srv.getWeb3();
+        this.web3 = this.web3Srv.getWeb3();
     }
 
 
@@ -83,7 +83,6 @@ export class TransactionService {
         return this.web3.eth.call(presentationStatus).then(result => {
             let resultStatus = this.web3.eth.abi.decodeParameters(["bool", "uint8"], result);
             let presentationStatus: PresentationStatus = resultStatus;
-            console.log('presentationStatus ------>', presentationStatus);
             return presentationStatus;
         })
     }

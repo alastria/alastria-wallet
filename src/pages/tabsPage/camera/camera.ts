@@ -1,4 +1,3 @@
-import { TabsPage } from './../tabsPage';
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner';
@@ -9,11 +8,9 @@ import { AppConfig } from '../../../app.config';
 import { MessageManagerService } from '../../../services/messageManager-service';
 import { IonicPage } from 'ionic-angular';
 import { ToastService } from '../../../services/toast-service';
-import { SecuredStorageService } from '../../../services/securedStorage.service';
 
 // COMPONENTS - PAGES
 import { ConfirmError } from '../../confirmError/confirmError';
-import { EntitiesPage } from '../../entities/entities';
 
 @IonicPage()
 @Component({
@@ -38,7 +35,6 @@ export class Camera {
         private navParams: NavParams,
         private http: HttpClient,
         private messageManagerService: MessageManagerService) {
-            console.log('------ CAMERA ------')
         let pageName = this.navParams.get('pageName');
         let options = {
             prompt: "Situe el código Qr en el interior del rectángulo.",

@@ -18,8 +18,6 @@ export class ExpandableList {
 
   navegateTo(text: string): void {
     let modal = this.modalCtrl.create(ContructionsPage);
-
-        modal.present();
-        console.log('Navigating to page: ' + text);
+    modal.present();
   }
 }

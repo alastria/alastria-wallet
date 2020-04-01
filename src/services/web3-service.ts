@@ -11,7 +11,6 @@ export class Web3Service {
     public constructor() {
         this.nodeIp = AppConfig.nodeURL;
         this.web3 = new Web3(this.nodeIp);
-        console.log("Web3Service initialized");
     }
 
     public getWeb3(): Web3 {

@@ -7,9 +7,6 @@ import * as socketIo from 'socket.io-client';
 
 // import { environment } from './../../../environments/environment';
 
-
-const webSocket = WebSocket; // Here we stub out the window object
-
 const SERVER_URL = 'http://34.244.47.233:10011';
 
 @Injectable()

@@ -46,7 +46,7 @@ export class SecuredStorageService {
             },
         ).catch(
             (error) => {
-                console.log('Falla al comprobar las keys', error);
+                console.error('Falla al comprobar las keys', error);
             }
         );
     }
@@ -168,10 +168,6 @@ export class SecuredStorageService {
         return this.getKeys()
             .then(result => {
                 allKeys = result;
-                console.log("All storage keys" + allKeys);
-                console.log("All storage keys", allKeys);
-
-
                 for (let i = 0; i < allKeys.length; i++) {
                     if (regex.test(allKeys[i])) {
                         matchingKeys.push(allKeys[i]);
@@ -186,6 +182,7 @@ export class SecuredStorageService {
                             return JSON.stringify(keyObj);
                         }))
                 }
+
                 return Promise.all(promises);
             });
     }

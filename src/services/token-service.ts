@@ -1,5 +1,4 @@
 import { Injectable } from "@angular/core";
-import { verify, sign, decode } from "jsonwebtoken";
 import { tokensFactory } from "alastria-identity-lib";
 import { AppConfig } from '../app.config';
 
@@ -14,7 +13,6 @@ export class TokenService {
     private readonly TYPE_CREDENTIAL_OFFER = "presentation";
     private readonly TYPE_AUTH = "authentication";
     private readonly TYPE_PRESENTATION_REQ = "presentationRequest";
-    private readonly SECRET = "your-256-bit-secret";
 
     constructor(private securedStrg: SecuredStorageService) {
     }

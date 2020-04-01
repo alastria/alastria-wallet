@@ -7,7 +7,6 @@ import { SecuredStorageService } from "./securedStorage.service";
 @Injectable()
 export class IdentityService {
 
-    private subjectPublicKey: string;
     private subjectPrivateKey: string;
     private subjectIdentity: UserIdentity;
     private userDID: string;
@@ -17,7 +16,7 @@ export class IdentityService {
         private web3Srv: Web3Service,
         private securedStrg: SecuredStorageService
     ) {
-        this.web3 = web3Srv.getWeb3();
+        this.web3 = this.web3Srv.getWeb3();
     }
 
     public getPrivateKey(): string {
