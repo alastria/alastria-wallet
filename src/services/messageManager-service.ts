@@ -116,8 +116,7 @@ export class MessageManagerService {
                     expires: Date.now() + (3600*1000),
                     publicKeyHex: identity[AppConfig.USER_PKU]
                 };
-                const signedAT = tokensFactory.tokens.signJWT(alastriaToken, privKey.substring(2));
-                const alastriaSession = tokensFactory.tokens.createAlastriaSession("@jwt", issuerDID, pku, signedAT);
+                const alastriaSession = tokensFactory.tokens.createAlastriaSession("@jwt", issuerDID, pku, alastriaToken);
                 const signedAS = tokensFactory.tokens.signJWT(alastriaSession, privKey.substring(2));
                 const AIC = {
                     signedAIC: signedAS
@@ -159,8 +158,7 @@ export class MessageManagerService {
 
                 const signedCreateTx = await subjectIdentity.getKnownTransaction(createTx);
 
-                const alastriaTokenSigned = tokensFactory.tokens.signJWT(alastriaToken, privKey.substring(2));      
-                const alastriaAIC = tokensFactory.tokens.createAIC(signedCreateTx, alastriaTokenSigned, pku.substring(2));
+                const alastriaAIC = tokensFactory.tokens.createAIC(signedCreateTx, alastriaToken, pku.substring(2));
                 const signedToken = tokensFactory.tokens.signJWT(alastriaAIC, privKey.substring(2));
                 const AIC = {
                     signedAIC: signedToken
