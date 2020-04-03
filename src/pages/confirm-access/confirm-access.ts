@@ -28,6 +28,7 @@ export class ConfirmAccess {
     public isPresentationRequest: boolean;
     public issName: string = "Empresa X";
     public entitiyName: string = "Entidad publica Ejemplo";
+    public isDeeplink: boolean = false;
     private identitiesSelected: Array<number> = [];
     private identityLoaded = new Array<any>();
     private credentials: Array<any>;
@@ -54,6 +55,9 @@ export class ConfirmAccess {
         this.credentials = this.navParams.get(AppConfig.CREDENTIALS);
         this.isPresentationRequest = this.navParams.get(AppConfig.IS_PRESENTATION_REQ);
         this.verifiedJWT = this.navParams.get(AppConfig.VERIFIED_JWT);
+        this.isDeeplink = this.navParams.get('isDeeplink');
+
+        console.log('isDeeplink confirm access --> ', this.isDeeplink);
     }
 
     public manageCredentials(): void {
@@ -210,12 +214,15 @@ export class ConfirmAccess {
     }
 
     public showSuccess() {
-        this.loadingSrv.updateModalState();
+        this.loadingSrv.updateModalState(this.isDeeplink);
         this.viewCtrl.dismiss();
     }
 
     public dismiss() {
-        this.viewCtrl.dismiss();
-        this.navCtrl.setRoot(TabsPage);
+        if (this.isDeeplink) {
+            this.navCtrl.popTo(TabsPage)
+        } else {
+            this.navCtrl.setRoot(TabsPage);
+        }
     }
 }

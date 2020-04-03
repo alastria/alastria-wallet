@@ -53,7 +53,7 @@ export class EntitiesPage {
     this.token = this.navParams.get('token');
     
     if (this.token) {
-      this.messageManagerService.prepareDataAndInit(this.token);
+      this.messageManagerService.prepareDataAndInit(this.token, true);
     }
   }
 

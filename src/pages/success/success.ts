@@ -11,6 +11,7 @@ import { TabsPage } from '../tabsPage/tabsPage';
 export class SuccessPage {
 
     data = {};
+    isDeeplink = false;
 
     constructor(
         public navCtrl: NavController,
@@ -25,10 +26,17 @@ export class SuccessPage {
             'imgSuccess': this.navParams.get('imgSuccess'),
             'page': this.navParams.get('page'),
             'callback': this.navParams.get('callback')
-        }
+        };
+
+        this.isDeeplink = this.navParams.get('isDeeplink');
     }
 
     public closeModal() {
-        this.navCtrl.setRoot(TabsPage);
+        if (this.isDeeplink) {
+            this.navCtrl.popTo(TabsPage)
+        } else {
+
+            this.navCtrl.setRoot(TabsPage);
+        }
     }
 }

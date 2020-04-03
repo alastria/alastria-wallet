@@ -6,3 +6,11 @@ export function getNav(app: App): NavControllerBase {
 
     return result;
 }
+
+export function parseCredentials(credentials: string): string {
+    let result = {
+        verifiableCredential: credentials.split(',')
+    }
+
+    return JSON.stringify(result);
+}

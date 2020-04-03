@@ -15,6 +15,7 @@ let Wallet = require('ethereumjs-util');
 
 @Injectable()
 export class MessageManagerService {
+    isDeeplink: boolean = false;
 
     constructor(private toastCtrl: ToastService,
         public alertCtrl: AlertController,
@@ -29,8 +30,12 @@ export class MessageManagerService {
     {
     }
 
-    public async prepareDataAndInit(alastriaToken: any): Promise<any> {
+    public async prepareDataAndInit(alastriaToken: any, isDeeplink?: boolean): Promise<any> {
         let parsedToken: object;
+        if (isDeeplink) {
+            this.isDeeplink = isDeeplink;
+        }
+
         try {
             parsedToken = JSON.parse(alastriaToken);
         } catch (error) { }
@@ -79,12 +84,14 @@ export class MessageManagerService {
     private showConfirmAccess(iss: string, credentials: Array<any>, iat: number, exp: number, isPresentationRequest = false, verifiedJWT = null, jti?: string) {
         const alert = this.modalCtrl.create(ConfirmAccess, {
             [AppConfig.ISSUER]: iss, [AppConfig.DATA_COUNT]: credentials.length, [AppConfig.VERIFIED_JWT]: verifiedJWT,
-            [AppConfig.CREDENTIALS]: credentials, [AppConfig.IAT]: iat, [AppConfig.EXP]: exp, [AppConfig.IS_PRESENTATION_REQ]: isPresentationRequest, [AppConfig.JTI]: jti
+            [AppConfig.CREDENTIALS]: credentials, [AppConfig.IAT]: iat, [AppConfig.EXP]: exp, [AppConfig.IS_PRESENTATION_REQ]: isPresentationRequest, [AppConfig.JTI]: jti,
+            isDeeplink: this.isDeeplink
         });
         alert.present();
     }
 
     private showConfirmEror(message?: string) {
+        this.loadingSrv.hide();
         const error = {
             message: message ? message : "Error: Contacte con el service provider"
         };
@@ -123,14 +130,13 @@ export class MessageManagerService {
                 }
 
                 await this.http.post(callbackUrl, AIC).toPromise();
-                this.loadingSrv.updateModalState();
+                this.loadingSrv.updateModalState(this.isDeeplink);
 
             }
 
         } catch(error) {
-
+            this.loadingSrv.hide();
             this.showConfirmEror();
-
         }
     }
 
@@ -188,10 +194,10 @@ export class MessageManagerService {
                     await this.http.put(callbackUrlPut, userUpdate).toPromise();
                     await this.securedStrg.remove('callbackUrlPut');
 
-                    this.loadingSrv.updateModalState();
+                    this.loadingSrv.updateModalState(this.isDeeplink);
 
                 } else {
-                    this.loadingSrv.updateModalState();
+                    this.loadingSrv.updateModalState(this.isDeeplink);
                 }
 
             } else if (!isVerifiedToken) {

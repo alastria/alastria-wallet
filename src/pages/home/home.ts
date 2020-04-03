@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, AlertController, NavParams, Platform, App } from 'ionic-angular';
 import { Deeplinks } from '@ionic-native/deeplinks';
+import { parseCredentials } from '../../utils';
 
 // Pages
 import { EntitiesPage } from '../entities/entities';
@@ -17,7 +18,7 @@ import { SecuredStorageService } from '../../services/securedStorage.service';
 })
 export class HomePage {
 
-    isLoged: Boolean;
+    isLoged: boolean;
     token: string;
     credentials: string;
 
@@ -32,30 +33,19 @@ export class HomePage {
     ) { 
         platform.ready().then(() => {
             this.token = this.navParams.get('token');
+
             this.deeplinks.route({
                 '/': LoginPage,
+                '/login': LoginPage,
                 '/createAI': LoginPage,
-                '/createCredentials': LoginPage
+                '/createCredentials': LoginPage,
+                '/createPresentations': LoginPage
             }).subscribe(
                 (match) => {
-                    if (match && match.$args) {
-                        if (match.$args.alastriaToken) {
-                            this.securedStrg.hasKey('userDID')
-                                .then((DID) => {
-                                    if(!DID) {
-                                        this.token = match.$args.alastriaToken;
-                                        // this.navCtrl.setRoot(HomePage, { token: this.token});
-                                        this.app.getRootNav().setRoot(HomePage, { token: this.token});
-                                    }
-                                });
-                        } else if (match.$args.credentials) {
-                            this.credentials = this.parseCredentials(match.$args.credentials);
+                    const path = (match &&  match.$link) ? match.$link.path : null;
 
-                            if (this.isLoged) {
-                                // this.navCtrl.setRoot(TabsPage, { credentials: this.credentials });
-                                this.app.getRootNav().setRoot(HomePage, { token: this.token});
-                            }
-                        }
+                    if (!this.isLoged) {
+                        this.controlDeeplink(path, match.$args);
                     }
                 },
                 (noMatch) => {
@@ -71,18 +61,46 @@ export class HomePage {
         if (isLogged) {
             const did = await this.securedStrg.hasKey('userDID');
             if (did) {
-                this.navCtrl.setRoot(TabsPage, { credentials: this.credentials });
+                this.navCtrl.setRoot(TabsPage, { token: this.token });
             } else {
                 this.navCtrl.setRoot(EntitiesPage, { token: this.token });
             }
         } 
     }
 
-    private parseCredentials(credentials: string): string {
-        let result = {
-            verifiableCredential: credentials.split(',')
-        }
+    private controlDeeplink(path: string, args: any) {
+        switch (path) {
+            case '/createAI':
 
-        return JSON.stringify(result);
+                this.securedStrg.hasKey('userDID')
+                    .then((DID) => {
+                         if(!DID) {
+                            this.token = args.alastriaToken;
+                            this.app.getRootNav().setRoot(HomePage, { token: this.token});
+                        }
+                    });
+                break;
+            case '/createCredentials':
+                this.token = parseCredentials(args.credentials);
+
+                if (this.isLoged) {
+                    this.handleLogin(this.isLoged);
+                }
+                break;
+        
+            case '/login':
+            case '/createPresentations':
+                this.token = args.alastriaToken;
+
+                if (this.isLoged) {
+                    this.handleLogin(this.isLoged);
+                }
+                break;
+
+            default:
+
+                break;
+        }
     }
+
 }
