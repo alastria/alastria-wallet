@@ -67,3 +67,6 @@ or
 ```
 npm run start:android
 ```
+
+## Deeplinks
+To access the application through a deeplink you can access this link to see examples: https://codepen.io/samuelsan95/pen/poJwmrY
