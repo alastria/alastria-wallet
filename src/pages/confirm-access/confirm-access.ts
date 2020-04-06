@@ -56,8 +56,6 @@ export class ConfirmAccess {
         this.isPresentationRequest = this.navParams.get(AppConfig.IS_PRESENTATION_REQ);
         this.verifiedJWT = this.navParams.get(AppConfig.VERIFIED_JWT);
         this.isDeeplink = this.navParams.get('isDeeplink');
-
-        console.log('isDeeplink confirm access --> ', this.isDeeplink);
     }
 
     public manageCredentials(): void {
@@ -99,7 +97,8 @@ export class ConfirmAccess {
                     let addPresentationTx = transactionFactory.presentationRegistry.addSubjectPresentation(web3, presentationPSMHash, uri);
     
                     presentation.payload.vp.procHash = presentationPSMHash;
-                    
+                    presentation[AppConfig.PSM_HASH] = presentationPSMHash;
+
                     await this.identitySrv.init();
                     const subjectPresentationSigned = await this.identitySrv.getKnownTransaction(addPresentationTx);
                     await this.transactionSrv.sendSigned(subjectPresentationSigned);

@@ -10,6 +10,7 @@ import { SecuredStorageService } from "./securedStorage.service";
 
 // Models
 import { PresentationStatus } from './../models/presentation-status.model';
+import { CredentialStatus } from './../models/credential-status.model';
 
 @Injectable()
 export class TransactionService {
@@ -86,5 +87,15 @@ export class TransactionService {
             return presentationStatus;
         })
     }
+
+    public getSubjectCredentialStatus(subject: string, credentialHash: string): Promise<CredentialStatus> {
+        let subjectCredentialTransaction = transactionFactory.credentialRegistry.getSubjectCredentialStatus(this.web3, subject, credentialHash);
+        return this.web3.eth.call(subjectCredentialTransaction).then(SubjectCredentialStatus => {
+            let result = this.web3.eth.abi.decodeParameters(["bool", "uint8"], SubjectCredentialStatus);
+            let credentialStatus: CredentialStatus = result;
+            return credentialStatus;
+        });
+    }
+
 
 }
