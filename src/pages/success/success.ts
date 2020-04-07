@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ModalController, ViewController } from 'ionic-angular';
+import { IonicPage, NavParams, ViewController, App } from 'ionic-angular';
 import { TabsPage } from '../tabsPage/tabsPage';
+import { getNav } from '../../utils';
 
 
 @IonicPage()
@@ -14,10 +15,9 @@ export class SuccessPage {
     isDeeplink = false;
 
     constructor(
-        public navCtrl: NavController,
         public navParams: NavParams,
-        public modalCtrl: ModalController,
-        public viewCtrl: ViewController
+        public viewCtrl: ViewController,
+        private app: App
     ) {
         this.data = {
             'titleSuccess': this.navParams.get('titleSuccess'),
@@ -32,11 +32,13 @@ export class SuccessPage {
     }
 
     public closeModal() {
-        if (this.isDeeplink) {
-            this.navCtrl.popTo(TabsPage)
-        } else {
+        const nav = getNav(this.app);
+        this.viewCtrl.dismiss();
 
-            this.navCtrl.setRoot(TabsPage);
+        if (this.isDeeplink) {
+            nav.popTo(TabsPage)
+        } else {
+            nav.setRoot(TabsPage);
         }
     }
 }

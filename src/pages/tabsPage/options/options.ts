@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { IonicPage, App } from 'ionic-angular';
 import { ToastService } from '../../../services/toast-service';
 import { MyApp } from '../../../app/app.component';
+import { HomePage } from '../../home/home';
+import { getNav } from '../../../utils';
 
 @IonicPage()
 @Component({
@@ -45,6 +47,7 @@ export class Options {
     }
 
     goToRoot() {
-        this.app.getRootNav().setRoot(MyApp);
+        const nav = getNav(this.app);
+        nav.setRoot(MyApp);
     }
 }
