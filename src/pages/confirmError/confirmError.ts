@@ -37,7 +37,6 @@ export class ConfirmError {
                 nav.push(EntitiesPage);
                 this.viewCtrl.dismiss();
             } else {
-                const views = this.app.getRootNav().getViews();
                 if (nav && nav._views.length > 1) { 
                     nav.pop();
                 } else {

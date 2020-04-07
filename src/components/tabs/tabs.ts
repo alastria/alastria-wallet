@@ -4,7 +4,6 @@ import { Deeplinks } from '@ionic-native/deeplinks';
 import { parseCredentials } from '../../utils';
 
 // SERVICES
-import { SecuredStorageService } from '../../services/securedStorage.service';
 import { MessageManagerService } from './../../services/messageManager-service';
 
 // PAGES - COMPONENTS
