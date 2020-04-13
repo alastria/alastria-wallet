@@ -1,16 +1,15 @@
 import { Injectable } from '@angular/core';
 import { SecureStorage, SecureStorageObject } from '@ionic-native/secure-storage';
-import { Platform, App } from 'ionic-angular';
 import { AppConfig } from '../app.config';
 
 @Injectable()
-export class IdentitySecuredStorageService {
+export class SecuredStorageService {
 
     securedStorageObject: SecureStorageObject;
+    promiseState: Promise<any>;
 
     constructor(
-        private securedStorage: SecureStorage,
-        private platform: Platform
+        private securedStorage: SecureStorage
     ) {
     }
 
@@ -22,36 +21,47 @@ export class IdentitySecuredStorageService {
         );
     }
 
-    async getKeys() {
+    // GETTERS
+
+    get(key: string): Promise<any> {
+        return this.securedStorageObject.get(key);
+    }
+
+    getAccessKey(): Promise<string> {
+        return this.securedStorageObject.get('accessKey');
+    }
+
+    getKeys(): Promise<Array<any>> {
         return this.securedStorageObject.keys();
     }
 
-    async hasKey(key: string) {
-        let keyExists = false;
-        if (this.securedStorageObject) {
-            return this.securedStorageObject.keys()
-                .then(result => {
-                    keyExists = result.some(k => { return k === key });
-                    return keyExists;
-                });
-        }
+    async getUsername(): Promise<any> {
+        return this.securedStorageObject.keys().then(
+            (str) => {
+                if (str.length > 0 && str.indexOf('username') > -1) {
+                    return this.securedStorageObject.get('username');
+                } else {
+                    return null;
+                }
+            },
+        ).catch(
+            (error) => {
+                console.error('Falla al comprobar las keys', error);
+            }
+        );
     }
 
-    async set(key: string, value: string) {
-        return this.securedStorageObject.set(key, value);
+    getLoginType(): Promise<any> {
+        return this.securedStorageObject.get('loginType');
     }
 
-    async setDID(DID: string) {
-        return this.set(AppConfig.DID, DID);
-    }
-
-    async getDID() {
+    async getDID(): Promise<any> {
         let hasDID = await this.hasKey(AppConfig.DID);
         let result = hasDID ? this.get(AppConfig.DID): null;
         return result;
     }
 
-    async getIdentityData() {
+    async getIdentityData(): Promise<any> {
         let identity = {};
         return this.get(AppConfig.USER_DID)
         .then(DID => {
@@ -68,25 +78,8 @@ export class IdentitySecuredStorageService {
         })
     }
 
-    async setJSON(key: string, value: any) {
-        const jsonTmp = JSON.stringify(value);
-        return this.securedStorageObject.set(key, jsonTmp);
-    }
-
-    async get(key: string) {
-        return this.securedStorageObject.get(key);
-    }
-
-    async remove(key: string) {
-        return this.securedStorageObject.remove(key);
-    }
-
-    async clearStorage() {
-        return this.securedStorageObject.clear();
-    }
-
-    async getAllCredentials() {
-        let credentials;
+    async getAllCredentials(): Promise<Array<any>> {
+        let credentials: Array<any>;
         let keys = await this.getKeys();
         credentials = keys.filter(key => key.split('_')[0] === 'cred')
             .map(key => {
@@ -96,16 +89,54 @@ export class IdentitySecuredStorageService {
         return Promise.all(credentials);
     }
 
-    async getJSON(key: string) {
+    async getJSON(key: string): Promise<any> {
         const jsonTmp = await this.securedStorageObject.get(key);
         return JSON.parse(jsonTmp);
     }
 
-    async removeJson(key: string) {
+    // SETTERS
+
+    set(key: string, value: string): Promise<any> {
+        return this.securedStorageObject.set(key, value);
+    }
+
+    setAccessKey(key: string): Promise<any> {
+        return this.securedStorageObject.set('accessKey', key);
+    }
+
+    setLoginType(type: string): Promise<any> {
+        return this.securedStorageObject.set('loginType', type);
+    }
+
+    async isAuthorized(key: string): Promise<boolean> {
+        return this.getAccessKey()
+            .then((keyStore) => (parseInt(keyStore) === parseInt(key)));
+    }
+
+    setDID(DID: string): Promise<any> {
+        return this.set(AppConfig.DID, DID);
+    }
+
+    setJSON(key: string, value: any): Promise<any> {
+        const jsonTmp = JSON.stringify(value);
+        return this.securedStorageObject.set(key, jsonTmp);
+    }
+
+    // REMOVE
+
+    remove(key: string): Promise<any> {
         return this.securedStorageObject.remove(key);
     }
 
-    async removePresentation(jti: string) {
+    clearStorage(): Promise<any> {
+        return this.securedStorageObject.clear();
+    }
+
+    removeJson(key: string): Promise<any> {
+        return this.securedStorageObject.remove(key);
+    }
+
+    async removePresentation(jti: string): Promise<any> {
         let keys = await this.getKeys();
         let regex = new RegExp(jti);
 
@@ -114,7 +145,22 @@ export class IdentitySecuredStorageService {
         return this.removeJson(key[0]);
     }
 
-    async matchAndGetJSON(key: string) {
+    // CHECKERS
+
+    async hasKey(key: string): Promise<boolean> {
+        let keyExists = false;
+        if (this.securedStorageObject) {
+            return this.securedStorageObject.keys()
+                .then(result => {
+                    keyExists = result.some(k => { return k === key });
+                    return keyExists;
+                });
+        }
+    }
+
+    // OTHERS
+
+    async matchAndGetJSON(key: string): Promise<any> {
         let regex = new RegExp(key);
         let allKeys;
         let matchingKeys = new Array<string>();
@@ -122,10 +168,6 @@ export class IdentitySecuredStorageService {
         return this.getKeys()
             .then(result => {
                 allKeys = result;
-                console.log("All storage keys" + allKeys);
-                console.log("All storage keys", allKeys);
-
-
                 for (let i = 0; i < allKeys.length; i++) {
                     if (regex.test(allKeys[i])) {
                         matchingKeys.push(allKeys[i]);
@@ -140,217 +182,8 @@ export class IdentitySecuredStorageService {
                             return JSON.stringify(keyObj);
                         }))
                 }
+
                 return Promise.all(promises);
             });
-    }
-
-    async matchPartiallyAndGetJSON(key: string) {
-        let allKeys;
-        let matchingKeys = new Array<string>();
-        let jsonTmp = [];
-
-        let words = key.split(" ");
-
-        return this.getKeys()
-            .then(result => {
-                allKeys = result;
-
-                for (let z = 0; z < 2; z++) {
-                    let regex;
-                    switch (z) {
-                        case 0:
-                            regex = new RegExp(key);
-                            break;
-                        case 1:
-                            regex = new RegExp(words[words.length - 1]);
-                            break;
-                    }
-
-                    let indexToSplice = new Array<Number>();
-                    let count = 0;
-                    for (let i = 0; i < allKeys.length; i++) {
-                        if (regex.test(allKeys[i])) {
-                            matchingKeys.push(allKeys[i]);
-                            indexToSplice.push(i - count);
-                            count++;
-                        }
-                    }
-                    for (let i = 0; i < indexToSplice.length; i++) {
-                        allKeys.splice(indexToSplice[i], 1);
-                    }
-
-                }
-                for (let z = 0; z < words.length; z++) {
-                    let regex;
-                    if (words[z].length > 3) {
-                        regex = new RegExp(words[z]);
-
-                        for (let i = 0; i < allKeys.length; i++) {
-                            if (regex.test(allKeys[i])) {
-                                matchingKeys.push(allKeys[i]);
-                            }
-                        }
-                    }
-
-                }
-                console.log(matchingKeys);
-
-                for (let z = 0; z < matchingKeys.length; z++) {
-                    jsonTmp.push(this.securedStorageObject.get(matchingKeys[z]));
-                }
-
-                return Promise.all(jsonTmp);
-            })
-    }
-}
-
-@Injectable()
-export class SessionSecuredStorageService {
-
-    securedStorageObject: SecureStorageObject;
-    promiseState: Promise<any>;
-
-    constructor(
-        private securedStorage: SecureStorage
-    ) {
-    }
-
-    initSecureStorage() {
-        return this.securedStorage.create('sessionSecureStorage').then(
-            (securedStorageObject) => {
-                this.securedStorageObject = securedStorageObject;
-            }
-        );
-    }
-
-    async isRegistered() {
-        return new Promise(
-            async (resolve, reject) =>  {
-                if (!this.securedStorageObject) {
-                    this.securedStorage.create('sessionSecureStorage').then(
-                        (securedStorageObject) => {
-                            this.securedStorageObject = securedStorageObject;
-                            this.getUsername().then(
-                                (result) => {
-                                    if (result) {
-                                        resolve(result);
-                                    }
-                                    else {
-                                        reject('No esta registrado, hay que crear una cuenta nueva');
-                                    }
-                                }
-                            );
-                        }
-                    )
-                } else {
-                    const keys: any = await this.securedStorageObject.keys();
-                    if (keys.includes('accessKey')) {
-                        resolve(this.securedStorageObject.get('accessKey'));
-                    } else {
-                        this.getUsername().then(
-                            (result) => {
-                                if (result) {
-                                    resolve(result);
-                                }
-                                else {
-                                    reject('No esta registrado, hay que crear una cuenta nueva');
-                                }
-                            }
-                        );
-                    }
-                }
-            }
-        )
-    }
-
-    getUsername(): Promise<any> {
-        return this.securedStorageObject.keys().then(
-            (str) => {
-                if (str.length > 0 && str.indexOf('username') > -1) {
-                    return this.securedStorageObject.get('username');
-                } else {
-                    return null;
-                }
-            },
-        ).catch(
-            (error) => {
-                console.log('Falla al comprobar las keys', error);
-            }
-        );
-    }
-
-    async checkPassword(username: string, password: string) {
-        const usernameSto = await this.securedStorageObject.get('username');
-        const passwordSto = await this.securedStorageObject.get('password');
-
-        return username === usernameSto && password === passwordSto;
-    }
-
-    register(username: string, password: any): Promise<any> {
-        return new Promise(
-            (resolve, reject) => {
-                this.getUsername().then(
-                    (res) => {
-                        const isRegistered = res !== null;
-                        if (isRegistered) {
-                            reject('El usuario ya esta registrado');
-                        }
-                        else {
-                            this.securedStorageObject.set('username', username).then(
-                                (result) => {
-                                    this.securedStorageObject.set('password', password).then(
-                                        (result) => {
-                                            resolve();
-                                        }
-                                    ).catch(
-                                        (error) => {
-                                            reject();
-                                        }
-                                    );
-                                }
-                            ).catch(
-                                (error) => {
-                                    reject();
-                                }
-                            );
-                        }
-                    }
-                );
-            }
-        )
-    }
-
-    async hasKey(key: string) {
-        let keyExists = false;
-        return this.securedStorageObject.keys()
-            .then(result => {
-                keyExists = result.some(k => { return k === key });
-                return keyExists;
-            });
-    }
-
-    setAccessKey(key: string): Promise<any> {
-        return this.securedStorageObject.set('accessKey', key);
-    }
-
-    getAccessKey(): Promise<any> {
-        return this.securedStorageObject.get('accessKey');
-    }
-
-    setLoginType(type: string) {
-        return this.securedStorageObject.set('loginType', type);
-    }
-
-    getLoginType() {
-        return this.securedStorageObject.get('loginType');
-    }
-
-    async isAuthorized(key: string): Promise<boolean> {
-        return this.getAccessKey()
-            .then((keyStore) => (parseInt(keyStore) === parseInt(key)));
-    }
-
-    async set(key: string, value: string) {
-        return this.securedStorageObject.set(key, value);
     }
 }

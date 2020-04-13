@@ -2,40 +2,71 @@
 
 Example mobile application to implement Alastria user stories
 
-## Installation
+## Starting 🚀
+
+These instructions will allow you to get a copy of the project running on your local machine for development and testing purposes:
+
+Clone the proyect:
+```
+git clone https://github.com/alastria/alastria-wallet.git
+```
+
+## Installation 🔧
 
 ### Requirements
 * Node.js 8+
-* Yarn
+* Yarn / Npm
 * Ionic 3 / Angular 6
-* Android / iOS SDK
+* Android SDK / iOS SDK
 * Cordova 7.1.0+
 * Barcode Scanner
 
 ionic cordova plugin add phonegap-plugin-barcodescanner
 
-## Installation
-
-```yarn
+```
 yarn install
 ```
-
-## Development
+or
 ```
-$ yarn start:browser
-```
-
-## Android deployment (emulator)
-```
-$ yarn start:android
+npm install
 ```
 
-## Android deployment (device)
+**AFTER INSTALLATION: it is necessary to change these code lines (54 and 69 in node_modules/web3-eht-abi/src/index.js)
 ```
-$ yarn start:android:device
+ functionName = utils._jsonInterfaceMethodToString(functionName);
+```
+to 
+```
+functionName = utils.jsonInterfaceMethodToString(functionName);
 ```
 
-## Contributing
-Pull requests are welcome!.
 
-Please make sure to update tests as appropriate.
+### Run application in browser
+```
+yarn start:browser
+```
+or
+```
+npm run start:browser
+```
+
+### Run application in emulator or in mobile debug mode
+```
+yarn start:android:device
+```
+or
+```
+npm run start:android:device
+```
+
+### Android apk build
+```
+yarn start:android
+```
+or
+```
+npm run start:android
+```
+
+## Deeplinks
+To access the application through a deeplink you can access this link to see examples: https://codepen.io/samuelsan95/pen/poJwmrY

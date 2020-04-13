@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ModalController, ViewController } from 'ionic-angular';
+import { IonicPage, NavParams, ViewController, App } from 'ionic-angular';
 import { TabsPage } from '../tabsPage/tabsPage';
+import { getNav } from '../../utils';
 
 
 @IonicPage()
@@ -11,29 +12,33 @@ import { TabsPage } from '../tabsPage/tabsPage';
 export class SuccessPage {
 
     data = {};
+    isDeeplink = false;
 
     constructor(
-        public navCtrl: NavController,
         public navParams: NavParams,
-        public modalCtrl: ModalController,
-        public viewCtrl: ViewController
+        public viewCtrl: ViewController,
+        private app: App
     ) {
         this.data = {
-            'cerrar': "assets/images/alastria/ic_close.png",
             'titleSuccess': this.navParams.get('titleSuccess'),
             'textSuccess': this.navParams.get('textSuccess'),
             'imgPrincipal': this.navParams.get('imgPrincipal'),
             'imgSuccess': this.navParams.get('imgSuccess'),
             'page': this.navParams.get('page'),
             'callback': this.navParams.get('callback')
-        }
-    }
+        };
 
-    ionViewDidLoad() {
-        console.log('ionViewDidLoad SuccessPage');
+        this.isDeeplink = this.navParams.get('isDeeplink');
     }
 
     public closeModal() {
-        this.navCtrl.setRoot(TabsPage);
+        const nav = getNav(this.app);
+        this.viewCtrl.dismiss();
+
+        if (this.isDeeplink) {
+            nav.popTo(TabsPage)
+        } else {
+            nav.setRoot(TabsPage);
+        }
     }
 }

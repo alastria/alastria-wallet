@@ -28,12 +28,15 @@ tabs {
     .ion-ios-more-outline,.ion-ios-more,.ion-md-more,.ion-md-more-outline {
         content: url('../assets/images/tabIcon/more.png');
         width: 32px;
-        padding-top: 22px;
+        margin-top: 22px !important;
         padding-bottom: 3px;
+    }
+    .ion-md-more[ng-reflect-is-active=true] {
+        content: url('../assets/images/tabIcon/more.png');
     }
 
     .ion-ios-leerQr-outline,.ion-ios-leerQr,.ion-md-leerQr,.ion-md-leerQr-outline {
-        content: url('../assets/images/tabIcon/QR\ READ.png');
+        content: url('../assets/images/tabIcon/qr-read.png');
         width: 105px;
         position: fixed;
         bottom: 0px;

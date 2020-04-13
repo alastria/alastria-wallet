@@ -1,11 +1,9 @@
-import { Component } from '@angular/core';
-import { NavController, NavParams, ModalController, ViewController } from 'ionic-angular';
-
-import { AppConfig } from './../../app.config';
-import { IdentitySecuredStorageService } from './../../services/securedStorage.service';
-
 import { EntitiesPage } from './../entities/entities';
+import { Component } from '@angular/core';
+import { NavParams, ModalController, ViewController, App } from 'ionic-angular';
 import { TabsPage } from '../tabsPage/tabsPage';
+import { getNav } from '../../utils';
+import { SecuredStorageService } from '../../services/securedStorage.service';
 
 @Component({
     selector: 'page-confirmError',
@@ -13,35 +11,44 @@ import { TabsPage } from '../tabsPage/tabsPage';
 })
 export class ConfirmError {
 
-    public error: any;
+    error: any;
+    pageName: string;
 
     constructor(
-        public navCtrl: NavController, 
         public navParams: NavParams, 
         public modalCtrl: ModalController,
         public viewCtrl: ViewController,
-        private identitySecuredStorageService: IdentitySecuredStorageService
+        private secureStrg: SecuredStorageService,
+        private app: App
     ) {
         this.error = this.navParams.get('error');
-        console.log('error ', this.error);
-    }
-
-    ionViewDidLoad() {
-        console.log('ionViewDidLoad ConfirmErrorPage');
+        this.pageName = this.navParams.get('pageName');
     }
 
     async dismiss(){
-        this.viewCtrl.dismiss();
         try {
-            const DID = await this.identitySecuredStorageService.hasKey(AppConfig.USER_DID);
+            const nav = getNav(this.app);
 
-            if (DID) {
-                this.navCtrl.setRoot(TabsPage);
+            if(this.pageName === 'TabsPage' || this.pageName === 'Camera' || this.pageName === 'Index') {
+                nav.setRoot(TabsPage);
+                this.viewCtrl.dismiss();
+            } else if (this.pageName === 'EntitiesPage') {                
+                nav.setRoot(TabsPage);
+                nav.push(EntitiesPage);
+                this.viewCtrl.dismiss();
             } else {
-                this.navCtrl.setRoot(EntitiesPage);
+                if (nav && nav._views.length > 1) { 
+                    nav.pop();
+                } else {
+                    const DID = await this.secureStrg.getDID();
+                    if (DID) {
+                        nav.setRoot(TabsPage);
+                    }
+                    this.viewCtrl.dismiss();
+                }
             }
         } catch(error) {
-
+            console.error(error);
         }
     }
 }

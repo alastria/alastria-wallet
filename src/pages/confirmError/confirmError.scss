@@ -1,11 +1,7 @@
 page-confirmError {
-    .alastria-logo {
-        height: 110px;
-    }
 
-    #fly-error {
-        width: 240px;
-        margin-bottom: 145px;
+    ion-footer {
+        height: 80px;
     }
 
     h2, .description {
@@ -19,13 +15,20 @@ page-confirmError {
         }
     }
 
+    img {
+        object-fit: fill;
+    }
+
+    #fly-error {
+        width: 240px;
+        margin-bottom: 145px;
+    }
+
+
     .cross {
         margin: 15px;
     }
 
-    img {
-        object-fit: fill;
-    }
 
     .footer-md::before {
         background-image: none;
@@ -48,11 +51,5 @@ page-confirmError {
     .button-inner {
         font-size: 17px;
     }
-
-    ion-footer {
-        height: 80px;
-    }
-
-    
 
 }

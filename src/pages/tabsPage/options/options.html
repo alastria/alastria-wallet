@@ -14,12 +14,12 @@
         <ion-row>
             <ion-col col-12>
                 <ion-list no-margin>
-                    <ion-item border no-lines [ngClass]="animateClass" *ngFor="let item of animateItems; let i = index;">
-                        <ion-icon name="{{item.icon}}" item-start></ion-icon>
-                        <h2 item-start>{{item.title}}</h2>
-                        <ion-toggle item-right *ngIf="!item.button" (ionChange)="onEvent('onSelect',item)" [checked]="item.selected"></ion-toggle>
-                        <button ion-button defoult-button item-right (click)="item.callback(this)" *ngIf="item.button">
-                            {{item.buttonLabel}}
+                    <ion-item border no-lines [ngClass]="animateClass" *ngFor="let option of options; let i = index;">
+                        <ion-icon name="{{option.icon}}" item-start></ion-icon>
+                        <h2 item-start>{{option.title}}</h2>
+                        <ion-toggle item-right *ngIf="!option.button" (ionChange)="onEvent('onSelect',option)" [checked]="option.selected"></ion-toggle>
+                        <button ion-button defoult-button item-right (click)="option.callback(this)" *ngIf="option.button">
+                            {{option.buttonLabel}}
                         </button>
                     </ion-item>
                 </ion-list>

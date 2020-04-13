@@ -2,12 +2,11 @@ import { Injectable } from "@angular/core";
 import { UserIdentity } from "alastria-identity-lib";
 import { Web3Service } from "./web3-service";
 import * as Web3 from "web3";
-import { IdentitySecuredStorageService } from "./securedStorage.service";
+import { SecuredStorageService } from "./securedStorage.service";
 
 @Injectable()
 export class IdentityService {
 
-    private subjectPublicKey: string;
     private subjectPrivateKey: string;
     private subjectIdentity: UserIdentity;
     private userDID: string;
@@ -15,9 +14,9 @@ export class IdentityService {
 
     constructor(
         private web3Srv: Web3Service,
-        private secureStorage: IdentitySecuredStorageService
+        private securedStrg: SecuredStorageService
     ) {
-        this.web3 = web3Srv.getWeb3();
+        this.web3 = this.web3Srv.getWeb3();
     }
 
     public getPrivateKey(): string {
@@ -38,7 +37,7 @@ export class IdentityService {
     public setUserDID(DID: string){
         if (!this.userDID) {
             this.userDID = DID;
-            this.secureStorage.setDID(DID);
+            this.securedStrg.setDID(DID);
         }
     }
 
@@ -47,11 +46,11 @@ export class IdentityService {
     }
 
     public init(): Promise<any> {
-        return this.secureStorage.get('ethAddress').then( address => {
-            return this.secureStorage.get('userPrivateKey').then( privateKey => {
+        return this.securedStrg.get('ethAddress').then( address => {
+            return this.securedStrg.get('userPrivateKey').then( privateKey => {
                 this.subjectPrivateKey = privateKey;
                 this.subjectIdentity = new UserIdentity(this.web3, address, privateKey.substr(2), null);
-                this.secureStorage.getDID().then(DID => this.userDID = DID);
+                this.securedStrg.getDID().then(DID => this.userDID = DID);
                 return this.subjectIdentity
             })
         })

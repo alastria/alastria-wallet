@@ -1,5 +1,7 @@
+import { TokenService } from './../../services/token-service';
 import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
+import { InAppBrowser } from '@ionic-native/in-app-browser';
 
 // COMPONENTS
 import { EntitiesPage } from './entities';
@@ -26,8 +28,10 @@ import { SocketService } from '../../services/socket.service';
   ],
   providers: [
     EntityService,
-    MessageManagerService,,
-    SocketService
+    MessageManagerService,
+    TokenService,
+    SocketService,
+    InAppBrowser
   ]
 })
 export class EntitiesPageModule {}

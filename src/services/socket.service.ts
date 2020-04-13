@@ -7,9 +7,6 @@ import * as socketIo from 'socket.io-client';
 
 // import { environment } from './../../../environments/environment';
 
-
-const webSocket = WebSocket; // Here we stub out the window object
-
 const SERVER_URL = 'http://34.244.47.233:10011';
 
 @Injectable()
@@ -35,9 +32,15 @@ export class SocketService {
       });
   }
 
-  public onCreateIdentityWv(): Observable<any> {
+  public onCreateIdentityWs(): Observable<any> {
     return new Observable<any>(observer => {
         this.socket.on('createIdentityWs', (data: any) => observer.next(data));
+    });
+  }
+
+  public onFillYourProfileWs(): Observable<any> {
+    return new Observable<any>(observer => {
+        this.socket.on('fillYourProfileWs', (data: any) => observer.next(data));
     });
   }
 
