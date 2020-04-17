@@ -27,7 +27,7 @@ export class ConfirmAccess {
     public dataNumberAccess: number;
     public isPresentationRequest: boolean;
     public issName: string = "Empresa X";
-    public entitiyName: string = "Entidad publica Ejemplo";
+    public entitiyName: string = "Entidad pública de ejemplo";
     public isDeeplink: boolean = false;
     private identitiesSelected: Array<number> = [];
     private identityLoaded = new Array<any>();
@@ -50,12 +50,17 @@ export class ConfirmAccess {
         this.initiateVariables();
     }
 
-    private initiateVariables(): void {
+    private async initiateVariables(): Promise<void> {
         this.dataNumberAccess = this.navParams.get(AppConfig.DATA_COUNT);
         this.credentials = this.navParams.get(AppConfig.CREDENTIALS);
         this.isPresentationRequest = this.navParams.get(AppConfig.IS_PRESENTATION_REQ);
         this.verifiedJWT = this.navParams.get(AppConfig.VERIFIED_JWT);
         this.isDeeplink = this.navParams.get('isDeeplink');
+        const did = this.verifiedJWT[0].header.kid;
+        const entity = await this.transactionSrv.getEntity(did);
+        if (entity && entity.name) {
+            this.entitiyName = entity.name;
+        }
     }
 
     public manageCredentials(): void {
