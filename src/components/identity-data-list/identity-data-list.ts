@@ -60,8 +60,6 @@ export class IdentityDataListComponent {
         }
         let count = 0;
         let credentialPromises = this.credentials.map(async (credential) => {
-            let propNames = Object.getOwnPropertyNames(credential);
-
             let level =  this.getLevelOfAssurance(credential.levelOfAssurance)
             let stars = this.createStars(level);
 
@@ -94,7 +92,8 @@ export class IdentityDataListComponent {
             } else {                
                 iatString = this.parseFormatDate(credential[AppConfig.IAT]);
                 expString = this.parseFormatDate(credential[AppConfig.EXP]);
-                    credentialRes = this.parseCredential(count++, propNames[1], credential[propNames[1].toString()], iatString,
+                const title = credential[AppConfig.FIELD_NAME]
+                    credentialRes = this.parseCredential(count++, title, credential[title], iatString,
                     expString, level, stars, true);
                 this.identityDisplay.push(credentialRes);
                 return Promise.resolve();
