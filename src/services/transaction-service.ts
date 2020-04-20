@@ -98,7 +98,6 @@ export class TransactionService {
     }
 
     public async getEntity(did: string): Promise<any> {
-        
         let entityTX = transactionFactory.identityManager.getEntity(this.web3, did.split(':')[4]);
         let result = await this.web3.eth.call(entityTX)
         let entityDecode = this.web3.eth.abi.decodeParameters(["string", "string", "string", "string", "string", "bool"], result)
