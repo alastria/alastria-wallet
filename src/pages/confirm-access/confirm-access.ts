@@ -26,7 +26,6 @@ import { SecuredStorageService } from './../../services/securedStorage.service';
 export class ConfirmAccess {
     public dataNumberAccess: number;
     public isPresentationRequest: boolean;
-    public issName: string = "Empresa X";
     public entitiyName: string = "Entidad pública de ejemplo";
     public isDeeplink: boolean = false;
     private identitiesSelected: Array<number> = [];
@@ -56,7 +55,8 @@ export class ConfirmAccess {
         this.isPresentationRequest = this.navParams.get(AppConfig.IS_PRESENTATION_REQ);
         this.verifiedJWT = this.navParams.get(AppConfig.VERIFIED_JWT);
         this.isDeeplink = this.navParams.get('isDeeplink');
-        const did = this.verifiedJWT[0].payload.iss;
+        const did = (this.verifiedJWT && this.verifiedJWT.length) ? this.verifiedJWT[0].payload.iss :
+            (this.verifiedJWT && this.verifiedJWT.payload) ? this.verifiedJWT.payload.iss : null;
         if (did) {
             const entity = await this.transactionSrv.getEntity(did);
             if (entity && entity.name) {
@@ -73,9 +73,32 @@ export class ConfirmAccess {
         }
     }
 
+    private checkIsAllCredentialsSelected() {
+        let isAllCredentialsSelected = true;
+
+        this.credentials.map((credential, i) => {
+            if (credential.required) {
+                let isCrecentialSelected = false;
+                this.identitiesSelected.map(identity => {
+                    if (identity === i) {
+                        isCrecentialSelected = true;
+                    }
+                });
+
+                if (!isCrecentialSelected) {
+                    isAllCredentialsSelected = false;
+                }
+            }
+        });
+
+        return isAllCredentialsSelected;
+    }
+
     private async sendPresentation(): Promise<any> {
         try {
-            if (this.identitiesSelected.length === this.credentials.length) {
+            let isAllCredentialsSelected = this.checkIsAllCredentialsSelected();
+            
+            if (isAllCredentialsSelected) {
                 const web3: Web3 = this.web3Srv.getWeb3();
                 let securedCredentials = new Array<any>();
                 let pendingIdentities = new Array<number>();
@@ -93,7 +116,7 @@ export class ConfirmAccess {
                     const callbackUrl = this.verifiedJWT.payload.pr.procUrl;
                     const uri = 'www.google.com'
                     const privKey = await this.securedStrg.get('userPrivateKey');
-                    const did = await this.securedStrg.getDID();
+                    const did = await this.securedStrg.get('userDID');
                     
                     let signedCredentialJwts = this.getSingalCredentials(securedCredentials, did, privKey);
                     let presentation = tokensFactory.tokens.createPresentation(did, this.verifiedJWT.payload.iss, did, 
