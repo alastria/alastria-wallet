@@ -62,12 +62,16 @@ export class IdentityDataListComponent {
         let credentialPromises = this.credentials.map(async (credential) => {
             let level =  this.getLevelOfAssurance(credential.levelOfAssurance)
             let stars = this.createStars(level);
-
+            let key = '';
+            Object.keys(credential).map((keyCredential) => {
+                if (keyCredential !== 'levelOfAssurance' && keyCredential !== 'exp' && keyCredential !== 'iat') {
+                    key = keyCredential;
+                }
+            });
             let credentialRes: Identity;
 
             if (this.isPresentationRequest) {
                 let securedCredentials;
-                let key = credential[AppConfig.FIELD_NAME];
                 let hasKey = await this.securedStrg.hasKey(AppConfig.CREDENTIAL_PREFIX + key);
                 if (hasKey) {
                     const resultKey = await this.securedStrg.get(AppConfig.CREDENTIAL_PREFIX + key)
@@ -92,9 +96,8 @@ export class IdentityDataListComponent {
             } else {                
                 iatString = this.parseFormatDate(credential[AppConfig.IAT]);
                 expString = this.parseFormatDate(credential[AppConfig.EXP]);
-                const title = credential[AppConfig.FIELD_NAME]
-                    credentialRes = this.parseCredential(count++, title, credential[title], iatString,
-                    expString, level, stars, true);
+                credentialRes = this.parseCredential(count++, key, credential[key], iatString,
+                expString, level, stars, true);
                 this.identityDisplay.push(credentialRes);
                 return Promise.resolve();
             }
