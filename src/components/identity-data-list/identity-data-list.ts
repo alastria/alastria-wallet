@@ -62,19 +62,17 @@ export class IdentityDataListComponent {
         let credentialPromises = this.credentials.map(async (credential) => {
             let level =  this.getLevelOfAssurance(credential.levelOfAssurance)
             let stars = this.createStars(level);
-
+            let key = this.getCreedKey(credential);
             let credentialRes: Identity;
 
             if (this.isPresentationRequest) {
                 let securedCredentials;
-                let key = credential[AppConfig.FIELD_NAME];
                 let hasKey = await this.securedStrg.hasKey(AppConfig.CREDENTIAL_PREFIX + key);
                 if (hasKey) {
                     const resultKey = await this.securedStrg.get(AppConfig.CREDENTIAL_PREFIX + key)
                     securedCredentials = JSON.parse(resultKey);
                     credentialRes = this.parseCredential(count++, credential[AppConfig.FIELD_NAME], securedCredentials[key], iatString,
                         expString, level, stars, true);
-
                     this.identityDisplay.push(credentialRes);
                     const credentialSelected: any = {
                         credential: this.credentials[credentialRes.id],
@@ -92,9 +90,8 @@ export class IdentityDataListComponent {
             } else {                
                 iatString = this.parseFormatDate(credential[AppConfig.IAT]);
                 expString = this.parseFormatDate(credential[AppConfig.EXP]);
-                const title = credential[AppConfig.FIELD_NAME]
-                    credentialRes = this.parseCredential(count++, title, credential[title], iatString,
-                    expString, level, stars, true);
+                credentialRes = this.parseCredential(count++, key, credential[key], iatString,
+                expString, level, stars, true);
                 this.identityDisplay.push(credentialRes);
                 return Promise.resolve();
             }
@@ -112,6 +109,22 @@ export class IdentityDataListComponent {
                     this.changeIdentitySelect(event, identity.id);
                 });
             });
+    }
+
+    private getCreedKey(credential: any) {
+        let key = '';
+        Object.keys(credential).map((keyCredential) => {
+            if (this.isPresentationRequest) {
+                key = credential[AppConfig.FIELD_NAME];
+            } else {
+                if (keyCredential !== 'levelOfAssurance' && keyCredential !== 'field_name' && keyCredential !== '@context' && keyCredential !== 'exp' && 
+                    keyCredential !== 'iat' && keyCredential !== 'issuer' && keyCredential !== 'PSMHash' && keyCredential !== 'required') {
+                    key = keyCredential;
+                }
+            }
+        });
+
+        return key;
     }
 
     private parseFormatDate(date: any): string {
