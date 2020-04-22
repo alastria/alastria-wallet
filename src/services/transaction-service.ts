@@ -45,7 +45,7 @@ export class TransactionService {
     }
 
     public addSubjectCredential(credential, didIsssuer, uri): Promise<any> {
-        this.identitySrv.setUserDID(credential[AppConfig.PAYLOAD][AppConfig.SUBJECT]);
+
         return this.createAndAddSubjectCredential(credential[AppConfig.HEADER][AppConfig.KID], didIsssuer,
             credential[AppConfig.PAYLOAD][AppConfig.SUBJECT], credential[AppConfig.PAYLOAD][AppConfig.VC][AppConfig.context],
             credential[AppConfig.PAYLOAD][AppConfig.VC][AppConfig.CREDENTIALS_SUBJECT], credential[AppConfig.PAYLOAD][AppConfig.EXP],
