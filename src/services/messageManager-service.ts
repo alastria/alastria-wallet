@@ -124,12 +124,8 @@ export class MessageManagerService {
                     publicKeyHex: identity[AppConfig.USER_PKU]
                 };
                 const alastriaSession = tokensFactory.tokens.createAlastriaSession("@jwt", issuerDID, pku, alastriaToken);
-                const signedAS = tokensFactory.tokens.signJWT(alastriaSession, privKey.substring(2));
-                const AIC = {
-                    signedAIC: signedAS
-                }
-
-                await this.http.post(callbackUrl, AIC).toPromise();
+                const signedAlastriaSession = tokensFactory.tokens.signJWT(alastriaSession, privKey.substring(2));
+                await this.http.post(callbackUrl, signedAlastriaSession).toPromise();
                 this.loadingSrv.updateModalState(this.isDeeplink);
 
             }
@@ -166,21 +162,16 @@ export class MessageManagerService {
 
                 const alastriaAIC = tokensFactory.tokens.createAIC(signedCreateTx, alastriaToken, pku.substring(2));
                 const signedToken = tokensFactory.tokens.signJWT(alastriaAIC, privKey.substring(2));
-                const AIC = {
-                    signedAIC: signedToken
-                }
                 let DID = null;
-                const resultCallbackUrl = await this.http.post(callbackUrl, AIC).toPromise();
+                const resultCallbackUrl = await this.http.post(callbackUrl, signedToken).toPromise();
 
                 DID = resultCallbackUrl[AppConfig.DID_KEY];
-                const proxyAddress = "0x" + DID.split(":")[4]
 
                 await this.securedStrg.set(AppConfig.IS_IDENTITY_CREATED, "1");
                 await this.securedStrg.set('ethAddress', address);
                 await this.securedStrg.set(AppConfig.USER_PKU, pku);
                 await this.securedStrg.set(AppConfig.USER_PRIV_KEY, privKey);
                 await this.securedStrg.set(AppConfig.USER_DID, DID);
-                await this.securedStrg.set(AppConfig.PROXY_ADDRESS, proxyAddress);
                 const hasKeycallbackUrlPut = await this.securedStrg.hasKey('callbackUrlPut');
                 
                 if (hasKeycallbackUrlPut) {

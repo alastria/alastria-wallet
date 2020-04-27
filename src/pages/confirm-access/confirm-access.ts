@@ -12,7 +12,6 @@ import { TabsPage } from '../tabsPage/tabsPage';
 
 // Services
 import { TransactionService } from '../../services/transaction-service';
-import { TokenService } from '../../services/token-service';
 import { Web3Service } from "../../services/web3-service";
 import { IdentityService } from "../../services/identity-service";
 import { LoadingService } from '../../services/loading-service';
@@ -40,7 +39,6 @@ export class ConfirmAccess {
         public toastCtrl: ToastService,
         private securedStrg: SecuredStorageService,
         private loadingSrv: LoadingService,
-        private tokenSrv: TokenService,
         private transactionSrv: TransactionService,
         private http: HttpClient,
         private web3Srv: Web3Service,
@@ -122,18 +120,18 @@ export class ConfirmAccess {
                     let presentation = tokensFactory.tokens.createPresentation(did, this.verifiedJWT.payload.iss, did, 
                         this.verifiedJWT.payload.pr['@context'], signedCredentialJwts, callbackUrl, this.verifiedJWT.payload.pr.procHash,
                         this.verifiedJWT.payload.exp, this.verifiedJWT.payload.iat, this.navParams.get(AppConfig.JTI));
-                    let signedPresentation = this.tokenSrv.signTokenES(JSON.stringify(presentation.payload), privKey.substring(2));
-                    let presentationPSMHash = tokensFactory.tokens.PSMHash(web3, signedPresentation, did.split(':')[4]);
+                    let signedPresentation = tokensFactory.tokens.signJWT(presentation, privKey.substring(2));
+                    let presentationPSMHash = tokensFactory.tokens.PSMHash(web3, signedPresentation, did);
                     let addPresentationTx = transactionFactory.presentationRegistry.addSubjectPresentation(web3, presentationPSMHash, uri);
     
-                    presentation.payload.vp.procHash = presentationPSMHash;
                     presentation[AppConfig.PSM_HASH] = presentationPSMHash;
+                    let presentationSigned = tokensFactory.tokens.signJWT(presentation, privKey.substring(2))
 
                     await this.identitySrv.init();
                     const subjectPresentationSigned = await this.identitySrv.getKnownTransaction(addPresentationTx);
                     await this.transactionSrv.sendSigned(subjectPresentationSigned);
                     await this.transactionSrv.getSubjectPresentationStatus(did.split(':')[4], presentationPSMHash);
-                    await this.http.post(callbackUrl, presentation).toPromise();
+                    await this.http.post(`${callbackUrl}?presentationRequestHash=${presentationPSMHash}`, presentationSigned).toPromise();
                     await this.securedStrg.setJSON(AppConfig.PRESENTATION_PREFIX + this.navParams.get(AppConfig.JTI), presentation);
     
                     this.showSuccess();
@@ -188,7 +186,7 @@ export class ConfirmAccess {
             let credentialJson = tokensFactory.tokens.createCredential(did, this.verifiedJWT.payload.iss, did,
                 this.verifiedJWT.payload.pr['@context'], credentialSubject, this.verifiedJWT.payload.exp, this.verifiedJWT.payload.iat, this.navParams.get(AppConfig.JTI));
 
-            return this.tokenSrv.signTokenES(JSON.stringify(credentialJson.payload), privKey.substring(2));
+            return tokensFactory.tokens.signJWT(credentialJson, privKey.substring(2));
         });
     }
     

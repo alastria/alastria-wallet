@@ -62,7 +62,7 @@ export class Activity {
             .then(async (elements) => {
                 let count = 0;
                 const promises = [];
-                const did = await this.securedStrg.getDID();
+                const did = await this.securedStrg.get('userDID');
                 elements.map(async (element) => {
                     const elementObj = JSON.parse(element);
                     const elementKeys = Object.getOwnPropertyNames(elementObj);

@@ -40,7 +40,7 @@ export class ConfirmError {
                 if (nav && nav._views.length > 1) { 
                     nav.pop();
                 } else {
-                    const DID = await this.secureStrg.getDID();
+                    const DID = await this.secureStrg.get('userDID');
                     if (DID) {
                         nav.setRoot(TabsPage);
                     }
