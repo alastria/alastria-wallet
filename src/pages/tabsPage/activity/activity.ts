@@ -102,6 +102,11 @@ export class Activity {
         this.toastCtrl.presentToast("Folow");
     }
 
+    async getEntity(issuer) {
+        const entity = await this.transactionSrv.getEntity(issuer)
+        return entity.name
+    }
+
     /**
      * Search activities fake
      * @param {string} event
@@ -259,14 +264,14 @@ export class Activity {
         this.activitiesSelected = [];
     }
 
-    private createActivityObject(activityId: number, title: string, subtitle: string, description: string, dateTime: any, statusType: number, removeKey: string): ActivityM {
+    private async createActivityObject(activityId: number, title: string, subtitle: string, description: string, dateTime: any, statusType: number, removeKey: string) {
         let auxArray = ["Valid", "AskIssuer", "Revoked", "DeletedBySubject"];
-
+        let entityName = await this.getEntity(description)
         return {
             "activityId": activityId,
             "title": title,
             "subtitle": subtitle,
-            "description": description,
+            "description": entityName,
             "datetime": dateTime,
             "type": this.type,
             "status": AppConfig.ActivityStatus[auxArray[statusType]],

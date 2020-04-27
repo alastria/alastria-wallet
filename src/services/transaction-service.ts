@@ -110,8 +110,6 @@ export class TransactionService {
           "status":entityDecode[5]
         }
 
-        console.log('entity ', entity);
-
         if(entity.status == false) {
           throw "This AlastriaDID is not an Entity"
         }
