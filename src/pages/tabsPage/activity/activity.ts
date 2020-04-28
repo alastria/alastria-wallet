@@ -84,7 +84,7 @@ export class Activity {
                             .then((credentialStatus) => {
                                 const statusType = parseInt(credentialStatus[1]);
 
-                                return this.createActivityObject(count++, title, "", elementObj[AppConfig.PAYLOAD][AppConfig.ISSUER], 
+                                return this.createActivityObject(count++, title, "", elementObj[AppConfig.PAYLOAD][AppConfig.AUDIENCE], 
                                     iatString, statusType, elementObj[AppConfig.REMOVE_KEY]);
                             }));
                     }

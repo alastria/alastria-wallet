@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { HttpHeaders } from '@angular/common/http';
 import { ToastService } from './toast-service';
 import { AlertController, PopoverController, ModalController } from 'ionic-angular';
 import { TokenService } from './token-service';
@@ -16,6 +17,7 @@ let Wallet = require('ethereumjs-util');
 @Injectable()
 export class MessageManagerService {
     isDeeplink: boolean = false;
+    private auth: string = AppConfig.AUTH_TOKEN;
 
     constructor(private toastCtrl: ToastService,
         public alertCtrl: AlertController,
@@ -116,16 +118,17 @@ export class MessageManagerService {
                 const identity = await this.securedStrg.getIdentityData();
 
                 const privKey = identity[AppConfig.USER_PRIV_KEY];
-                const pku = {
-                    id: identity[AppConfig.USER_DID],
-                    type: ["CryptographicKey", "EcdsaKoblitzPublicKey"],
-                    curve: "secp256k1",
-                    expires: Date.now() + (3600*1000),
-                    publicKeyHex: identity[AppConfig.USER_PKU]
-                };
-                const alastriaSession = tokensFactory.tokens.createAlastriaSession("@jwt", issuerDID, pku, alastriaToken);
+                const pku = identity[AppConfig.USER_PKU]
+                const subjectDID = identity[AppConfig.USER_DID]
+                const alastriaSession = tokensFactory.tokens.createAlastriaSession("@jwt", subjectDID, pku, alastriaToken);
                 const signedAlastriaSession = tokensFactory.tokens.signJWT(alastriaSession, privKey.substring(2));
-                await this.http.post(callbackUrl, signedAlastriaSession).toPromise();
+                const httpOptions = {
+                    headers: new HttpHeaders({
+                      'Content-Type':  'application/json',
+                      'Authorization': this.auth
+                    })
+                };
+                await this.http.post(callbackUrl, signedAlastriaSession, httpOptions).toPromise();
                 this.loadingSrv.updateModalState(this.isDeeplink);
 
             }
@@ -163,7 +166,13 @@ export class MessageManagerService {
                 const alastriaAIC = tokensFactory.tokens.createAIC(signedCreateTx, alastriaToken, pku.substring(2));
                 const signedToken = tokensFactory.tokens.signJWT(alastriaAIC, privKey.substring(2));
                 let DID = null;
-                const resultCallbackUrl = await this.http.post(callbackUrl, signedToken).toPromise();
+                const httpOptions = {
+                    headers: new HttpHeaders({
+                      'Content-Type':  'application/json',
+                      'Authorization': this.auth
+                    })
+                };
+                const resultCallbackUrl = await this.http.post(callbackUrl, signedToken, httpOptions).toPromise();
 
                 DID = resultCallbackUrl[AppConfig.DID_KEY];
 

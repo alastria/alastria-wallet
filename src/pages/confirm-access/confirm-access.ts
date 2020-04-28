@@ -1,4 +1,5 @@
 import { HttpClient } from '@angular/common/http';
+import { HttpHeaders } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { ViewController, NavParams, NavController } from 'ionic-angular';
 import { AppConfig } from '../../app.config';
@@ -31,6 +32,7 @@ export class ConfirmAccess {
     private identityLoaded = new Array<any>();
     private credentials: Array<any>;
     private verifiedJWT: any;
+    private auth: string = AppConfig.AUTH_TOKEN;
 
     constructor(
         public viewCtrl: ViewController,
@@ -117,7 +119,7 @@ export class ConfirmAccess {
                     const did = await this.securedStrg.get('userDID');
                     
                     let signedCredentialJwts = this.getSingalCredentials(securedCredentials, did, privKey);
-                    let presentation = tokensFactory.tokens.createPresentation(did, this.verifiedJWT.payload.iss, did, 
+                    let presentation = tokensFactory.tokens.createPresentation(did, did, this.verifiedJWT.payload.iss, 
                         this.verifiedJWT.payload.pr['@context'], signedCredentialJwts, callbackUrl, this.verifiedJWT.payload.pr.procHash,
                         this.verifiedJWT.payload.exp, this.verifiedJWT.payload.iat, this.navParams.get(AppConfig.JTI));
                     let signedPresentation = tokensFactory.tokens.signJWT(presentation, privKey.substring(2));
@@ -131,7 +133,13 @@ export class ConfirmAccess {
                     const subjectPresentationSigned = await this.identitySrv.getKnownTransaction(addPresentationTx);
                     await this.transactionSrv.sendSigned(subjectPresentationSigned);
                     await this.transactionSrv.getSubjectPresentationStatus(did.split(':')[4], presentationPSMHash);
-                    await this.http.post(`${callbackUrl}?presentationRequestHash=${presentationPSMHash}`, presentationSigned).toPromise();
+                    const httpOptions = {
+                        headers: new HttpHeaders({
+                          'Content-Type':  'application/json',
+                          'Authorization': this.auth
+                        })
+                    };
+                    await this.http.post(`${callbackUrl}?presentationRequestHash=${presentationPSMHash}`, presentationSigned, httpOptions).toPromise();
                     await this.securedStrg.setJSON(AppConfig.PRESENTATION_PREFIX + this.navParams.get(AppConfig.JTI), presentation);
     
                     this.showSuccess();
