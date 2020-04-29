@@ -113,7 +113,7 @@ export class ConfirmAccess {
                
                 if (!pendingIdentities.length) {
                     this.showLoading();
-                    const callbackUrl = this.verifiedJWT.payload.pr.procUrl;
+                    const callbackUrl = this.verifiedJWT.payload.cbu;
                     const uri = 'www.google.com'
                     const privKey = await this.securedStrg.get('userPrivateKey');
                     const did = await this.securedStrg.get('userDID');
