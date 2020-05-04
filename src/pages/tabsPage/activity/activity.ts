@@ -72,7 +72,7 @@ export class Activity {
                             .then((credentialStatus) => {
                                 const statusType = parseInt(credentialStatus[1]);
 
-                                return this.createActivityObject(count++, elementKeys[1], elementObj[elementKeys[1]], elementObj.issuer, 
+                                return this.createActivityObject(count++, elementKeys[1], elementObj[elementKeys[1]], elementObj.iss, 
                                     "", statusType, elementObj[AppConfig.REMOVE_KEY]);
                             }));
                     } else {
