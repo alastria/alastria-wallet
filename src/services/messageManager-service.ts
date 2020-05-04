@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ToastService } from './toast-service';
-import { AlertController, PopoverController, ModalController, App } from 'ionic-angular';
+import { AlertController, PopoverController, ModalController } from 'ionic-angular';
 import { TokenService } from './token-service';
 import { ConfirmAccess } from '../pages/confirm-access/confirm-access';
 import { ConfirmError } from '../pages/confirmError/confirmError';
@@ -146,9 +146,7 @@ export class MessageManagerService {
         let isVerifiedToken: any;
 
         try {
-            console.log(issuerDID)
             const issuerPKU = await this.transactionSrv.getCurrentPublicKey(issuerDID);
-            console.log(issuerPKU)
 
             isVerifiedToken = this.tokenSrv.verifyTokenES(alastriaToken, `04${issuerPKU}`);
             const isIdentityCreated = await this.securedStrg.hasKey(AppConfig.IS_IDENTITY_CREATED);
