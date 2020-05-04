@@ -280,13 +280,13 @@ export class Activity {
     }
 
     private async getCredentialStatus(psmHash: string, did: string) {
-        let status = await this.transactionSrv.getSubjectPresentationStatus(did.split(':')[4], psmHash);
+        let status = await this.transactionSrv.getSubjectPresentationStatus(did, psmHash);
 
         return status;
     } 
     
     private async getPresentationStatus(psmHash: string, did: string) {
-        let status = await this.transactionSrv.getSubjectPresentationStatus(did.split(':')[4], psmHash);
+        let status = await this.transactionSrv.getSubjectPresentationStatus(did, psmHash);
 
         return status;
     }

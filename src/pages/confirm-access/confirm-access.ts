@@ -119,7 +119,7 @@ export class ConfirmAccess {
                     const did = await this.securedStrg.get('userDID');
                     
                     let signedCredentialJwts = this.getSingalCredentials(securedCredentials, did, privKey);
-                    let presentation = tokensFactory.tokens.createPresentation(did, did, this.verifiedJWT.payload.iss, 
+                    let presentation = tokensFactory.tokens.createPresentation(`${did}#keys-1`, did, this.verifiedJWT.payload.iss, 
                         this.verifiedJWT.payload.pr['@context'], signedCredentialJwts, callbackUrl, this.verifiedJWT.payload.pr.procHash,
                         this.verifiedJWT.payload.exp, this.verifiedJWT.payload.iat, this.navParams.get(AppConfig.JTI));
                     let signedPresentation = tokensFactory.tokens.signJWT(presentation, privKey.substring(2));
@@ -132,7 +132,7 @@ export class ConfirmAccess {
                     await this.identitySrv.init();
                     const subjectPresentationSigned = await this.identitySrv.getKnownTransaction(addPresentationTx);
                     await this.transactionSrv.sendSigned(subjectPresentationSigned);
-                    await this.transactionSrv.getSubjectPresentationStatus(did.split(':')[4], presentationPSMHash);
+                    await this.transactionSrv.getSubjectPresentationStatus(did, presentationPSMHash);
                     const httpOptions = {
                         headers: new HttpHeaders({
                           'Content-Type':  'application/json',
@@ -159,12 +159,13 @@ export class ConfirmAccess {
             if (this.identitiesSelected.length > 0) {
                 this.showLoading();
                 this.identitiesSelected.reduce(async (prevVal: Promise<void>, index: number) => {
-                    return prevVal.then(() => {
+                    return prevVal.then(async () => {
                         let credentialKeys = Object.getOwnPropertyNames(this.credentials[index]);
                         let currentCredentialKey = AppConfig.CREDENTIAL_PREFIX + credentialKeys[1];
                         let finalCredential = this.credentials[index];
-                        finalCredential.issuer = this.verifiedJWT[index][AppConfig.PAYLOAD][AppConfig.ISSUER];
-        
+                        let entity = await this.transactionSrv.getEntity(this.verifiedJWT[index][AppConfig.PAYLOAD][AppConfig.ISSUER])
+                        finalCredential.entityName = entity.name
+                        
                         return this.securedStrg.hasKey(currentCredentialKey)
                             .then(async result => {
                                 let ret;

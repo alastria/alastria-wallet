@@ -5,6 +5,7 @@ import { SecuredStorageService } from '../../services/securedStorage.service';
 import { SelectIdentity } from '../../pages/confirm-access/select-identity/select-identity'
 import { AppConfig } from '../../app.config';
 import { Identity } from '../../models/identity.model'
+import { TransactionService } from '../../services/transaction-service';
 
 @Component({
     selector: 'identity-data-list',
@@ -40,6 +41,7 @@ export class IdentityDataListComponent {
         public navCtrl: NavController,
         public navParams: NavParams,
         private securedStrg: SecuredStorageService,
+        private transactionSrv: TransactionService
     ) {
     }
 
@@ -51,6 +53,7 @@ export class IdentityDataListComponent {
     private async parseAllCredentials(): Promise<void> {
         let iatString: any; 
         let expString: any;
+        let entityName: any;
         if (this.isManualSelection) {
             this.credentials = this.allCredentials.map(cred => JSON.parse(cred));
             iatString = this.parseFormatDate(this.iat);
@@ -72,7 +75,7 @@ export class IdentityDataListComponent {
                     const resultKey = await this.securedStrg.get(AppConfig.CREDENTIAL_PREFIX + key)
                     securedCredentials = JSON.parse(resultKey);
                     credentialRes = this.parseCredential(count++, credential[AppConfig.FIELD_NAME], securedCredentials[key], iatString,
-                        expString, level, stars, true);
+                        expString, securedCredentials.entityName, level, stars, true);
                     this.identityDisplay.push(credentialRes);
                     const credentialSelected: any = {
                         credential: this.credentials[credentialRes.id],
@@ -83,15 +86,21 @@ export class IdentityDataListComponent {
                     return Promise.resolve();
                 } else {
                     credentialRes = this.parseCredential(count++, credential[AppConfig.FIELD_NAME], null, '',
-                        'expString', level, stars, false);
+                        'expString', '', level, stars, false);
                     this.identityDisplay.push(credentialRes);
                     return Promise.resolve();
                 }
-            } else {                
+            } else {
+                if(credential[AppConfig.ISSUER]) {
+                    let entity = await this.transactionSrv.getEntity(credential[AppConfig.ISSUER])
+                    entityName = entity.name
+                } else {
+                    entityName = credential.entityName
+                }
                 iatString = this.parseFormatDate(credential[AppConfig.IAT]);
                 expString = this.parseFormatDate(credential[AppConfig.EXP]);
                 credentialRes = this.parseCredential(count++, key, credential[key], iatString,
-                expString, level, stars, true);
+                expString, entityName, level, stars, true);
                 this.identityDisplay.push(credentialRes);
                 return Promise.resolve();
             }
@@ -118,7 +127,8 @@ export class IdentityDataListComponent {
                 key = credential[AppConfig.FIELD_NAME];
             } else {
                 if (keyCredential !== 'levelOfAssurance' && keyCredential !== 'field_name' && keyCredential !== '@context' && keyCredential !== 'exp' && 
-                    keyCredential !== 'iat' && keyCredential !== 'issuer' && keyCredential !== 'PSMHash' && keyCredential !== 'required') {
+                    keyCredential !== 'iat' && keyCredential !== 'issuer' && keyCredential !== 'PSMHash' && keyCredential !== 'required' && 
+                    keyCredential !== 'entityName' && keyCredential !== 'iss') {
                     key = keyCredential;
                 }
             }
@@ -130,8 +140,8 @@ export class IdentityDataListComponent {
     private parseFormatDate(date: any): string {
         let result = '';
         if (date) {
-            const newDate = new Date(date); 
-            result = newDate.getDay() + "/" + (newDate.getMonth() + 1) + "/" + newDate.getFullYear();
+            const newDate = new Date(date * 1000); 
+            result = newDate.getDate() + "/" + (newDate.getMonth() + 1) + "/" + newDate.getFullYear();
         }
 
         return result;
@@ -185,15 +195,15 @@ export class IdentityDataListComponent {
         return stars;
     }
 
-    private parseCredential(id: number, title: string, value: any, addDate: string, endDate: string, level: number, stars: Array<any>, credentialAssigned: boolean) {
-
+    private parseCredential(id: number, title: string, value: any, addDate: string, endDate: string, issuer: string, level: number, stars: Array<any>, credentialAssigned: boolean) {
         return {
             id: id,
             titleP: (title) ? title.toUpperCase().replace(/_/g, " ") : '',
             emitter: "Emisor del testimonio",
             valueT: "Valor",
             value: (value) ? value : "Credencial no selecionada o no disponible",
-            place: "Emisor de credencial",
+            place: "Emisor",
+            issuer: issuer,
             addDateT: "Fecha incorporación del testimonio",
             addDate: addDate,
             endDateT: "Fecha fin de vigencia",
