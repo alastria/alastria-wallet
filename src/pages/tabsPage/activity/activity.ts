@@ -62,7 +62,7 @@ export class Activity {
             .then(async (elements) => {
                 let count = 0;
                 const promises = [];
-                const did = await this.securedStrg.getDID();
+                const did = await this.securedStrg.get('userDID');
                 elements.map(async (element) => {
                     const elementObj = JSON.parse(element);
                     const elementKeys = Object.getOwnPropertyNames(elementObj);
@@ -72,7 +72,7 @@ export class Activity {
                             .then((credentialStatus) => {
                                 const statusType = parseInt(credentialStatus[1]);
 
-                                return this.createActivityObject(count++, elementKeys[1], elementObj[elementKeys[1]], elementObj.issuer, 
+                                return this.createActivityObject(count++, elementKeys[1], elementObj[elementKeys[1]], elementObj.iss, 
                                     "", statusType, elementObj[AppConfig.REMOVE_KEY]);
                             }));
                     } else {
@@ -84,7 +84,7 @@ export class Activity {
                             .then((credentialStatus) => {
                                 const statusType = parseInt(credentialStatus[1]);
 
-                                return this.createActivityObject(count++, title, "", elementObj[AppConfig.PAYLOAD][AppConfig.ISSUER], 
+                                return this.createActivityObject(count++, title, "", elementObj[AppConfig.PAYLOAD][AppConfig.AUDIENCE], 
                                     iatString, statusType, elementObj[AppConfig.REMOVE_KEY]);
                             }));
                     }
@@ -100,6 +100,11 @@ export class Activity {
     */
     onItemClick(item: any): void {
         this.toastCtrl.presentToast("Folow");
+    }
+
+    async getEntity(issuer) {
+        const entity = await this.transactionSrv.getEntity(issuer)
+        return entity.name
     }
 
     /**
@@ -259,14 +264,14 @@ export class Activity {
         this.activitiesSelected = [];
     }
 
-    private createActivityObject(activityId: number, title: string, subtitle: string, description: string, dateTime: any, statusType: number, removeKey: string): ActivityM {
+    private async createActivityObject(activityId: number, title: string, subtitle: string, description: string, dateTime: any, statusType: number, removeKey: string) {
         let auxArray = ["Valid", "AskIssuer", "Revoked", "DeletedBySubject"];
-
+        let entityName = await this.getEntity(description)
         return {
             "activityId": activityId,
             "title": title,
             "subtitle": subtitle,
-            "description": description,
+            "description": entityName,
             "datetime": dateTime,
             "type": this.type,
             "status": AppConfig.ActivityStatus[auxArray[statusType]],
@@ -275,13 +280,13 @@ export class Activity {
     }
 
     private async getCredentialStatus(psmHash: string, did: string) {
-        let status = await this.transactionSrv.getSubjectPresentationStatus(did.split(':')[4], psmHash);
+        let status = await this.transactionSrv.getSubjectPresentationStatus(did, psmHash);
 
         return status;
     } 
     
     private async getPresentationStatus(psmHash: string, did: string) {
-        let status = await this.transactionSrv.getSubjectPresentationStatus(did.split(':')[4], psmHash);
+        let status = await this.transactionSrv.getSubjectPresentationStatus(did, psmHash);
 
         return status;
     }

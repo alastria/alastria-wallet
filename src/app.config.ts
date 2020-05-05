@@ -4,6 +4,7 @@ export class AppConfig {
     public static readonly VERIFIABLE_CREDENTIAL = "verifiableCredential";
     public static readonly CREDENTIALS = "credentials";
     public static readonly ISSUER = "iss";
+    public static readonly AUDIENCE = "aud";
     public static readonly SUBJECT = "sub";
     public static readonly ISSUER_NAME = "issName";
     public static readonly CBU = "cbu";
@@ -51,6 +52,7 @@ export class AppConfig {
 
 
 
+    public static readonly AUTH_TOKEN = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJlbnRpdHlJc3N1ZXIiLCJpYXQiOjE1ODczNjc3MjcsImV4cCI6MTYxODkwMzcyNywiYXVkIjoiRXhhbXBsZSBhdXRob3JpemF0aW9uIFRva2VuIiwic3ViIjoiaWRlbnRpdHlTdWJqZWN0In0.zujXluegmpfzWLqoFECL_X6h8gaRIHkQrg5kh9fvSyg'
     public static readonly SECRET = "your-256-bit-secret";
 
 

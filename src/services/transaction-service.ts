@@ -55,7 +55,7 @@ export class TransactionService {
 
 
     public getCurrentPublicKey(DID: string): Promise<any> {
-        DID = DID.split(":")[4];
+        DID = DID;
         let currentPubKey = transactionFactory.publicKeyRegistry.getCurrentPublicKey(this.web3, DID)
 
         return this.web3.eth.call(currentPubKey)
@@ -98,7 +98,7 @@ export class TransactionService {
     }
 
     public async getEntity(did: string): Promise<any> {
-        let entityTX = transactionFactory.identityManager.getEntity(this.web3, did.split(':')[4]);
+        let entityTX = transactionFactory.identityManager.getEntity(this.web3, did);
         let result = await this.web3.eth.call(entityTX)
         let entityDecode = this.web3.eth.abi.decodeParameters(["string", "string", "string", "string", "string", "bool"], result)
         let entity = {
@@ -109,8 +109,6 @@ export class TransactionService {
           "urlAOA":entityDecode[4],
           "status":entityDecode[5]
         }
-
-        console.log('entity ', entity);
 
         if(entity.status == false) {
           throw "This AlastriaDID is not an Entity"

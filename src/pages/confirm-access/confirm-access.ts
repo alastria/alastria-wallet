@@ -1,4 +1,5 @@
 import { HttpClient } from '@angular/common/http';
+import { HttpHeaders } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { ViewController, NavParams, NavController } from 'ionic-angular';
 import { AppConfig } from '../../app.config';
@@ -12,7 +13,6 @@ import { TabsPage } from '../tabsPage/tabsPage';
 
 // Services
 import { TransactionService } from '../../services/transaction-service';
-import { TokenService } from '../../services/token-service';
 import { Web3Service } from "../../services/web3-service";
 import { IdentityService } from "../../services/identity-service";
 import { LoadingService } from '../../services/loading-service';
@@ -32,6 +32,7 @@ export class ConfirmAccess {
     private identityLoaded = new Array<any>();
     private credentials: Array<any>;
     private verifiedJWT: any;
+    private auth: string = AppConfig.AUTH_TOKEN;
 
     constructor(
         public viewCtrl: ViewController,
@@ -40,7 +41,6 @@ export class ConfirmAccess {
         public toastCtrl: ToastService,
         private securedStrg: SecuredStorageService,
         private loadingSrv: LoadingService,
-        private tokenSrv: TokenService,
         private transactionSrv: TransactionService,
         private http: HttpClient,
         private web3Srv: Web3Service,
@@ -113,27 +113,33 @@ export class ConfirmAccess {
                
                 if (!pendingIdentities.length) {
                     this.showLoading();
-                    const callbackUrl = this.verifiedJWT.payload.pr.procUrl;
+                    const callbackUrl = this.verifiedJWT.payload.cbu;
                     const uri = 'www.google.com'
                     const privKey = await this.securedStrg.get('userPrivateKey');
                     const did = await this.securedStrg.get('userDID');
                     
                     let signedCredentialJwts = this.getSingalCredentials(securedCredentials, did, privKey);
-                    let presentation = tokensFactory.tokens.createPresentation(did, this.verifiedJWT.payload.iss, did, 
+                    let presentation = tokensFactory.tokens.createPresentation(`${did}#keys-1`, did, this.verifiedJWT.payload.iss, 
                         this.verifiedJWT.payload.pr['@context'], signedCredentialJwts, callbackUrl, this.verifiedJWT.payload.pr.procHash,
                         this.verifiedJWT.payload.exp, this.verifiedJWT.payload.iat, this.navParams.get(AppConfig.JTI));
-                    let signedPresentation = this.tokenSrv.signTokenES(JSON.stringify(presentation.payload), privKey.substring(2));
-                    let presentationPSMHash = tokensFactory.tokens.PSMHash(web3, signedPresentation, did.split(':')[4]);
+                    let signedPresentation = tokensFactory.tokens.signJWT(presentation, privKey.substring(2));
+                    let presentationPSMHash = tokensFactory.tokens.PSMHash(web3, signedPresentation, did);
                     let addPresentationTx = transactionFactory.presentationRegistry.addSubjectPresentation(web3, presentationPSMHash, uri);
     
-                    presentation.payload.vp.procHash = presentationPSMHash;
                     presentation[AppConfig.PSM_HASH] = presentationPSMHash;
+                    let presentationSigned = tokensFactory.tokens.signJWT(presentation, privKey.substring(2))
 
                     await this.identitySrv.init();
                     const subjectPresentationSigned = await this.identitySrv.getKnownTransaction(addPresentationTx);
                     await this.transactionSrv.sendSigned(subjectPresentationSigned);
-                    await this.transactionSrv.getSubjectPresentationStatus(did.split(':')[4], presentationPSMHash);
-                    await this.http.post(callbackUrl, presentation).toPromise();
+                    await this.transactionSrv.getSubjectPresentationStatus(did, presentationPSMHash);
+                    const httpOptions = {
+                        headers: new HttpHeaders({
+                          'Content-Type':  'application/json',
+                          'Authorization': this.auth
+                        })
+                    };
+                    await this.http.post(`${callbackUrl}?presentationRequestHash=${presentationPSMHash}`, presentationSigned, httpOptions).toPromise();
                     await this.securedStrg.setJSON(AppConfig.PRESENTATION_PREFIX + this.navParams.get(AppConfig.JTI), presentation);
     
                     this.showSuccess();
@@ -153,12 +159,13 @@ export class ConfirmAccess {
             if (this.identitiesSelected.length > 0) {
                 this.showLoading();
                 this.identitiesSelected.reduce(async (prevVal: Promise<void>, index: number) => {
-                    return prevVal.then(() => {
+                    return prevVal.then(async () => {
                         let credentialKeys = Object.getOwnPropertyNames(this.credentials[index]);
                         let currentCredentialKey = AppConfig.CREDENTIAL_PREFIX + credentialKeys[1];
                         let finalCredential = this.credentials[index];
-                        finalCredential.issuer = this.verifiedJWT[index][AppConfig.PAYLOAD][AppConfig.ISSUER];
-        
+                        let entity = await this.transactionSrv.getEntity(this.verifiedJWT[index][AppConfig.PAYLOAD][AppConfig.ISSUER])
+                        finalCredential.entityName = entity.name
+                        
                         return this.securedStrg.hasKey(currentCredentialKey)
                             .then(async result => {
                                 let ret;
@@ -188,7 +195,7 @@ export class ConfirmAccess {
             let credentialJson = tokensFactory.tokens.createCredential(did, this.verifiedJWT.payload.iss, did,
                 this.verifiedJWT.payload.pr['@context'], credentialSubject, this.verifiedJWT.payload.exp, this.verifiedJWT.payload.iat, this.navParams.get(AppConfig.JTI));
 
-            return this.tokenSrv.signTokenES(JSON.stringify(credentialJson.payload), privKey.substring(2));
+            return tokensFactory.tokens.signJWT(credentialJson, privKey.substring(2));
         });
     }
     
