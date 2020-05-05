@@ -161,7 +161,8 @@ export class ConfirmAccess {
                 this.identitiesSelected.reduce(async (prevVal: Promise<void>, index: number) => {
                     return prevVal.then(async () => {
                         let credentialKeys = Object.getOwnPropertyNames(this.credentials[index]);
-                        let currentCredentialKey = AppConfig.CREDENTIAL_PREFIX + credentialKeys[1];
+                        let key = this.getCreedKey(this.credentials[index])
+                        let currentCredentialKey = AppConfig.CREDENTIAL_PREFIX + key;
                         let finalCredential = this.credentials[index];
                         let entity = await this.transactionSrv.getEntity(this.verifiedJWT[index][AppConfig.PAYLOAD][AppConfig.ISSUER])
                         finalCredential.entityName = entity.name
@@ -186,6 +187,16 @@ export class ConfirmAccess {
         } catch(error) {
             console.error('Error save credentials ', error);
         }
+    }
+
+    private getCreedKey(credential: any) {
+        let key = '';
+        Object.keys(credential).map((keyCredential) => {
+            if (keyCredential !== 'levelOfAssurance' && keyCredential !== 'iat' && keyCredential !== 'exp' && keyCredential !== 'iss' && keyCredential !== 'nbf') {
+                key = keyCredential;
+            }
+        });
+        return key;
     }
 
     private getSingalCredentials(securedCredentials: Array<any>, did: string, privKey: string) {

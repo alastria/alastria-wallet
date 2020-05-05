@@ -68,7 +68,7 @@ export class MessageManagerService {
                         })
                     break;
                 case ProtocolTypes.presentationRequest:
-                    this.showConfirmAccess(verifiedToken[AppConfig.ISSUER], verifiedToken[AppConfig.PAYLOAD][AppConfig.PR][AppConfig.DATA], verifiedToken[AppConfig.IAT],
+                    this.showConfirmAccess(verifiedToken[AppConfig.ISSUER], verifiedToken[AppConfig.PAYLOAD][AppConfig.PR][AppConfig.DATA], verifiedToken[AppConfig.NBF],
                         verifiedToken[AppConfig.EXP], true, verifiedToken, verifiedToken[AppConfig.JTI]);
                     break;
                 case ProtocolTypes.alastriaToken:
@@ -227,7 +227,7 @@ export class MessageManagerService {
                 .then(isIdentityCreated => {
                     if (verifiedJWT && isIdentityCreated) {
                         const credentialSubject = decodedToken[AppConfig.PAYLOAD][AppConfig.VC][AppConfig.CREDENTIALS_SUBJECT];
-                        credentialSubject[AppConfig.IAT] = decodedToken[AppConfig.PAYLOAD][AppConfig.IAT];
+                        credentialSubject[AppConfig.NBF] = decodedToken[AppConfig.PAYLOAD][AppConfig.NBF];
                         credentialSubject[AppConfig.EXP] = decodedToken[AppConfig.PAYLOAD][AppConfig.EXP];
                         credentialSubject[AppConfig.ISSUER] = decodedToken[AppConfig.PAYLOAD][AppConfig.ISSUER]
                         return Promise.resolve(credentialSubject);
