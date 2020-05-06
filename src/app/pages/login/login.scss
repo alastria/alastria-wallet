@@ -28,10 +28,8 @@ ion-col img {
   color: #3A6D96;
   font-size: larger;
   margin-bottom: 15px;
-  button {
-    border-radius: 30px;
-    background-color: white;
-  }
+  width: 300px;
+  margin: auto;
 }
 
 .input-key, ion-label {
@@ -58,6 +56,12 @@ ion-col img {
     display: flex;
     min-height: 100%;
     flex-direction: column;
+
+    ion-row.row-bottom {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+    }
   }
 }
 

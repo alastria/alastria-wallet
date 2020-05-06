@@ -11,7 +11,7 @@
                 <h3> {{ title }} </h3>
             </ion-col>
         </ion-row>
-        <ion-row class="ion-align-items-end">
+        <ion-row class="row-bottom">
             <ion-col size="12" id="key-form" class="row2" *ngIf="loginType === buttons[0].type" align-self-end>
                 <form [formGroup]="accessKeyForm">
                     <ion-item *ngFor="let input of inputsKeyForm; let i = index" class="input-key">
@@ -30,7 +30,7 @@
                     </div>
                 </form>
             </ion-col>
-            <ion-col size="12" *ngIf="!loginType" id="button-select-login" align-self-end>
+            <ion-col size="12" *ngIf="!loginType" id="button-select-login">
                 <ion-button *ngFor="let button of buttons; let i = index"
                     expand="block" class="btnLogin" 
                     (click)="selectTypeLogin(button.type)">
@@ -38,7 +38,7 @@
                     <ion-icon class="arrow-icon" name="ios-arrow-forward"></ion-icon>
                 </ion-button>
             </ion-col>
-            <ion-col size="12" class="ion-align-self-end" *ngIf="buttons[0] && loginType === buttons[0].type" align-self-end>
+            <ion-col size="12" class="ion-align-self-end" *ngIf="buttons[0] && loginType === buttons[0].type">
                 <ion-button expand="block" class="btnLogin" (click)="createAccessKey()">
                     Aceptar
                     <ion-icon class="arrow-icon" name="ios-arrow-forward"></ion-icon>
