@@ -6,6 +6,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 @Component({
     selector: 'page-success',
     templateUrl: 'success.html',
+    styleUrls: ['/success.scss']
 })
 export class SuccessPage {
 

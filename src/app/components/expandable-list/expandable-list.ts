@@ -4,7 +4,8 @@ import { ConstructionsPage } from '../../pages/constructions/constructions';
 
 @Component({
   selector: 'expandable-list',
-  templateUrl: 'expandable-list.html'
+  templateUrl: 'expandable-list.html',
+  styleUrls: ['/expandable-list.scss']
 })
 export class ExpandableListComponent {
   @Input() data: any[];

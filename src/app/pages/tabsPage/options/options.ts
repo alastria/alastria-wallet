@@ -4,7 +4,8 @@ import { Router } from '@angular/router';
 
 @Component({
     templateUrl: 'options.html',
-    providers: [ToastService]
+    providers: [ToastService],
+    styleUrls: ['/options.scss']
 })
 export class OptionsPage {
 

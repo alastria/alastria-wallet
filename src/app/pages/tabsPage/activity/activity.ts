@@ -16,7 +16,8 @@ import { ActivitiesService } from '../../../services/activities.service';
 
 @Component({
     templateUrl: 'activity.html',
-    providers: [ToastService]
+    providers: [ToastService],
+    styleUrls: ['/activity.scss']
 })
 
 export class ActivityPage {

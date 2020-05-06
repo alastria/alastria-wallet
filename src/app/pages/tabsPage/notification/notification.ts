@@ -6,7 +6,8 @@ import { NotificationService } from '../../../services/notification.service';
 
 @Component({
   templateUrl: 'notification.html',
-  providers: [ToastService]
+  providers: [ToastService],
+  styleUrls: ['/notification.scss']
 })
 export class NotificationPage {
 

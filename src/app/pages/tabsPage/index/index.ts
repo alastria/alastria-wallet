@@ -6,7 +6,8 @@ import { ArticleService } from '../../../services/article.service';
 
 @Component({
     templateUrl: 'index.html',
-    providers: [ToastService]
+    providers: [ToastService],
+    styleUrls: ['/index.scss']
 })
 export class IndexPage implements OnInit, OnChanges {
 

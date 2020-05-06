@@ -7,6 +7,7 @@ import { SecuredStorageService } from '../../services/securedStorage.service';
 @Component({
     selector: 'page-confirmError',
     templateUrl: 'confirmError.html',
+    styleUrls: ['/confirmError.scss']
 })
 export class ConfirmErrorPage {
 

@@ -13,7 +13,8 @@ import { ConfirmErrorPage } from '../../confirmError/confirmError';
 
 @Component({
     templateUrl: 'camera.html',
-    providers: [ToastService]
+    providers: [ToastService],
+    styleUrls: ['/camera.scss']
 })
 
 export class CameraPage {

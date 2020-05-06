@@ -18,7 +18,8 @@ import { SecuredStorageService } from '../../services/securedStorage.service';
 
 @Component({
     selector: 'confirm-access',
-    templateUrl: 'confirm-access.html'
+    templateUrl: 'confirm-access.html',
+    styleUrls: ['/confirm-access.scss']
 })
 export class ConfirmAccessPage {
     public dataNumberAccess: number;
@@ -69,7 +70,7 @@ export class ConfirmAccessPage {
     private async sendPresentation(): Promise<any> {
         try {
             if (this.identitiesSelected.length === this.credentials.length) {
-                const web3: Web3 = this.web3Srv.getWeb3();
+                const web3 = this.web3Srv.getWeb3();
                 const securedCredentials = new Array<any>();
                 const pendingIdentities = new Array<number>();
 

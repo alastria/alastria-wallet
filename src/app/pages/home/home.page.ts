@@ -13,7 +13,8 @@ import { SecuredStorageService } from '../../services/securedStorage.service';
 
 @Component({
     selector: 'page-home',
-    templateUrl: 'home.page.html'
+    templateUrl: 'home.page.html',
+    styleUrls: ['/home.page.scss']
 })
 export class HomePage {
 

@@ -19,7 +19,7 @@ import { Validators, FormBuilder, FormGroup } from '@angular/forms';
   // tslint:disable-next-line: no-host-metadata-property
   host: {class: 'btnLogin'},
   templateUrl: 'login.html',
-  styleUrls: ['login.scss']
+  styleUrls: ['/login.scss']
 })
 export class LoginPage {
   @Output() handleLogin = new EventEmitter<boolean>();

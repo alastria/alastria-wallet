@@ -26,6 +26,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'page-entities',
   templateUrl: 'entities.html',
+  styleUrls: ['/entities.scss']
 })
 export class EntitiesPage {
   entities: Array<Item>;

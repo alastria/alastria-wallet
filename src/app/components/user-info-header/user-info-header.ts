@@ -7,7 +7,7 @@ import { SecuredStorageService } from '../../services/securedStorage.service';
 @Component({
     selector: 'user-info-header',
     templateUrl: 'user-info-header.html',
-    styleUrls: ['/user-info-header.scss']
+    styleUrls: ['//user-info-header.scss']
 })
 export class UserInfoHeaderComponent {
 

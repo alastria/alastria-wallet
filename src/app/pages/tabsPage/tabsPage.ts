@@ -5,7 +5,8 @@ import { Router } from '@angular/router';
 
 @Component({
     selector: 'tabsPage',
-    templateUrl: 'tabsPage.html'
+    templateUrl: 'tabsPage.html',
+    styleUrls: ['/tabsPage.scss']
 })
 export class TabsPage {
 

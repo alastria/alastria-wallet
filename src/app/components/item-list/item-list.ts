@@ -9,7 +9,8 @@ import { Item } from '../../models/item.model';
  */
 @Component({
   selector: 'item-list',
-  templateUrl: 'item-list.html'
+  templateUrl: 'item-list.html',
+  styleUrls: ['/item-list.scss']
 })
 export class ItemListComponent {
 

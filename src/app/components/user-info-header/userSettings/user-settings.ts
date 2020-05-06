@@ -7,7 +7,7 @@ import { SecuredStorageService } from '../../../services/securedStorage.service'
 @Component({
     selector: 'user-settings',
     templateUrl: 'user-settings.html',
-    styleUrls: ['./user-settings.scss']
+    styleUrls: ['/user-settings.scss']
 })
 export class UserSettingsPage {
 

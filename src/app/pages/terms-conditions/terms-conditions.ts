@@ -4,6 +4,7 @@ import { NavController } from '@ionic/angular';
 @Component({
     selector: 'page-terms-conditions',
     templateUrl: 'terms-conditions.html',
+    styleUrls: ['/terms-conditions.scss']
 })
 export class TermsConditionsPage {
 

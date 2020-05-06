@@ -12,7 +12,7 @@ import { TabsPage } from '../../pages/tabsPage/tabsPage';
 @Component({
     selector: 'tabs',
     templateUrl: 'tabs.html',
-    styleUrls: ['./tabs.scss']
+    styleUrls: ['/tabs.scss']
 })
 export class TabsComponent {
     @Input() data: any;

@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'credential-detail-page',
   templateUrl: 'credential-detail.html',
+  styleUrls: ['/credential-detail.scss']
 })
 export class CredentialDetailPage implements OnInit {
 

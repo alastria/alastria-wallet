@@ -3,7 +3,7 @@ import { Component, Input, OnChanges } from '@angular/core';
 @Component({
     selector: 'parallax',
     templateUrl: 'parallax.html',
-    // styleUrls: ['paralax.scss']
+    styleUrls: ['/parallax.scss']
 })
 export class ParallaxPage implements OnChanges {
     @Input() data: any;

@@ -4,7 +4,8 @@ import { SecuredStorageService } from '../../services/securedStorage.service';
 
 @Component({
     selector: 'page-profile',
-    templateUrl: 'profile.html'
+    templateUrl: 'profile.html',
+    styleUrls: ['/profile.scss']
 })
 export class ProfilePage {
 

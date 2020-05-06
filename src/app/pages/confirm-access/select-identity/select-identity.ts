@@ -5,7 +5,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'select-identity',
-    templateUrl: 'select-identity.html'
+    templateUrl: 'select-identity.html',
+    styleUrls: ['/select-identity.scss']
 })
 export class SelectIdentityPage {
     @ViewChild(forwardRef(() => IdentityDataListComponent), { read: '', static: false})

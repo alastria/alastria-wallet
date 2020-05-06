@@ -11,7 +11,7 @@ import { Identity } from '../../models/identity.model';
 @Component({
     selector: 'identity-data-list',
     templateUrl: 'identity-data-list.html',
-    styleUrls: ['./identity-data-list.scss']
+    styleUrls: ['/identity-data-list.scss']
 })
 
 export class IdentityDataListComponent implements OnInit {

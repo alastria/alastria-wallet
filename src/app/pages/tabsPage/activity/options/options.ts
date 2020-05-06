@@ -8,7 +8,8 @@ import { Component, Output, EventEmitter } from '@angular/core';
  */
 @Component({
   selector: 'options',
-  templateUrl: 'options.html'
+  templateUrl: 'options.html',
+  styleUrls: ['/options.scss']
 })
 export class OptionsComponent {
 

@@ -5,6 +5,7 @@ import { SuccessPage } from '../success/success';
 @Component({
     selector: 'page-contructions',
     templateUrl: 'constructions.html',
+    styleUrls: ['/constructions.scss']
 })
 export class ConstructionsPage {
 
