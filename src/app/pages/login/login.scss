@@ -1,0 +1,95 @@
+
+#logo {
+  margin-top: 40px;
+  margin-bottom: 40px;
+  width: 80%;
+}
+
+.mainContent {
+    text-align: center;
+}
+
+ion-col, h3 {
+  margin: auto;
+  color: white;
+}
+
+ion-col img {
+  height: 100%;
+  width: auto;
+  display: block;
+  margin: auto;
+}
+
+.btnLogin {
+  height: 50px;
+  --border-radius: 30px;
+  --background: white;
+  color: #3A6D96;
+  font-size: larger;
+  margin-bottom: 15px;
+  button {
+    border-radius: 30px;
+    background-color: white;
+  }
+}
+
+.input-key, ion-label {
+  background-color: transparent;
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  line-height: normal;
+  font-size: 18px;
+  color: white !important;
+  width: 90%;
+  margin: auto;
+}
+
+.child-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  align-items: center;
+}
+
+.mainContent {
+  ion-grid {
+    display: flex;
+    min-height: 100%;
+    flex-direction: column;
+  }
+}
+
+.fingerPrint {
+  font-size: 18px;
+  color: #FFFFFF;
+  margin: auto;
+  width: 100%;
+}
+
+.fingerPrint > img {
+  margin-right: 15px;
+  margin-left: 15px;
+  display: inherit;
+}
+
+.fingerPrint > img, .fingerPrint > p {
+  position: relative;
+  float: left;
+}
+
+.error {
+  color: red;
+  text-align: left;
+  width: 90%;
+  margin-top: 5px;
+  position: relative;
+  float: right;
+
+}
+
+.arrow-icon {
+  position: absolute;
+  left: 85%;
+}  

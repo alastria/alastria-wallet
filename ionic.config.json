@@ -1,7 +1,7 @@
 {
-  "name": "alastriaApp",
+  "name": "alastria-wallet-4",
   "integrations": {
     "cordova": {}
   },
-  "type": "ionic-angular"
+  "type": "angular"
 }

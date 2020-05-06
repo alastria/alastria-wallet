@@ -1,0 +1,55 @@
+<!--- Settings TAB lauout-1 -->
+<ion-header>
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-back-button></ion-back-button>
+      </ion-buttons>
+      <div background-size *ngIf="data != null" [ngStyle]="{'background-image': 'url(' + data.headerImage + ')'}">
+            <div search-bar-bcg>
+                <!-- Header Title -->
+                <ion-text no-margin padding-left search-bar-title>{{data.title}}</ion-text>                
+                <!--ion-searchbar (ionInput)="onEvent('onTextChange', $event)"></ion-searchbar-->
+            </div>
+            <h2 no-margin padding-left>{{data.subtitle}}</h2>
+        </div>
+    </ion-toolbar>
+</ion-header>
+<ion-content>
+    <ion-grid no-padding *ngIf="data != null">
+        <ion-row>
+          <ion-col size="12">
+            <!-- Content -->
+            <ion-list no-margin>
+              <ion-item-sliding *ngFor="let item of data.items" #slidingItem>
+                <ion-item no-lines (click)="onItemClick(item.title, $event)">
+                  <ion-label>
+                    <!-- Images -->
+                    <ion-thumbnail item-start>
+                      <img src="{{item.image}}">
+                    </ion-thumbnail>
+                    <!-- Title -->
+                    <h2 item-title>{{item.title}}</h2>
+                    <!-- Subtitle -->
+                    <p item-subtitle text-wrap>{{item.subtitle}}</p>
+                    </ion-label>
+                </ion-item>
+                <!--Action Button-->
+                <ion-item-options no-lines>
+                  <!-- Button -->
+                  <ion-button  text-capitalize>
+                    <ion-text>
+                      {{item.accept}}
+                    </ion-text>
+                  </ion-button>
+                  <ion-button style="background-color: #9e001e" text-capitalize (click)="delete(item)">
+                    <ion-text>
+                      {{item.delete}}
+                    </ion-text>
+                  </ion-button>
+                </ion-item-options>
+              </ion-item-sliding>
+            </ion-list>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+</ion-content>
