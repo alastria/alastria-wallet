@@ -21,6 +21,16 @@ ion-col img {
   margin: auto;
 }
 
+form {
+  margin: auto;
+  width: 250px;
+  margin-bottom: 50px;
+}
+
+#button-select-login {
+  margin-top: 50px;
+}
+
 .btnLogin {
   height: 50px;
   --border-radius: 30px;
@@ -42,6 +52,8 @@ ion-col img {
   color: white !important;
   width: 90%;
   margin: auto;
+  --highlight-color-focused: white;
+  --highlight-color-valid: white;
 }
 
 .child-content {

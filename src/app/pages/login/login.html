@@ -18,9 +18,6 @@
                         <ion-label position="floating" class="grey">{{input.label}}</ion-label>
                         <ion-input class="menu form-control" type="number" style="-webkit-text-security:disc" [id]="input.key" [formControlName]="input.key">
                         </ion-input>
-                        <div class="error" *ngIf="accessKeyForm?.controls[input.key].errors?.required && accessKeyForm?.controls[input.key].touched">
-                            Por favor introduce el valor requerido
-                        </div>
                     </ion-item>
                     <div class="error" *ngIf="accessKeyForm?.controls['repeatKey']?.errors?.mismatch">
                         Las claves no coinciden
