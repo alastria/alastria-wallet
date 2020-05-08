@@ -1,9 +1,0 @@
-<!-- Theme Tabs Footer tab - text -->
-<ion-tabs>
-    <ion-tab-bar slot="bottom">
-        <ion-tab-button *ngFor="let item of data;let i = index"  [tabTitle]="item.title" [tabIcon]="item.icon" [tab]="item.page">
-            <ion-icon [name]="item.icon"></ion-icon>
-            <ion-label>{{ item.title }}</ion-label>
-        </ion-tab-button>
-    </ion-tab-bar>
-</ion-tabs>
