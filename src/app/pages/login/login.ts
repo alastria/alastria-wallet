@@ -103,7 +103,7 @@ export class LoginPage {
       await this.securedStrg.setLoginType(this.loginType);
       const hasKey = await this.securedStrg.hasKey('accessKey');
       if (!hasKey) {
-        await this.securedStrg.setAccessKey(this.accessKeyForm.get('key').value);
+        await this.securedStrg.setAccessKey(this.accessKeyForm.get('key').value.toString());
       }
       const isAuthorized = await this.securedStrg.isAuthorized(this.accessKeyForm.get('key').value);
       if (!isAuthorized) {
