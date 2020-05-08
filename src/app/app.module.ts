@@ -1,3 +1,4 @@
+import { CameraModule } from './pages/tabsPage/camera/camera.module';
 import { RouteReuseStrategy } from '@angular/router';
 import { IonicRouteStrategy, IonicModule } from '@ionic/angular';
 import { BrowserModule } from '@angular/platform-browser';
@@ -11,10 +12,7 @@ import { Deeplinks } from '@ionic-native/deeplinks/ngx';
 // MODULES
 import { TabsPageModule } from './pages/tabsPage/tabsPage.module';
 import { SuccessPageModule } from './pages/success/success.module';
-import { EntitiesPageModule } from './pages/entities/entities.module';
-import { ProfilePageModule } from './pages/profile/profile.module';
 import { ConfirmAccessModule } from './pages/confirm-access/confirm-access.module';
-import { LoginPageModule } from './pages/login/login.module';
 import { HomePageModule } from './pages/home/home.module';
 
 // PAGES - COMPONETS
@@ -23,7 +21,6 @@ import { EntitiesPage } from './pages/entities/entities';
 import { ConfirmErrorPage } from './pages/confirmError/confirmError';
 
 // SERVICES
-import { SecuredStorageService } from './services/securedStorage.service';
 import { ToastService } from './services/toast-service';
 import { Web3Service } from './services/web3-service';
 
@@ -45,19 +42,16 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
         HttpClientModule,
         AppRoutingModule,
         HomePageModule,
-        LoginPageModule,
         TabsPageModule,
         NgxQRCodeModule,
         SuccessPageModule,
-        EntitiesPageModule,
-        ProfilePageModule,
-        ConfirmAccessModule
+        ConfirmAccessModule,
     ],
     bootstrap: [AppComponent],
     entryComponents: [
       AppComponent,
       CredentialDetailPage,
-      EntitiesPage,
+      // EntitiesPage,
       ConfirmErrorPage
     ],
     providers: [

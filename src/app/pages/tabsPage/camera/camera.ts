@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
-import { ModalController, NavController, NavParams  } from '@ionic/angular';
+import { ModalController, NavController } from '@ionic/angular';
+import { ActivatedRoute } from '@angular/router';
 import { AppConfig } from '../../../../app.config';
 
 // SERVICE
@@ -31,10 +32,10 @@ export class CameraPage {
         public barcodeScanner: BarcodeScanner,
         public modalCtrl: ModalController,
         public navCtrl: NavController,
-        private navParams: NavParams,
+        public activatedRoute: ActivatedRoute,
         private http: HttpClient,
         private messageManagerService: MessageManagerService) {
-        const pageName = this.navParams.get('pageName');
+        const pageName = this.activatedRoute.snapshot.paramMap.get('token');
         const options = {
             prompt: 'Situe el código Qr en el interior del rectángulo.',
             formats: AppConfig.QR_CODE
@@ -43,7 +44,7 @@ export class CameraPage {
         this.barcodeScanner.scan(options).then(async barcodeData => {
             const alastriaToken = barcodeData.text;
             if (barcodeData.text && !barcodeData.cancelled) {
-        if (alastriaToken.match(/(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/gi)) {
+            if (alastriaToken.match(/(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/gi)) {
                     this.http.get(alastriaToken).subscribe(data => {
                         this.messageManagerService.prepareDataAndInit(data)
                             .catch((error) => {

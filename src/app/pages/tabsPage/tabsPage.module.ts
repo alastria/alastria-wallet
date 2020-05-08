@@ -5,20 +5,23 @@ import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { TabsPage } from './tabsPage';
 
 // MODULES
-import { TabsModule } from '../../components/tabs/tabs.module';
 import { IndexModule } from './index/index.module';
 import { CameraModule } from './camera/camera.module';
 import { OptionsModule } from './options/options.module';
 import { ActivityModule } from './activity/activity.module';
 import { NotificationModule } from './notification/notification.module';
 import { ConstructionsPageModule } from '../constructions/constructions.module';
+import { TabsPageRoutingModule } from './tabs-routing.module';
+import { IonicModule } from '@ionic/angular';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
-    declarations: [
-        TabsPage
-    ],
     imports: [
-        TabsModule,
+        CommonModule,
+        FormsModule,
+        IonicModule,
+        TabsPageRoutingModule,
         ConstructionsPageModule,
         IndexModule,
         NotificationModule,
@@ -26,13 +29,9 @@ import { ConstructionsPageModule } from '../constructions/constructions.module';
         OptionsModule,
         CameraModule
     ],
-    entryComponents: [
+    declarations: [
         TabsPage
     ],
-    exports: [
-        TabsPage
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-
-export class TabsPageModule { }
+export class TabsPageModule {}

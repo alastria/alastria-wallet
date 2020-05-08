@@ -69,7 +69,7 @@ export class EntitiesPage {
   }
 
   readQr() {
-    this.router.navigateByUrl('/tabs/camera');
+    this.router.navigate(['/', 'camera']);
   }
 
   openBlank(item: Item) {

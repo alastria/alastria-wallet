@@ -1,4 +1,10 @@
 <ion-content padding>
-  <tabs [data]="tabs.data" [events]="tabs.events">
-  </tabs>
+  <ion-tabs>
+    <ion-tab-bar slot="bottom">
+        <ion-tab-button tabTitle="Leer Qr" tabIcon="leerQr" [tab]="camera">
+            <ion-icon name="leerQr"></ion-icon>
+            <ion-label>Leer Qr</ion-label>
+        </ion-tab-button>
+    </ion-tab-bar>
+  </ion-tabs>
 </ion-content>

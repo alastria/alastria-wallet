@@ -7,9 +7,6 @@ import { CommonModule } from '@angular/common';
 import { EntitiesPage } from './entities';
 import { ItemListComponent } from '../../components/item-list/item-list';
 
-// MODULES
-import { TabsModule } from '../../components/tabs/tabs.module';
-
 // SERVICES
 import { EntityService } from '../../services/entity.service';
 import { CameraModule } from '../tabsPage/camera/camera.module';
@@ -23,7 +20,6 @@ import { SocketService } from '../../services/socket.service';
   ],
   imports: [
     CommonModule,
-    TabsModule,
     CameraModule
   ],
   entryComponents: [

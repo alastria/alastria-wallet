@@ -2,6 +2,9 @@ import { Component } from '@angular/core';
 
 import { SecuredStorageService } from '../../services/securedStorage.service';
 import { Router } from '@angular/router';
+import { MessageManagerService } from 'src/app/services/messageManager-service';
+import { Deeplinks } from '@ionic-native/deeplinks/ngx';
+import { parseCredentials } from 'src/utils';
 
 @Component({
     selector: 'tabsPage',
@@ -14,21 +17,71 @@ export class TabsPage {
     tabs: any = {};
     isLoged: boolean;
 
-    constructor(public router: Router,
-                private securedStrg: SecuredStorageService) {
 
-        this.securedStrg.hasKey('loginType').then(
-            () => {
-                this.isLoged = true;
-            }
-        ).catch(
-            () => {
-                this.isLoged = false;
-                this.router.navigateByUrl('/homer');
-            }
-        )
+    constructor(
+        private messageManagerService: MessageManagerService,
+        private deeplinks: Deeplinks,
+        private router: Router,
+        private securedStrg: SecuredStorageService,
+    ) {
+            this.securedStrg.hasKey('loginType').then(
+                () => {
+                    this.isLoged = true;
+                }
+            ).catch(
+                () => {
+                    this.isLoged = false;
+                    this.router.navigateByUrl('/home');
+                }
+            );
 
-        this.setTabsParams();
+            this.setTabsParams();
+
+            const token = this.router.getCurrentNavigation().extras.state.token;
+            this.checkTokenAndPrepare(token);
+
+            this.deeplinks.route({
+                '/': TabsPage,
+                '/login': TabsPage,
+                '/createCredentials': TabsPage,
+                '/createPresentations': TabsPage
+            }).subscribe(
+                (match: any) => {
+                    const path = (match &&  match.$link) ? match.$link.path : null;
+                    this.controlDeeplink(path, match.$args);
+                },
+                (noMatch: any) => {
+                    console.log('No Match ', noMatch);
+                }
+            );
+    }
+
+    checkTokenAndPrepare(token: any) {
+        if (token) {
+            this.messageManagerService.prepareDataAndInit(token, true);
+            this.router.getCurrentNavigation().extras.state.token = null;
+        }
+    }
+
+        private controlDeeplink(path: string, args: any) {
+        switch (path) {
+            case '/createCredentials':
+                const credentials = parseCredentials(args.credentials);
+
+                this.checkTokenAndPrepare(credentials);
+
+                break;
+
+            case '/login':
+            case '/createPresentations':
+                this.checkTokenAndPrepare(args.alastriaToken);
+
+                break;
+
+            default:
+
+                break;
+        }
     }
 
     setTabsParams() {
