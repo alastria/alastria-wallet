@@ -11,7 +11,7 @@ import { Web3Service } from './web3-service';
 import { TransactionService } from './transaction-service';
 import { SecuredStorageService } from './securedStorage.service';
 import { LoadingService } from './loading-service';
-// import { Wallet } from 'ethereumjs-util';
+import { privateToPublic, toBuffer } from 'ethereumjs-util';
 
 export enum ProtocolTypes {
     authentication = 'authentication',
@@ -161,9 +161,7 @@ export class MessageManagerService {
         let isVerifiedToken: any;
 
         try {
-
             const issuerPKU = await this.transactionSrv.getCurrentPublicKey(issuerDID);
-
             isVerifiedToken = this.tokenSrv.verifyTokenES(alastriaToken, `04${issuerPKU}`);
             const isIdentityCreated = await this.securedStrg.hasKey(AppConfig.IS_IDENTITY_CREATED);
 
@@ -172,7 +170,10 @@ export class MessageManagerService {
                 const account = this.web3Srv.getWeb3().eth.accounts.create();
                 const address = account[AppConfig.ADDRESS];
                 const privKey = account[AppConfig.PRIVATE_KEY];
-                const pku = '0x' + account.privateToPublic(privKey).toString('hex');
+                const pku = '0x' + privateToPublic(toBuffer(privKey)).toString('hex');
+
+
+                // Get a public key
                 const subjectIdentity = new UserIdentity(this.web3Srv.getWeb3(), address, privKey.substring(2), 0);
                 const createTx = transactionFactory.identityManager.createAlastriaIdentity(this.web3Srv.getWeb3(), pku.substring(2));
 
@@ -184,7 +185,8 @@ export class MessageManagerService {
                     signedAIC: signedToken
                 };
                 let DID = null;
-                const resultCallbackUrl = await this.http.post(callbackUrl, AIC).toPromise();
+
+                const resultCallbackUrl = await this.http.post(callbackUrl, AIC.signedAIC).toPromise();
 
                 DID = resultCallbackUrl[AppConfig.DID_KEY];
                 const proxyAddress = '0x' + DID.split(':')[4];
