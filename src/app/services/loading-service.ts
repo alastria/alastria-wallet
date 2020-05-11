@@ -91,6 +91,6 @@ export class LoadingService {
           component: SuccessPage,
           componentProps
         });
-        return await modal.present();
+        return modal;
     }
 }
