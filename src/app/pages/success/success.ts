@@ -15,18 +15,20 @@ export class SuccessPage {
 
     constructor(
         private router: Router,
-        private activatedRoute: ActivatedRoute
+        private navParams: NavParams
     ) {
         this.data = {
-            titleSuccess: this.activatedRoute.snapshot.paramMap.get('titleSuccess'),
-            textSuccess: this.activatedRoute.snapshot.paramMap.get('textSuccess'),
-            imgPrincipal: this.activatedRoute.snapshot.paramMap.get('imgPrincipal'),
-            imgSuccess: this.activatedRoute.snapshot.paramMap.get('imgSuccess'),
-            page: this.activatedRoute.snapshot.paramMap.get('page'),
-            callback: this.activatedRoute.snapshot.paramMap.get('callback'),
+            titleSuccess: this.navParams.get('titleSuccess'),
+            textSuccess: this.navParams.get('textSuccess'),
+            imgPrincipal: this.navParams.get('imgPrincipal'),
+            imgSuccess: this.navParams.get('imgSuccess'),
+            page: this.navParams.get('page'),
+            callback: this.navParams.get('callback'),
         };
 
-        this.isDeeplink = this.activatedRoute.snapshot.paramMap.get('isDeeplink');
+        console.log('data ', this.data);
+
+        this.isDeeplink = navParams.get('isDeeplink');
     }
 
     public closeModal() {
