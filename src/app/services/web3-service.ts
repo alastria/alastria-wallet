@@ -1,6 +1,6 @@
-import { Injectable } from "@angular/core";
-import * as Web3 from "web3";
-import { AppConfig } from "../../app.config";
+import { Injectable } from '@angular/core';
+import * as Web3 from 'web3';
+import { AppConfig } from '../../app.config';
 
 @Injectable({
     providedIn: 'root',
