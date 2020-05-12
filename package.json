@@ -36,7 +36,6 @@
     "cordova-ios": "5.0.0",
     "core-js": "^2.5.4",
     "ethereumjs-util": "^7.0.0",
-    "ethereumjs-wallet": "^0.6.3",
     "ngx-qrcode2": "0.0.9",
     "rxjs": "^6.5.5",
     "web3": "1.2.1",
