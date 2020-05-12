@@ -18,6 +18,7 @@ import { IdentityService } from "../../services/identity-service";
 import { LoadingService } from '../../services/loading-service';
 import { ToastService } from '../../services/toast-service';
 import { SecuredStorageService } from './../../services/securedStorage.service';
+import { TokenService } from '../../services/token-service';
 
 @Component({
     selector: 'confirm-access',
@@ -32,6 +33,7 @@ export class ConfirmAccess {
     private identityLoaded = new Array<any>();
     private credentials: Array<any>;
     private verifiedJWT: any;
+    private credentialJWT: any;
     private auth: string = AppConfig.AUTH_TOKEN;
 
     constructor(
@@ -44,7 +46,8 @@ export class ConfirmAccess {
         private transactionSrv: TransactionService,
         private http: HttpClient,
         private web3Srv: Web3Service,
-        private identitySrv: IdentityService
+        private identitySrv: IdentityService,
+        private tokenSrv: TokenService
     ) {
         this.initiateVariables();
     }
@@ -55,6 +58,16 @@ export class ConfirmAccess {
         this.isPresentationRequest = this.navParams.get(AppConfig.IS_PRESENTATION_REQ);
         this.verifiedJWT = this.navParams.get(AppConfig.VERIFIED_JWT);
         this.isDeeplink = this.navParams.get('isDeeplink');
+
+        let credentialJWTArr = []
+        if(!this.isPresentationRequest){
+            this.credentialJWT = this.navParams.get(AppConfig.VERIFIED_JWT)
+            this.credentialJWT.map(item => {
+                credentialJWTArr.push(this.tokenSrv.decodeTokenES(item))
+            })
+            this.verifiedJWT = credentialJWTArr;
+        }
+        
         const did = (this.verifiedJWT && this.verifiedJWT.length) ? this.verifiedJWT[0].payload.iss :
             (this.verifiedJWT && this.verifiedJWT.payload) ? this.verifiedJWT.payload.iss : null;
         if (did) {
@@ -102,7 +115,7 @@ export class ConfirmAccess {
                 const web3: Web3 = this.web3Srv.getWeb3();
                 let securedCredentials = new Array<any>();
                 let pendingIdentities = new Array<number>();
-    
+                
                 for (let id of this.identitiesSelected) {
                     if (this.identityLoaded[id]) {
                         securedCredentials.push(this.identityLoaded[id]);
@@ -110,25 +123,23 @@ export class ConfirmAccess {
                         pendingIdentities.push(id);
                     }
                 }
-               
-                if (!pendingIdentities.length) {
+                
+                if (!pendingIdentities.length) {                    
                     this.showLoading();
                     const callbackUrl = this.verifiedJWT.payload.cbu;
-                    const uri = 'www.google.com'
+                    const uri = AppConfig.procUrl
                     const privKey = await this.securedStrg.get('userPrivateKey');
                     const did = await this.securedStrg.get('userDID');
-                    
-                    let signedCredentialJwts = this.getSingalCredentials(securedCredentials, did, privKey);
+                    let jti = Math.random().toString(36).substring(2)
+                    let signedCredentialJwts = this.getSingalCredentials(securedCredentials);
                     let presentation = tokensFactory.tokens.createPresentation(`${did}#keys-1`, did, this.verifiedJWT.payload.iss, 
-                        this.verifiedJWT.payload.pr['@context'], signedCredentialJwts, callbackUrl, this.verifiedJWT.payload.pr.procHash,
-                        this.verifiedJWT.payload.exp, this.verifiedJWT.payload.iat, this.navParams.get(AppConfig.JTI));
+                        this.verifiedJWT.payload.pr['@context'], signedCredentialJwts, AppConfig.procUrl, this.verifiedJWT.payload.pr.procHash,
+                        this.verifiedJWT.payload.exp, this.verifiedJWT.payload.nbf, jti);
+
                     let signedPresentation = tokensFactory.tokens.signJWT(presentation, privKey.substring(2));
                     let presentationPSMHash = tokensFactory.tokens.PSMHash(web3, signedPresentation, did);
                     let addPresentationTx = transactionFactory.presentationRegistry.addSubjectPresentation(web3, presentationPSMHash, uri);
-    
-                    presentation[AppConfig.PSM_HASH] = presentationPSMHash;
-                    let presentationSigned = tokensFactory.tokens.signJWT(presentation, privKey.substring(2))
-
+                    
                     await this.identitySrv.init();
                     const subjectPresentationSigned = await this.identitySrv.getKnownTransaction(addPresentationTx);
                     await this.transactionSrv.sendSigned(subjectPresentationSigned);
@@ -139,8 +150,9 @@ export class ConfirmAccess {
                           'Authorization': this.auth
                         })
                     };
-                    await this.http.post(`${callbackUrl}?presentationRequestHash=${presentationPSMHash}`, presentationSigned, httpOptions).toPromise();
-                    await this.securedStrg.setJSON(AppConfig.PRESENTATION_PREFIX + this.navParams.get(AppConfig.JTI), presentation);
+                    await this.http.post(`${callbackUrl}`, signedPresentation, httpOptions).toPromise();
+                    presentation['PSMHash'] = presentationPSMHash
+                    await this.securedStrg.setJSON(AppConfig.PRESENTATION_PREFIX + this.verifiedJWT.payload.jti, presentation);
     
                     this.showSuccess();
                 } else {
@@ -160,18 +172,19 @@ export class ConfirmAccess {
                 this.showLoading();
                 this.identitiesSelected.reduce(async (prevVal: Promise<void>, index: number) => {
                     return prevVal.then(async () => {
-                        let credentialKeys = Object.getOwnPropertyNames(this.credentials[index]);
                         let key = this.getCreedKey(this.credentials[index])
                         let currentCredentialKey = AppConfig.CREDENTIAL_PREFIX + key;
                         let finalCredential = this.credentials[index];
                         let entity = await this.transactionSrv.getEntity(this.verifiedJWT[index][AppConfig.PAYLOAD][AppConfig.ISSUER])
+                        finalCredential.credentialJWT = this.credentialJWT[index]
                         finalCredential.entityName = entity.name
+                        finalCredential.sub = this.verifiedJWT[index][AppConfig.PAYLOAD][AppConfig.SUBJECT]
                         
                         return this.securedStrg.hasKey(currentCredentialKey)
                             .then(async result => {
                                 let ret;
                                 if (result) {
-                                    ret = await this.existKey(currentCredentialKey, credentialKeys, index, finalCredential);
+                                    ret = await this.existKey(currentCredentialKey, key, index, finalCredential);
                                 } else {
                                     ret = await this.notExistKey(currentCredentialKey, index, finalCredential);
                                 }
@@ -192,41 +205,33 @@ export class ConfirmAccess {
     private getCreedKey(credential: any) {
         let key = '';
         Object.keys(credential).map((keyCredential) => {
-            if (keyCredential !== 'levelOfAssurance' && keyCredential !== 'iat' && keyCredential !== 'exp' && keyCredential !== 'iss' && keyCredential !== 'nbf') {
+            if (keyCredential !== 'levelOfAssurance' && keyCredential !== 'iat' && keyCredential !== 'exp' && keyCredential !== 'iss' && 
+                keyCredential !== 'nbf' && keyCredential !== 'sub') {
                 key = keyCredential;
             }
         });
         return key;
     }
 
-    private getSingalCredentials(securedCredentials: Array<any>, did: string, privKey: string) {
+    private getSingalCredentials(securedCredentials: Array<any>) {
         return securedCredentials.map(securedCredential => {
-            let credentialSubject = securedCredential;
-
-            let credentialJson = tokensFactory.tokens.createCredential(did, this.verifiedJWT.payload.iss, did,
-                this.verifiedJWT.payload.pr['@context'], credentialSubject, this.verifiedJWT.payload.exp, this.verifiedJWT.payload.iat, this.navParams.get(AppConfig.JTI));
-
-            return tokensFactory.tokens.signJWT(credentialJson, privKey.substring(2));
+            return securedCredential.credJWT;
         });
     }
     
-    private async existKey(currentCredentialKey: string,  credentialKeys: any, index: number, finalCredential: any): Promise<any> {
+    private async existKey(currentCredentialKey: string,  key: any, index: number, finalCredential: any): Promise<any> {
         try {
-            const result = await this.securedStrg.getJSON(currentCredentialKey); 
-            let currentCredentialValue = result[credentialKeys[1]];
-            let resultAddSubjectCredential: any;
-            const issDID = this.navParams.get(AppConfig.ISSUER);
+            const result = await this.securedStrg.getJSON(currentCredentialKey);
+            const subDID = await this.securedStrg.get('userDID');
 
-            if (this.credentials[index][credentialKeys[1]] !== currentCredentialValue) {
-                resultAddSubjectCredential = this.transactionSrv.addSubjectCredential(this.verifiedJWT[index], issDID, "www.google.com");
+            if (finalCredential.levelOfAssurance >= result.levelOfAssurance) {
+                return this.transactionSrv.addSubjectCredential(this.credentialJWT[index], subDID, "www.google.com")
+                    .then(result => {
+                        finalCredential[AppConfig.PSM_HASH] = result;
+                        return this.securedStrg.setJSON(currentCredentialKey, finalCredential);
+                    })
             }else {
-                resultAddSubjectCredential = false;
-            }
-
-            if (resultAddSubjectCredential) {
-                return this.securedStrg.setJSON(currentCredentialKey + "_" + Math.random(), finalCredential);
-            } else{
-                return false;
+                return 'Credential nos registered';
             }
         } catch(error) {
             throw error;
@@ -234,7 +239,7 @@ export class ConfirmAccess {
     }
 
     private async notExistKey(currentCredentialKey: string, index: number, finalCredential: any): Promise<any> {
-        return this.transactionSrv.addSubjectCredential(this.verifiedJWT[index], this.verifiedJWT[index][AppConfig.PAYLOAD][AppConfig.ISSUER], "www.google.com")
+        return this.transactionSrv.addSubjectCredential(this.credentialJWT[index], this.verifiedJWT[index][AppConfig.PAYLOAD][AppConfig.SUBJECT], "www.google.com")
             .then(result => {
                 finalCredential[AppConfig.PSM_HASH] = result;
                 return this.securedStrg.setJSON(currentCredentialKey, finalCredential);

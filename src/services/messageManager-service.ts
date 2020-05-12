@@ -116,11 +116,14 @@ export class MessageManagerService {
             
             if (isVerifiedToken) {
                 const identity = await this.securedStrg.getIdentityData();
+                let jti = Math.random().toString(36).substring(2)
+                let currentDate = Math.floor(Date.now());
+                let expDate = currentDate + 86400
 
                 const privKey = identity[AppConfig.USER_PRIV_KEY];
                 const pku = identity[AppConfig.USER_PKU]
                 const subjectDID = identity[AppConfig.USER_DID]
-                const alastriaSession = tokensFactory.tokens.createAlastriaSession("@jwt", subjectDID, pku, alastriaToken);
+                const alastriaSession = tokensFactory.tokens.createAlastriaSession("@jwt", subjectDID, pku, alastriaToken, expDate, currentDate, jti);
                 const signedAlastriaSession = tokensFactory.tokens.signJWT(alastriaSession, privKey.substring(2));
                 const httpOptions = {
                     headers: new HttpHeaders({
@@ -213,7 +216,6 @@ export class MessageManagerService {
 
     private prepareCredentials(verifiedToken: string | object) {
         let credentialsJWT = verifiedToken[AppConfig.VERIFIABLE_CREDENTIAL];
-
         let promises = credentialsJWT.map((credential: any) => {
             let decodedToken = this.tokenSrv.decodeTokenES(credential)
             let issuerDID = decodedToken[AppConfig.PAYLOAD][AppConfig.ISSUER];
@@ -244,7 +246,7 @@ export class MessageManagerService {
 
     private prepareVerfiedJWT(verifiedToken: Array<string>): Array<any> {
         return verifiedToken.map(token => {
-            return this.tokenSrv.decodeTokenES(token);
+            return token;
         });
     }
 }

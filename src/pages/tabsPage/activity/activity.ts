@@ -76,9 +76,9 @@ export class Activity {
                                     "", statusType, elementObj[AppConfig.REMOVE_KEY]);
                             }));
                     } else {
-                        const iat = new Date(elementObj[AppConfig.PAYLOAD][AppConfig.IAT]);
+                        const iat = new Date(elementObj[AppConfig.PAYLOAD][AppConfig.NBF]);
                         const iatString = iat.getDate() + "/" + (iat.getMonth() + 1) + "/" + iat.getFullYear();
-                        const title = "Presentación " + count;
+                        const title = "Presentación " + count++;
 
                         promises.push(this.getPresentationStatus(elementObj[AppConfig.PSM_HASH], did)
                             .then((credentialStatus) => {
@@ -97,7 +97,8 @@ export class Activity {
         let key = '';
         Object.keys(credential).map((keyCredential) => {
             if (keyCredential !== 'levelOfAssurance' && keyCredential !== 'iat' && keyCredential !== 'exp' && keyCredential !== 'iss' && 
-            keyCredential !== 'entityName' && keyCredential !== 'PSMHash' && keyCredential !== 'removeKey' && keyCredential !== 'nbf') {
+            keyCredential !== 'entityName' && keyCredential !== 'PSMHash' && keyCredential !== 'removeKey' && keyCredential !== 'nbf' && 
+            keyCredential !== 'credentialJWT' && keyCredential !== 'sub') {
                 key = keyCredential;
             }
         });

@@ -79,8 +79,9 @@ export class IdentityDataListComponent {
                     this.identityDisplay.push(credentialRes);
                     const credentialSelected: any = {
                         credential: this.credentials[credentialRes.id],
-                        index: credentialRes.id
+                        index: credentialRes.id,
                     }
+                    credentialSelected.credential.credJWT = securedCredentials['credentialJWT']
                     credentialSelected.credential[key] = securedCredentials[key];
                     this.loadCredential.emit(credentialSelected);
                     return Promise.resolve();
@@ -128,7 +129,7 @@ export class IdentityDataListComponent {
             } else {
                 if (keyCredential !== 'levelOfAssurance' && keyCredential !== 'field_name' && keyCredential !== '@context' && keyCredential !== 'exp' && 
                     keyCredential !== 'iat' && keyCredential !== 'issuer' && keyCredential !== 'PSMHash' && keyCredential !== 'required' && 
-                    keyCredential !== 'entityName' && keyCredential !== 'iss' && keyCredential !== 'nbf') {
+                    keyCredential !== 'entityName' && keyCredential !== 'iss' && keyCredential !== 'nbf' && keyCredential !== 'credentialJWT' && keyCredential !== 'sub') {
                     key = keyCredential;
                 }
             }
