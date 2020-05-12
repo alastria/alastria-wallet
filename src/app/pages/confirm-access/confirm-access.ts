@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
+import { HttpHeaders } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { AppConfig } from '../../../app.config';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 
 // Libraries
 import * as Web3 from 'web3';
@@ -15,6 +16,7 @@ import { IdentityService } from '../../services/identity-service';
 import { LoadingService } from '../../services/loading-service';
 import { ToastService } from '../../services/toast-service';
 import { SecuredStorageService } from '../../services/securedStorage.service';
+import { NavParams } from '@ionic/angular';
 
 @Component({
     selector: 'confirm-access',
@@ -31,32 +33,48 @@ export class ConfirmAccessPage {
     private identityLoaded = new Array<any>();
     private credentials: Array<any>;
     private verifiedJWT: any;
-    private jti: any;
-    private issuer: any;
+    private credentialJWT: any;
+    private auth: string = AppConfig.AUTH_TOKEN;
 
     constructor(
         private router: Router,
-        private route: ActivatedRoute,
+        private navParams: NavParams,
         private toastCtrl: ToastService,
         private securedStrg: SecuredStorageService,
         private loadingSrv: LoadingService,
-        private tokenSrv: TokenService,
         private transactionSrv: TransactionService,
         private http: HttpClient,
         private web3Srv: Web3Service,
-        private identitySrv: IdentityService
+        private identitySrv: IdentityService,
+        private tokenSrv: TokenService
     ) {
-        this.route.queryParams.subscribe(params => {
-            if (this.router.getCurrentNavigation().extras.state) {
-                this.dataNumberAccess = this.router.getCurrentNavigation().extras.state[AppConfig.DATA_COUNT];
-                this.credentials = this.router.getCurrentNavigation().extras.state[AppConfig.CREDENTIALS];
-                this.isPresentationRequest = this.router.getCurrentNavigation().extras.state[AppConfig.IS_PRESENTATION_REQ];
-                this.verifiedJWT = this.router.getCurrentNavigation().extras.state[AppConfig.VERIFIED_JWT];
-                this.isDeeplink = this.router.getCurrentNavigation().extras.state.isDeeplink;
-                this.jti = this.router.getCurrentNavigation().extras.state.isDeeplink;
-                this.issuer = this.router.getCurrentNavigation().extras.state[AppConfig.ISSUER];
+        this.initiateVariables();
+    }
+
+    private async initiateVariables(): Promise<void> {
+        this.dataNumberAccess = this.navParams.get(AppConfig.DATA_COUNT);
+        this.credentials = this.navParams.get(AppConfig.CREDENTIALS);
+        this.isPresentationRequest = this.navParams.get(AppConfig.IS_PRESENTATION_REQ);
+        this.verifiedJWT = this.navParams.get(AppConfig.VERIFIED_JWT);
+        this.isDeeplink = this.navParams.get('isDeeplink');
+
+        const credentialJWTArr = [];
+        if (!this.isPresentationRequest) {
+            this.credentialJWT = this.navParams.get(AppConfig.VERIFIED_JWT);
+            this.credentialJWT.map(item => {
+                credentialJWTArr.push(this.tokenSrv.decodeTokenES(item));
+            });
+            this.verifiedJWT = credentialJWTArr;
+        }
+
+        const did = (this.verifiedJWT && this.verifiedJWT.length) ? this.verifiedJWT[0].payload.iss :
+            (this.verifiedJWT && this.verifiedJWT.payload) ? this.verifiedJWT.payload.iss : null;
+        if (did) {
+            const entity = await this.transactionSrv.getEntity(did);
+            if (entity && entity.name) {
+                this.entitiyName = entity.name;
             }
-        });
+        }
     }
 
     public manageCredentials(): void {
@@ -67,10 +85,34 @@ export class ConfirmAccessPage {
         }
     }
 
+    private checkIsAllCredentialsSelected() {
+        let isAllCredentialsSelected = true;
+
+        this.credentials.map((credential, i) => {
+            if (credential.required) {
+                let isCrecentialSelected = false;
+                this.identitiesSelected.map(identity => {
+                    if (identity === i) {
+                        isCrecentialSelected = true;
+                    }
+                });
+
+                if (!isCrecentialSelected) {
+                    isAllCredentialsSelected = false;
+                }
+            }
+        });
+
+        return isAllCredentialsSelected;
+    }
+
+
     private async sendPresentation(): Promise<any> {
         try {
-            if (this.identitiesSelected.length === this.credentials.length) {
-                const web3 = this.web3Srv.getWeb3();
+            const isAllCredentialsSelected = this.checkIsAllCredentialsSelected();
+
+            if (isAllCredentialsSelected) {
+                const web3: Web3 = this.web3Srv.getWeb3();
                 const securedCredentials = new Array<any>();
                 const pendingIdentities = new Array<number>();
 
@@ -81,33 +123,38 @@ export class ConfirmAccessPage {
                         pendingIdentities.push(id);
                     }
                 }
-
-                if (!pendingIdentities.length) {
+                
+                if (!pendingIdentities.length) {                    
                     this.showLoading();
-                    const callbackUrl = this.verifiedJWT.payload.pr.procUrl;
-                    const uri = 'www.google.com';
+                    const callbackUrl = this.verifiedJWT.payload.cbu;
+                    const uri = AppConfig.procUrl;
                     const privKey = await this.securedStrg.get('userPrivateKey');
-                    const did = await this.securedStrg.getDID();
+                    const did = await this.securedStrg.get('userDID');
+                    const jti = Math.random().toString(36).substring(2);
+                    const signedCredentialJwts = this.getSingalCredentials(securedCredentials);
+                    const presentation = tokensFactory.tokens.createPresentation(`${did}#keys-1`, did, this.verifiedJWT.payload.iss,
+                        this.verifiedJWT.payload.pr['@context'], signedCredentialJwts,
+                        AppConfig.procUrl, this.verifiedJWT.payload.pr.procHash,
+                        this.verifiedJWT.payload.exp, this.verifiedJWT.payload.nbf, jti);
 
-                    const signedCredentialJwts = this.getSingalCredentials(securedCredentials, did, privKey);
-                    const presentation = tokensFactory.tokens.createPresentation(did, this.verifiedJWT.payload.iss, did,
-                        this.verifiedJWT.payload.pr['@context'], signedCredentialJwts, callbackUrl, this.verifiedJWT.payload.pr.procHash,
-                        this.verifiedJWT.payload.exp, this.verifiedJWT.payload.iat, this.jti);
-                    const signedPresentation = this.tokenSrv.signTokenES(JSON.stringify(presentation.payload), privKey.substring(2));
-                    const presentationPSMHash = tokensFactory.tokens.PSMHash(web3, signedPresentation, did.split(':')[4]);
-                    const addPresentationTx = transactionFactory.presentationRegistry.addSubjectPresentation(
-                        web3, presentationPSMHash, uri
-                    );
-
-                    presentation.payload.vp.procHash = presentationPSMHash;
-                    presentation[AppConfig.PSM_HASH] = presentationPSMHash;
+                    const signedPresentation = tokensFactory.tokens.signJWT(presentation, privKey.substring(2));
+                    const presentationPSMHash = tokensFactory.tokens.PSMHash(web3, signedPresentation, did);
+                    const addPresentationTx =
+                        transactionFactory.presentationRegistry.addSubjectPresentation(web3, presentationPSMHash, uri);
 
                     await this.identitySrv.init();
                     const subjectPresentationSigned = await this.identitySrv.getKnownTransaction(addPresentationTx);
                     await this.transactionSrv.sendSigned(subjectPresentationSigned);
-                    await this.transactionSrv.getSubjectPresentationStatus(did.split(':')[4], presentationPSMHash);
-                    await this.http.post(callbackUrl, presentation).toPromise();
-                    await this.securedStrg.setJSON(AppConfig.PRESENTATION_PREFIX + this.jti, presentation);
+                    await this.transactionSrv.getSubjectPresentationStatus(did, presentationPSMHash);
+                    const httpOptions = {
+                        headers: new HttpHeaders({
+                          'Content-Type':  'application/json',
+                          Authorization: this.auth
+                        })
+                    };
+                    await this.http.post(`${callbackUrl}`, signedPresentation, httpOptions).toPromise();
+                    presentation['PSMHash'] = presentationPSMHash;
+                    await this.securedStrg.setJSON(AppConfig.PRESENTATION_PREFIX + this.verifiedJWT.payload.jti, presentation);
 
                     this.showSuccess();
                 } else {
@@ -126,17 +173,20 @@ export class ConfirmAccessPage {
             if (this.identitiesSelected.length > 0) {
                 this.showLoading();
                 this.identitiesSelected.reduce(async (prevVal: Promise<void>, index: number) => {
-                    return prevVal.then(() => {
-                        const credentialKeys = Object.getOwnPropertyNames(this.credentials[index]);
-                        const currentCredentialKey = AppConfig.CREDENTIAL_PREFIX + credentialKeys[1];
+                    return prevVal.then(async () => {
+                        const key = this.getCreedKey(this.credentials[index]);
+                        const currentCredentialKey = AppConfig.CREDENTIAL_PREFIX + key;
                         const finalCredential = this.credentials[index];
-                        finalCredential.issuer = this.verifiedJWT[index][AppConfig.PAYLOAD][AppConfig.ISSUER];
-
+                        const entity = await this.transactionSrv.getEntity(this.verifiedJWT[index][AppConfig.PAYLOAD][AppConfig.ISSUER]);
+                        finalCredential.credentialJWT = this.credentialJWT[index];
+                        finalCredential.entityName = entity.name;
+                        finalCredential.sub = this.verifiedJWT[index][AppConfig.PAYLOAD][AppConfig.SUBJECT];
+                        
                         return this.securedStrg.hasKey(currentCredentialKey)
                             .then(async result => {
                                 let ret;
                                 if (result) {
-                                    ret = await this.existKey(currentCredentialKey, credentialKeys, index, finalCredential);
+                                    ret = await this.existKey(currentCredentialKey, key, index, finalCredential);
                                 } else {
                                     ret = await this.notExistKey(currentCredentialKey, index, finalCredential);
                                 }
@@ -154,37 +204,36 @@ export class ConfirmAccessPage {
         }
     }
 
-    private getSingalCredentials(securedCredentials: Array<any>, did: string, privKey: string) {
-        return securedCredentials.map(securedCredential => {
-            const credentialSubject = securedCredential;
-
-            const credentialJson = tokensFactory.tokens.createCredential(
-                did, this.verifiedJWT.payload.iss, did,
-                this.verifiedJWT.payload.pr['@context'], credentialSubject,
-                this.verifiedJWT.payload.exp, this.verifiedJWT.payload.iat, this.jti
-            );
-
-            return this.tokenSrv.signTokenES(JSON.stringify(credentialJson.payload), privKey.substring(2));
+    private getCreedKey(credential: any) {
+        let key = '';
+        Object.keys(credential).map((keyCredential) => {
+            if (keyCredential !== 'levelOfAssurance' && keyCredential !== 'iat' && keyCredential !== 'exp' && keyCredential !== 'iss' && 
+                keyCredential !== 'nbf' && keyCredential !== 'sub') {
+                key = keyCredential;
+            }
         });
+        return key;
     }
 
-    private async existKey(currentCredentialKey: string,  credentialKeys: any, index: number, finalCredential: any): Promise<any> {
+    private getSingalCredentials(securedCredentials: Array<any>) {
+        return securedCredentials.map(securedCredential => {
+            return securedCredential.credJWT;
+        });
+    }
+    
+    private async existKey(currentCredentialKey: string,  key: any, index: number, finalCredential: any): Promise<any> {
         try {
             const result = await this.securedStrg.getJSON(currentCredentialKey);
-            const currentCredentialValue = result[credentialKeys[1]];
-            let resultAddSubjectCredential: any;
-            const issDID = this.issuer;
+            const subDID = await this.securedStrg.get('userDID');
 
-            if (this.credentials[index][credentialKeys[1]] !== currentCredentialValue) {
-                resultAddSubjectCredential = this.transactionSrv.addSubjectCredential(this.verifiedJWT[index], issDID, 'www.google.com');
+            if (finalCredential.levelOfAssurance >= result.levelOfAssurance) {
+                return this.transactionSrv.addSubjectCredential(this.credentialJWT[index], subDID, 'www.google.com')
+                    .then((res) => {
+                        finalCredential[AppConfig.PSM_HASH] = res;
+                        return this.securedStrg.setJSON(currentCredentialKey, finalCredential);
+                    });
             } else {
-                resultAddSubjectCredential = false;
-            }
-
-            if (resultAddSubjectCredential) {
-                return this.securedStrg.setJSON(currentCredentialKey + '_' + Math.random(), finalCredential);
-            } else {
-                return false;
+                return 'Credential nos registered';
             }
         } catch (error) {
             throw error;
@@ -192,16 +241,15 @@ export class ConfirmAccessPage {
     }
 
     private async notExistKey(currentCredentialKey: string, index: number, finalCredential: any): Promise<any> {
-        return this.transactionSrv.addSubjectCredential(
-            this.verifiedJWT[index], this.verifiedJWT[index][AppConfig.PAYLOAD][AppConfig.ISSUER], 'www.google.com'
-        )
-        .then(result => {
-            finalCredential[AppConfig.PSM_HASH] = result;
-            return this.securedStrg.setJSON(currentCredentialKey, finalCredential);
-        })
-        .catch(error => {
-            throw error;
-        });
+        return this.transactionSrv.addSubjectCredential(this.credentialJWT[index],
+            this.verifiedJWT[index][AppConfig.PAYLOAD][AppConfig.SUBJECT], 'www.google.com')
+            .then(result => {
+                finalCredential[AppConfig.PSM_HASH] = result;
+                return this.securedStrg.setJSON(currentCredentialKey, finalCredential);
+            })
+            .catch(error => {
+                throw error;
+            });
     }
 
     public handleIdentitySelect(identitySelect: any): void {

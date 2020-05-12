@@ -7,6 +7,8 @@ import { AppConfig } from '../../../app.config';
 
 // MODELS
 import { Identity } from '../../models/identity.model';
+import { SelectIdentityPage } from '../../pages/confirm-access/select-identity/select-identity';
+import { TransactionService } from '../../services/transaction-service';
 
 @Component({
     selector: 'identity-data-list',
@@ -43,6 +45,7 @@ export class IdentityDataListComponent implements OnInit {
         private router: Router,
         private route: ActivatedRoute,
         private securedStrg: SecuredStorageService,
+        private transactionSrv: TransactionService
     ) {
         this.route.queryParams.subscribe(params => {
             if (this.router.getCurrentNavigation().extras.state) {
@@ -61,6 +64,7 @@ export class IdentityDataListComponent implements OnInit {
     private async parseAllCredentials(): Promise<void> {
         let iatString: any;
         let expString: any;
+        let entityName: any;
         if (this.isManualSelection) {
             this.credentials = this.allCredentials.map(cred => JSON.parse(cred));
             iatString = this.parseFormatDate(this.iat);
@@ -68,42 +72,45 @@ export class IdentityDataListComponent implements OnInit {
         }
         let count = 0;
         const credentialPromises = this.credentials.map(async (credential) => {
-            const propNames = Object.getOwnPropertyNames(credential);
-
             const level =  this.getLevelOfAssurance(credential.levelOfAssurance);
             const stars = this.createStars(level);
-
+            const key = this.getCreedKey(credential);
             let credentialRes: Identity;
 
             if (this.isPresentationRequest) {
                 let securedCredentials;
-                const key = credential[AppConfig.FIELD_NAME];
                 const hasKey = await this.securedStrg.hasKey(AppConfig.CREDENTIAL_PREFIX + key);
                 if (hasKey) {
                     const resultKey = await this.securedStrg.get(AppConfig.CREDENTIAL_PREFIX + key);
                     securedCredentials = JSON.parse(resultKey);
                     credentialRes = this.parseCredential(count++, credential[AppConfig.FIELD_NAME], securedCredentials[key], iatString,
-                        expString, level, stars, true);
-
+                        expString, securedCredentials.entityName, level, stars, true);
                     this.identityDisplay.push(credentialRes);
                     const credentialSelected: any = {
                         credential: this.credentials[credentialRes.id],
-                        index: credentialRes.id
+                        index: credentialRes.id,
                     };
+                    credentialSelected.credential.credJWT = securedCredentials.credentialJWT;
                     credentialSelected.credential[key] = securedCredentials[key];
                     this.loadCredential.emit(credentialSelected);
                     return Promise.resolve();
                 } else {
                     credentialRes = this.parseCredential(count++, credential[AppConfig.FIELD_NAME], null, '',
-                        'expString', level, stars, false);
+                        'expString', '', level, stars, false);
                     this.identityDisplay.push(credentialRes);
                     return Promise.resolve();
                 }
             } else {
-                iatString = this.parseFormatDate(credential[AppConfig.IAT]);
+                if (credential[AppConfig.ISSUER]) {
+                    const entity = await this.transactionSrv.getEntity(credential[AppConfig.ISSUER]);
+                    entityName = entity.name;
+                } else {
+                    entityName = credential.entityName;
+                }
+                iatString = this.parseFormatDate(credential[AppConfig.NBF]);
                 expString = this.parseFormatDate(credential[AppConfig.EXP]);
-                credentialRes = this.parseCredential(count++, propNames[1], credential[propNames[1].toString()], iatString,
-                                                        expString, level, stars, true);
+                credentialRes = this.parseCredential(count++, key, credential[key], iatString,
+                expString, entityName, level, stars, true);
                 this.identityDisplay.push(credentialRes);
                 return Promise.resolve();
             }
@@ -123,11 +130,31 @@ export class IdentityDataListComponent implements OnInit {
             });
     }
 
+
+    private getCreedKey(credential: any) {
+        let key = '';
+        Object.keys(credential).map((keyCredential) => {
+            if (this.isPresentationRequest) {
+                key = credential[AppConfig.FIELD_NAME];
+            } else {
+                if (keyCredential !== 'levelOfAssurance' && keyCredential !== 'field_name' && keyCredential !== '@context'
+                    && keyCredential !== 'exp' && keyCredential !== 'iat' && keyCredential !== 'issuer'
+                    && keyCredential !== 'PSMHash' && keyCredential !== 'required' &&
+                    keyCredential !== 'entityName' && keyCredential !== 'iss' && keyCredential !== 'nbf'
+                    && keyCredential !== 'credentialJWT' && keyCredential !== 'sub') {
+                    key = keyCredential;
+                }
+            }
+        });
+
+        return key;
+    }
+
     private parseFormatDate(date: any): string {
         let result = '';
         if (date) {
             const newDate = new Date(date);
-            result = newDate.getDay() + '/' + (newDate.getMonth() + 1) + '/' + newDate.getFullYear();
+            result = newDate.getDate() + '/' + (newDate.getMonth() + 1) + '/' + newDate.getFullYear();
         }
 
         return result;
@@ -181,16 +208,16 @@ export class IdentityDataListComponent implements OnInit {
         return stars;
     }
 
-    private parseCredential(id: number, title: string, value: any, addDate: string,
-                            endDate: string, level: number, stars: Array<any>, credentialAssigned: boolean) {
-
+    private parseCredential(id: number, title: string, value: any, addDate: string, endDate: string,
+                            issuer: string, level: number, stars: Array<any>, credentialAssigned: boolean) {
         return {
             id,
             titleP: (title) ? title.toUpperCase().replace(/_/g, ' ') : '',
             emitter: 'Emisor del testimonio',
             valueT: 'Valor',
             value: (value) ? value : 'Credencial no selecionada o no disponible',
-            place: 'Emisor de credencial',
+            place: 'Emisor',
+            issuer,
             addDateT: 'Fecha incorporación del testimonio',
             addDate,
             endDateT: 'Fecha fin de vigencia',

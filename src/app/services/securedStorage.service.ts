@@ -59,12 +59,6 @@ export class SecuredStorageService {
         return this.securedStorageObject.get('loginType');
     }
 
-    async getDID(): Promise<any> {
-        let hasDID = await this.hasKey(AppConfig.DID);
-        let result = hasDID ? this.get(AppConfig.DID): null;
-        return result;
-    }
-
     async getIdentityData(): Promise<any> {
         let identity = {};
         return this.get(AppConfig.USER_DID)

@@ -60,10 +60,10 @@ export class ActivityPage {
             .then(async (elements) => {
                 let count = 0;
                 const promises = [];
-                const did = await this.securedStrg.getDID();
+                const did = await this.securedStrg.get('userDID');
                 elements.map(async (element) => {
                     const elementObj = JSON.parse(element);
-                    const elementKeys = Object.getOwnPropertyNames(elementObj);
+                    const key = this.getCreedKey(elementObj)
 
                     if (prefix === AppConfig.CREDENTIAL_PREFIX) {
                         promises.push(this.getCredentialStatus(elementObj[AppConfig.PSM_HASH], did)
@@ -71,20 +71,20 @@ export class ActivityPage {
                                 // tslint:disable-next-line: radix
                                 const statusType = parseInt(credentialStatus[1]);
 
-                                return this.createActivityObject(count++, elementKeys[1], elementObj[elementKeys[1]], elementObj.issuer,
+                                return this.createActivityObject(count++, key, elementObj[key], elementObj.iss, 
                                     '', statusType, elementObj[AppConfig.REMOVE_KEY]);
                             }));
                     } else {
-                        const iat = new Date(elementObj[AppConfig.PAYLOAD][AppConfig.IAT] * 1000);
-                        const iatString = iat.getDay() + '/' + (iat.getMonth() + 1) + '/' + iat.getFullYear();
-                        const title = 'Presentación ' + count;
+                        const iat = new Date(elementObj[AppConfig.PAYLOAD][AppConfig.NBF]);
+                        const iatString = iat.getDate() + '/' + (iat.getMonth() + 1) + '/' + iat.getFullYear();
+                        const title = 'Presentación ' + count++;
 
                         promises.push(this.getPresentationStatus(elementObj[AppConfig.PSM_HASH], did)
                             .then((credentialStatus) => {
                                 // tslint:disable-next-line: radix
                                 const statusType = parseInt(credentialStatus[1]);
 
-                                return this.createActivityObject(count++, title, '', elementObj[AppConfig.PAYLOAD][AppConfig.ISSUER],
+                                return this.createActivityObject(count++, title, '', elementObj[AppConfig.PAYLOAD][AppConfig.AUDIENCE], 
                                     iatString, statusType, elementObj[AppConfig.REMOVE_KEY]);
                             }));
                     }
@@ -93,6 +93,18 @@ export class ActivityPage {
                 return Promise.all(promises);
             });
     }
+    private getCreedKey(credential: any) {
+        let key = '';
+        Object.keys(credential).map((keyCredential) => {
+            if (keyCredential !== 'levelOfAssurance' && keyCredential !== 'iat' && keyCredential !== 'exp' && keyCredential !== 'iss' && 
+            keyCredential !== 'entityName' && keyCredential !== 'PSMHash' && keyCredential !== 'removeKey' && keyCredential !== 'nbf' && 
+            keyCredential !== 'credentialJWT' && keyCredential !== 'sub') {
+                key = keyCredential;
+            }
+        });
+
+        return key;
+    }
 
     /**
      * Go item click
@@ -100,6 +112,11 @@ export class ActivityPage {
      */
     onItemClick(item: any): void {
         this.toastCtrl.presentToast('Folow');
+    }
+
+    async getEntity(issuer) {
+        const entity = await this.transactionSrv.getEntity(issuer)
+        return entity.name
     }
 
     /**
@@ -259,16 +276,17 @@ export class ActivityPage {
         this.activitiesSelected = [];
     }
 
-    private createActivityObject(activityId: number, title: string, subtitle: string, description: string,
-                                 datetime: any, statusType: number, removeKey: string): ActivityM {
+    private async createActivityObject(activityId: number, title: string, subtitle: string,
+                                       description: string, dateTime: any, statusType: number, removeKey: string) {
         const auxArray = ['Valid', 'AskIssuer', 'Revoked', 'DeletedBySubject'];
+        const entityName = await this.getEntity(description);
 
         return {
             activityId,
             title,
             subtitle,
-            description,
-            datetime,
+            description: entityName,
+            datetime: dateTime,
             type: this.type,
             status: AppConfig.ActivityStatus[auxArray[statusType]],
             removeKey,
@@ -276,13 +294,13 @@ export class ActivityPage {
     }
 
     private async getCredentialStatus(psmHash: string, did: string) {
-        const status = await this.transactionSrv.getSubjectPresentationStatus(did.split(':')[4], psmHash);
+        const status = await this.transactionSrv.getSubjectPresentationStatus(did, psmHash);
 
         return status;
     }
 
     private async getPresentationStatus(psmHash: string, did: string) {
-        const status = await this.transactionSrv.getSubjectPresentationStatus(did.split(':')[4], psmHash);
+        const status = await this.transactionSrv.getSubjectPresentationStatus(did, psmHash);
 
         return status;
     }

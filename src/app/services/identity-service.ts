@@ -52,7 +52,7 @@ export class IdentityService {
             return this.securedStrg.get('userPrivateKey').then( privateKey => {
                 this.subjectPrivateKey = privateKey;
                 this.subjectIdentity = new UserIdentity(this.web3, address, privateKey.substr(2), null);
-                this.securedStrg.getDID().then(DID => this.userDID = DID);
+                this.securedStrg.get('userDID').then(DID => this.userDID = DID);
                 return this.subjectIdentity
             })
         })

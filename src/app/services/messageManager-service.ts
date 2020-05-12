@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { HttpHeaders } from '@angular/common/http';
 import { ToastService } from './toast-service';
 import { AlertController, PopoverController, ModalController } from '@ionic/angular';
 import { TokenService } from './token-service';
@@ -26,6 +27,7 @@ export enum ProtocolTypes {
 })
 export class MessageManagerService {
     isDeeplink = false;
+    private auth: string = AppConfig.AUTH_TOKEN;
 
     constructor(private toastCtrl: ToastService,
                 public alertCtrl: AlertController,
@@ -77,8 +79,8 @@ export class MessageManagerService {
                     break;
                 case ProtocolTypes.presentationRequest:
                     this.showConfirmAccessPage(verifiedToken[AppConfig.ISSUER],
-                        verifiedToken[AppConfig.PAYLOAD][AppConfig.PR][AppConfig.DATA],
-                        verifiedToken[AppConfig.IAT], verifiedToken[AppConfig.EXP], true, verifiedToken, verifiedToken[AppConfig.JTI]);
+                        verifiedToken[AppConfig.PAYLOAD][AppConfig.PR][AppConfig.DATA], verifiedToken[AppConfig.NBF],
+                        verifiedToken[AppConfig.EXP], true, verifiedToken, verifiedToken[AppConfig.JTI]);
                     break;
                 case ProtocolTypes.alastriaToken:
                     this.createAndSendAlastriaAIC(alastriaToken);
@@ -128,22 +130,23 @@ export class MessageManagerService {
 
             if (isVerifiedToken) {
                 const identity = await this.securedStrg.getIdentityData();
+                const jti = Math.random().toString(36).substring(2)
+                const currentDate = Math.floor(Date.now());
+                const expDate = currentDate + 86400
 
                 const privKey = identity[AppConfig.USER_PRIV_KEY];
-                const pku = {
-                    id: identity[AppConfig.USER_DID],
-                    type: ['CryptographicKey', 'EcdsaKoblitzPublicKey'],
-                    curve: 'secp256k1',
-                    expires: Date.now() + (3600 * 1000),
-                    publicKeyHex: identity[AppConfig.USER_PKU]
+                const pku = identity[AppConfig.USER_PKU]
+                const subjectDID = identity[AppConfig.USER_DID]
+                const alastriaSession =
+                    tokensFactory.tokens.createAlastriaSession("@jwt", subjectDID, pku, alastriaToken, expDate, currentDate, jti);
+                const signedAlastriaSession = tokensFactory.tokens.signJWT(alastriaSession, privKey.substring(2));
+                const httpOptions = {
+                    headers: new HttpHeaders({
+                      'Content-Type':  'application/json',
+                      Authorization: this.auth
+                    })
                 };
-                const alastriaSession = tokensFactory.tokens.createAlastriaSession('@jwt', issuerDID, pku, alastriaToken);
-                const signedAS = tokensFactory.tokens.signJWT(alastriaSession, privKey.substring(2));
-                const AIC = {
-                    signedAIC: signedAS
-                };
-
-                await this.http.post(callbackUrl, AIC).toPromise();
+                await this.http.post(callbackUrl, signedAlastriaSession, httpOptions).toPromise();
                 this.loadingSrv.updateModalState(this.isDeeplink);
 
             }
@@ -181,22 +184,22 @@ export class MessageManagerService {
 
                 const alastriaAIC = tokensFactory.tokens.createAIC(signedCreateTx, alastriaToken, pku.substring(2));
                 const signedToken = tokensFactory.tokens.signJWT(alastriaAIC, privKey.substring(2));
-                const AIC = {
-                    signedAIC: signedToken
-                };
                 let DID = null;
-
-                const resultCallbackUrl = await this.http.post(callbackUrl, AIC.signedAIC).toPromise();
+                const httpOptions = {
+                    headers: new HttpHeaders({
+                      'Content-Type':  'application/json',
+                      Authorization: this.auth
+                    })
+                };
+                const resultCallbackUrl = await this.http.post(callbackUrl, signedToken, httpOptions).toPromise();
 
                 DID = resultCallbackUrl[AppConfig.DID_KEY];
-                const proxyAddress = '0x' + DID.split(':')[4];
 
                 await this.securedStrg.set(AppConfig.IS_IDENTITY_CREATED, '1');
                 await this.securedStrg.set('ethAddress', address);
                 await this.securedStrg.set(AppConfig.USER_PKU, pku);
                 await this.securedStrg.set(AppConfig.USER_PRIV_KEY, privKey);
                 await this.securedStrg.set(AppConfig.USER_DID, DID);
-                await this.securedStrg.set(AppConfig.PROXY_ADDRESS, proxyAddress);
                 const hasKeycallbackUrlPut = await this.securedStrg.hasKey('callbackUrlPut');
 
                 if (hasKeycallbackUrlPut) {
@@ -230,9 +233,8 @@ export class MessageManagerService {
 
     private prepareCredentials(verifiedToken: string | object) {
         const credentialsJWT = verifiedToken[AppConfig.VERIFIABLE_CREDENTIAL];
-
         const promises = credentialsJWT.map((credential: any) => {
-            const decodedToken = this.tokenSrv.decodeTokenES(credential);
+            const decodedToken = this.tokenSrv.decodeTokenES(credential)
             const issuerDID = decodedToken[AppConfig.PAYLOAD][AppConfig.ISSUER];
             let verifiedJWT = null;
 
@@ -244,8 +246,9 @@ export class MessageManagerService {
                 .then(isIdentityCreated => {
                     if (verifiedJWT && isIdentityCreated) {
                         const credentialSubject = decodedToken[AppConfig.PAYLOAD][AppConfig.VC][AppConfig.CREDENTIALS_SUBJECT];
-                        credentialSubject[AppConfig.IAT] = Date.now();
+                        credentialSubject[AppConfig.NBF] = decodedToken[AppConfig.PAYLOAD][AppConfig.NBF];
                         credentialSubject[AppConfig.EXP] = decodedToken[AppConfig.PAYLOAD][AppConfig.EXP];
+                        credentialSubject[AppConfig.ISSUER] = decodedToken[AppConfig.PAYLOAD][AppConfig.ISSUER]
                         return Promise.resolve(credentialSubject);
                     }
                 })
@@ -260,7 +263,7 @@ export class MessageManagerService {
 
     private prepareVerfiedJWT(verifiedToken: Array<string>): Array<any> {
         return verifiedToken.map(token => {
-            return this.tokenSrv.decodeTokenES(token);
+            return token;
         });
     }
 

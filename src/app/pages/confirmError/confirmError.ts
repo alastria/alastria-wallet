@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { ModalController, NavController } from '@ionic/angular';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ModalController, NavController, NavParams } from '@ionic/angular';
+import { Router } from '@angular/router';
 
 import { SecuredStorageService } from '../../services/securedStorage.service';
 
@@ -17,12 +17,11 @@ export class ConfirmErrorPage {
     constructor(
         public navCtrl: NavController,
         public modalCtrl: ModalController,
-        private secureStrg: SecuredStorageService,
         private router: Router,
-        private activatedRoute: ActivatedRoute
+        private navParams: NavParams
     ) {
-        this.error = this.activatedRoute.snapshot.paramMap.get('errors');
-        this.pageName = this.activatedRoute.snapshot.paramMap.get('pageName');
+        this.error = this.navParams.get('error');
+        this.pageName = this.navParams.get('pageName');
     }
 
     async dismiss() {
