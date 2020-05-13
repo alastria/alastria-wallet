@@ -14,7 +14,6 @@ import { parseCredentials } from 'src/utils';
 export class TabsPage {
 
     login: any = {};
-    tabs: any = {};
     isLoged: boolean;
 
 
@@ -34,8 +33,6 @@ export class TabsPage {
                     this.router.navigateByUrl('/home');
                 }
             );
-
-            this.setTabsParams();
 
             const token = this.router.getCurrentNavigation().extras.state.token;
             this.checkTokenAndPrepare(token);
@@ -83,15 +80,4 @@ export class TabsPage {
                 break;
         }
     }
-
-    setTabsParams() {
-        this.tabs.data = [
-            { page: 'Index', icon: 'home', title: 'Inicio' },
-            { page: 'Activity', icon: 'act', title: 'Actividad' },
-            { page: 'Camera', icon: 'leerQr', title: 'Leer Qr' },
-            { page: 'Notification', icon: 'bell', title: 'Avisos' },
-            { page: 'Options', icon: 'more', title: 'Mas' }
-        ];
-    }
-
 }

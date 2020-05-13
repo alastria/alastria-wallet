@@ -15,7 +15,6 @@ const routes: Routes = [
       [
         {
           path: 'index',
-          outlet: 'index',
           component: IndexPage
         },
         {
@@ -25,26 +24,23 @@ const routes: Routes = [
         },
         {
           path: 'camera',
-          outlet: 'camera',
           component: CameraPage
         },
         {
           path: 'notification',
-          outlet: 'notification',
           component: NotificationPage
         },
         {
           path: 'options',
-          outlet: 'options',
           component: OptionsPage
         },
-        {
-          path: '',
-          redirectTo: '/tabs/index',
-          pathMatch: 'full'
-        }
       ]
-  }
+  },
+  {
+    path: '',
+    redirectTo: '/tabs/index',
+    pathMatch: 'full'
+  },
 ];
 
 @NgModule({

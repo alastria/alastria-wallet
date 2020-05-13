@@ -1,10 +1,29 @@
 <ion-content padding>
   <ion-tabs>
     <ion-tab-bar slot="bottom">
-        <ion-tab-button tabTitle="Leer Qr" tabIcon="leerQr" [tab]="camera">
-            <ion-icon name="leerQr"></ion-icon>
-            <ion-label>Leer Qr</ion-label>
-        </ion-tab-button>
+      <ion-tab-button tab="index">
+        <ion-icon src="../../../assets/images/tabIcon/house.png"></ion-icon>
+        <ion-label>Inicio</ion-label>
+      </ion-tab-button>
+
+      <ion-tab-button tab="activity">
+        <ion-icon src="../../../assets/images/tabIcon/act.png"></ion-icon>
+        <ion-label>Actividad</ion-label>
+      </ion-tab-button>
+      <ion-tab-button tab="camera">
+        <ion-icon src="../../../assets/images/tabIcon/qr-read.png"></ion-icon>
+        <ion-label>Leer Qr</ion-label>
+      </ion-tab-button>
+
+      <ion-tab-button tab="notification">
+        <ion-icon src="../../../assets/images/tabIcon/bell.png"></ion-icon>
+        <ion-label>Avisos</ion-label>
+      </ion-tab-button>
+
+      <ion-tab-button tab="options">
+        <ion-icon src="../../../assets/images/tabIcon/more.png"></ion-icon>
+        <ion-label>Más</ion-label>
+      </ion-tab-button>
     </ion-tab-bar>
   </ion-tabs>
 </ion-content>
