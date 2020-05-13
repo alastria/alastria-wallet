@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
 import { NavParams } from '@ionic/angular';
-import { TabsPage } from '../tabsPage/tabsPage';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'page-success',
     templateUrl: 'success.html',
-    styleUrls: ['/success.scss']
+    styleUrls: ['success.scss']
 })
 export class SuccessPage {
 
@@ -25,8 +24,6 @@ export class SuccessPage {
             page: this.navParams.get('page'),
             callback: this.navParams.get('callback'),
         };
-
-        console.log('data ', this.data);
 
         this.isDeeplink = navParams.get('isDeeplink');
     }

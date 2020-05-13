@@ -3,11 +3,12 @@
 }
 
 .description-login {
-    // color: $blueT;
+    color: #325B8E;
     padding: 2%;
-    width: 300px;
     font-weight: normal;
-
+    text-align: center;
+    margin: auto;
+    width: 80%;
     &.-bold {
         font-weight: bold;
     }
@@ -21,18 +22,16 @@
     margin-bottom: 70px;
 }
 
-img {
-    object-fit: fill;
-}
-
 .footer-md::before {
     background-image: none;
 }
 
 .btnConfirm {
-    background: linear-gradient(90deg, #325B8E 0%, #00CAD6 100%);
-    border-radius: 30px;
+    --background: linear-gradient(90deg, #325B8E 0%, #00CAD6 100%);
+    --border-radius: 30px;
     height: 50px;
+    margin: auto;
+    width: 80%;
 }
 
 .btnConfirm:before {
@@ -43,6 +42,11 @@ img {
     font-size: 25px;
 }
 
-ion-footer {
-    height: 80px;
+img {
+    object-fit: fill;
+    margin: auto;
+}
+
+.specific-height {
+    height: 150px;
 }
