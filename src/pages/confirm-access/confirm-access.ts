@@ -152,7 +152,7 @@ export class ConfirmAccess {
                     };
                     await this.http.post(`${callbackUrl}`, signedPresentation, httpOptions).toPromise();
                     presentation['PSMHash'] = presentationPSMHash
-                    await this.securedStrg.setJSON(AppConfig.PRESENTATION_PREFIX + this.verifiedJWT.payload.jti, presentation);
+                    await this.securedStrg.setJSON(AppConfig.PRESENTATION_PREFIX + Math.random().toString(36).substring(2), presentation);
     
                     this.showSuccess();
                 } else {
