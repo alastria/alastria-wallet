@@ -132,7 +132,7 @@ export class MessageManagerService {
                 const identity = await this.securedStrg.getIdentityData();
                 const jti = Math.random().toString(36).substring(2)
                 const currentDate = Math.floor(Date.now());
-                const expDate = currentDate + 86400
+                const expDate = currentDate + 86400;
 
                 const privKey = identity[AppConfig.USER_PRIV_KEY];
                 const pku = identity[AppConfig.USER_PKU]
@@ -147,6 +147,7 @@ export class MessageManagerService {
                     })
                 };
                 await this.http.post(callbackUrl, signedAlastriaSession, httpOptions).toPromise();
+                this.loadingSrv.hide();
                 this.loadingSrv.updateModalState(this.isDeeplink);
 
             }
@@ -162,7 +163,6 @@ export class MessageManagerService {
         const issuerDID = decodedToken[AppConfig.PAYLOAD][AppConfig.ISSUER];
         const callbackUrl = decodedToken[AppConfig.PAYLOAD][AppConfig.CBU];
         let isVerifiedToken: any;
-
         try {
             const issuerPKU = await this.transactionSrv.getCurrentPublicKey(issuerDID);
             isVerifiedToken = this.tokenSrv.verifyTokenES(alastriaToken, `04${issuerPKU}`);
@@ -212,20 +212,20 @@ export class MessageManagerService {
 
                     await this.http.put(callbackUrlPut, userUpdate).toPromise();
                     await this.securedStrg.remove('callbackUrlPut');
-
+                    this.loadingSrv.hide();
                     this.loadingSrv.updateModalState(this.isDeeplink);
 
                 } else {
+                    this.loadingSrv.hide();
                     this.loadingSrv.updateModalState(this.isDeeplink);
                 }
 
             } else if (!isVerifiedToken) {
-                this.showConfirmEror('Error: No se puede verificar al Service Provider');
+                    this.showConfirmEror('Error: No se puede verificar al Service Provider');
             } else {
                 this.showConfirmEror('Error: Identidad ya creada');
             }
         } catch (error) {
-            console.error('Error', error);
             this.showConfirmEror();
         }
 
