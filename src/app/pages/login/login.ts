@@ -6,6 +6,9 @@ import { FingerprintAIO } from '@ionic-native/fingerprint-aio/ngx';
 // SERVICES
 import { SecuredStorageService } from '../../services/securedStorage.service';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
+import { Deeplinks } from '@ionic-native/deeplinks/ngx';
+import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
+import { parseCredentials } from 'src/utils';
 
 /**
  * Generated class for the LoginPage page.
@@ -22,7 +25,9 @@ import { Validators, FormBuilder, FormGroup } from '@angular/forms';
   styleUrls: ['/login.scss']
 })
 export class LoginPage {
-  @Output() handleLogin = new EventEmitter<boolean>();
+  isLogged: boolean;
+  token: string;
+  credentials: string;
   accessKeyForm: FormGroup;
   title = 'Accede para gestionar tu identidad de Alastria.';
   logoUrl = 'assets/images/logo/letter-alastria-white.png';
@@ -48,7 +53,10 @@ export class LoginPage {
   constructor(private platform: Platform,
               private faio: FingerprintAIO,
               private securedStrg: SecuredStorageService,
-              private fb: FormBuilder) {
+              private fb: FormBuilder,
+              private router: Router,
+              private route: ActivatedRoute,
+              private deeplinks: Deeplinks) {
     this.platform.backButton.subscribe(() => {
       if (this.loginType) {
         if (!this.hashKeyLoginType) {
@@ -79,6 +87,31 @@ export class LoginPage {
               this.selectTypeLogin(this.buttons[0].type);
             });
         }
+
+        this.route.queryParams.subscribe(params => {
+          if (this.router.getCurrentNavigation() && this.router.getCurrentNavigation().extras
+              && this.router.getCurrentNavigation().extras.state) {
+              this.token = this.router.getCurrentNavigation().extras.state.token;
+          }
+        });
+        this.deeplinks.route({
+            '/': LoginPage,
+            '/login': LoginPage,
+            '/createAI': LoginPage,
+            '/createCredentials': LoginPage,
+            '/createPresentations': LoginPage
+        }).subscribe(
+            (match) => {
+                const path = (match &&  match.$link) ? match.$link.path : null;
+
+                if (!this.isLogged) {
+                    this.controlDeeplink(path, match.$args);
+                }
+            },
+            (noMatch) => {
+                console.log('No Match ', noMatch);
+            }
+        );
       });
   }
 
@@ -109,7 +142,7 @@ export class LoginPage {
       if (!isAuthorized) {
         this.accessKeyForm.get('key').setErrors({incorrect: true});
       }
-      this.handleLogin.emit(isAuthorized);
+      this.handleLogin(isAuthorized);
     }
   }
 
@@ -164,15 +197,15 @@ export class LoginPage {
             .then(() => {
               this.securedStrg.setLoginType(this.loginType)
                 .then(() => {
-                  this.handleLogin.emit(true);
+                  this.handleLogin(true);
                 });
             })
             .catch(() => {
-                this.handleLogin.emit(false);
+                this.handleLogin(false);
                 reject('Error in fingerprint');
             });
         }).catch(err => {
-            this.handleLogin.emit(false);
+            this.handleLogin(false);
             if (err === 'cordova_not_available') {
               reject('Cordova not aviable');
             } else {
@@ -182,5 +215,68 @@ export class LoginPage {
       }
     );
   }
+
+  async handleLogin(isLogged: boolean): Promise<any> {
+    this.isLogged = isLogged;
+    if (isLogged) {
+        const did = await this.securedStrg.hasKey('userDID');
+        if (did) {
+          const navigationExtras: NavigationExtras = {
+            state: {
+                token: this.token
+            }
+          };
+          this.router.navigate(['/', 'tabs', 'index'], navigationExtras);
+        } else {
+            const navigationExtras: NavigationExtras = {
+              state: {
+                  token: this.token
+              }
+            };
+            this.router.navigate(['/', 'entities'], navigationExtras);
+        }
+    }
+  }
+
+  private controlDeeplink(path: string, args: any) {
+      switch (path) {
+          case '/createAI':
+
+              this.securedStrg.hasKey('userDID')
+                  .then((DID) => {
+                      if (!DID) {
+                          this.token = args.alastriaToken;
+                          const navigationExtras: NavigationExtras = {
+                            state: {
+                                token: this.token
+                            }
+                          };
+                          this.router.navigate(['/', 'home'], navigationExtras);
+                      }
+                  });
+              break;
+          case '/createCredentials':
+              this.token = parseCredentials(args.credentials);
+
+              if (this.isLogged) {
+                  this.handleLogin(this.isLogged);
+              }
+              break;
+
+          case '/login':
+          case '/createPresentations':
+              this.token = args.alastriaToken;
+
+              if (this.isLogged) {
+                  this.handleLogin(this.isLogged);
+              }
+              break;
+
+          default:
+
+              break;
+      }
+  }
+
 
 }

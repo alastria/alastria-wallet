@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 import { SecuredStorageService } from '../../services/securedStorage.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { MessageManagerService } from 'src/app/services/messageManager-service';
 import { Deeplinks } from '@ionic-native/deeplinks/ngx';
 import { parseCredentials } from 'src/utils';
@@ -15,11 +15,10 @@ export class TabsPage {
 
     login: any = {};
     isLoged: boolean;
-
-
     constructor(
         private messageManagerService: MessageManagerService,
         private deeplinks: Deeplinks,
+        private route: ActivatedRoute,
         private router: Router,
         private securedStrg: SecuredStorageService,
     ) {
@@ -34,8 +33,14 @@ export class TabsPage {
                 }
             );
 
-            const token = this.router.getCurrentNavigation().extras.state.token;
-            this.checkTokenAndPrepare(token);
+
+            this.route.queryParams.subscribe(() => {
+                if (this.router.getCurrentNavigation() && this.router.getCurrentNavigation().extras
+                    && this.router.getCurrentNavigation().extras.state) {
+                    const token = this.router.getCurrentNavigation().extras.state.token;
+                    this.checkTokenAndPrepare(token);
+                }
+            });
 
             this.deeplinks.route({
                 '/': TabsPage,
