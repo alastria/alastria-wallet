@@ -123,7 +123,7 @@ export class MessageManagerService {
                 const privKey = identity[AppConfig.USER_PRIV_KEY];
                 const pku = identity[AppConfig.USER_PKU]
                 const subjectDID = identity[AppConfig.USER_DID]
-                const alastriaSession = tokensFactory.tokens.createAlastriaSession("@jwt", subjectDID, pku, alastriaToken, expDate, currentDate, jti);
+                const alastriaSession = tokensFactory.tokens.createAlastriaSession("@jwt", subjectDID, `0x${pku}`, alastriaToken, expDate, currentDate, jti);
                 const signedAlastriaSession = tokensFactory.tokens.signJWT(alastriaSession, privKey.substring(2));
                 const httpOptions = {
                     headers: new HttpHeaders({
@@ -165,7 +165,7 @@ export class MessageManagerService {
 
                 const signedCreateTx = await subjectIdentity.getKnownTransaction(createTx);
 
-                const alastriaAIC = tokensFactory.tokens.createAIC(signedCreateTx, alastriaToken, pku.substring(2));
+                const alastriaAIC = tokensFactory.tokens.createAIC(signedCreateTx, alastriaToken, pku);
                 const signedToken = tokensFactory.tokens.signJWT(alastriaAIC, privKey.substring(2));
                 let DID = null;
                 const httpOptions = {

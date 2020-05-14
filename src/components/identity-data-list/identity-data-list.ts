@@ -79,7 +79,7 @@ export class IdentityDataListComponent {
                     this.identityDisplay.push(credentialRes);
                     const credentialSelected: any = {
                         credential: this.credentials[credentialRes.id],
-                        index: credentialRes.id,
+                        index: credentialRes.id
                     }
                     credentialSelected.credential.credJWT = securedCredentials['credentialJWT']
                     credentialSelected.credential[key] = securedCredentials[key];

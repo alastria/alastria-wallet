@@ -133,7 +133,7 @@ export class ConfirmAccess {
                     let jti = Math.random().toString(36).substring(2)
                     let signedCredentialJwts = this.getSingalCredentials(securedCredentials);
                     let presentation = tokensFactory.tokens.createPresentation(`${did}#keys-1`, did, this.verifiedJWT.payload.iss, 
-                        this.verifiedJWT.payload.pr['@context'], signedCredentialJwts, AppConfig.procUrl, this.verifiedJWT.payload.pr.procHash,
+                        this.verifiedJWT.payload.pr['@context'], signedCredentialJwts, AppConfig.procUrl, `0x${this.verifiedJWT.payload.pr.procHash}`,
                         this.verifiedJWT.payload.exp, this.verifiedJWT.payload.nbf, jti);
 
                     let signedPresentation = tokensFactory.tokens.signJWT(presentation, privKey.substring(2));
