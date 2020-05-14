@@ -79,8 +79,9 @@ export class IdentityDataListComponent {
                     this.identityDisplay.push(credentialRes);
                     const credentialSelected: any = {
                         credential: this.credentials[credentialRes.id],
-                        index: credentialRes.id
+                        index: credentialRes.id,
                     }
+                    credentialSelected.credential.credJWT = securedCredentials['credentialJWT']
                     credentialSelected.credential[key] = securedCredentials[key];
                     this.loadCredential.emit(credentialSelected);
                     return Promise.resolve();
@@ -97,7 +98,7 @@ export class IdentityDataListComponent {
                 } else {
                     entityName = credential.entityName
                 }
-                iatString = this.parseFormatDate(credential[AppConfig.IAT]);
+                iatString = this.parseFormatDate(credential[AppConfig.NBF]);
                 expString = this.parseFormatDate(credential[AppConfig.EXP]);
                 credentialRes = this.parseCredential(count++, key, credential[key], iatString,
                 expString, entityName, level, stars, true);
@@ -128,7 +129,7 @@ export class IdentityDataListComponent {
             } else {
                 if (keyCredential !== 'levelOfAssurance' && keyCredential !== 'field_name' && keyCredential !== '@context' && keyCredential !== 'exp' && 
                     keyCredential !== 'iat' && keyCredential !== 'issuer' && keyCredential !== 'PSMHash' && keyCredential !== 'required' && 
-                    keyCredential !== 'entityName' && keyCredential !== 'iss') {
+                    keyCredential !== 'entityName' && keyCredential !== 'iss' && keyCredential !== 'nbf' && keyCredential !== 'credentialJWT' && keyCredential !== 'sub') {
                     key = keyCredential;
                 }
             }
@@ -140,7 +141,7 @@ export class IdentityDataListComponent {
     private parseFormatDate(date: any): string {
         let result = '';
         if (date) {
-            const newDate = new Date(date * 1000); 
+            const newDate = new Date(date); 
             result = newDate.getDate() + "/" + (newDate.getMonth() + 1) + "/" + newDate.getFullYear();
         }
 

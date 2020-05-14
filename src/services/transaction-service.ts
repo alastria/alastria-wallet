@@ -1,12 +1,10 @@
 import { Injectable } from "@angular/core";
 import * as Web3 from "web3";
-import { AppConfig } from "../app.config";
 import { transactionFactory, tokensFactory } from "alastria-identity-lib";
 
 // Services
 import { Web3Service } from "./web3-service";
 import { IdentityService } from "./identity-service";
-import { SecuredStorageService } from "./securedStorage.service";
 
 // Models
 import { PresentationStatus } from './../models/presentation-status.model';
@@ -20,36 +18,25 @@ export class TransactionService {
     constructor(
         private web3Srv: Web3Service,
         private identitySrv: IdentityService,
-        private securedStrg: SecuredStorageService
     ) {
         this.web3 = this.web3Srv.getWeb3();
     }
 
 
-    public createAndAddSubjectCredential(kidCredential, didIsssuer, subjectAlastriaID, context, credentialSubject, tokenExpTime, tokenActivationDate, jti, uri): Promise<any> {
-        let credential = tokensFactory.tokens.createCredential(kidCredential, didIsssuer,
-            subjectAlastriaID, context, credentialSubject, tokenExpTime, tokenActivationDate, jti);
-  
-        return this.securedStrg.get('userPrivateKey').then( privateKey => {
-            let signedJWTCredential = tokensFactory.tokens.signJWT(credential, privateKey);
-    
-            let credentialHash = tokensFactory.tokens.PSMHash(this.web3, signedJWTCredential, didIsssuer);
-    
-            let subjectCredential = transactionFactory.credentialRegistry.addSubjectCredential(this.web3, credentialHash, uri); //aqui no funciona
-            return this.identitySrv.getKnownTransaction(subjectCredential).then((subjectCredentialSigned: string) => {
-                return this.sendSigned(subjectCredentialSigned);
-            }).then(() => {
-                return credentialHash;
-            });
+    public createAndAddSubjectCredential(credential, didSubject, uri): Promise<any> {
+        let credentialHash = tokensFactory.tokens.PSMHash(this.web3, credential, didSubject);
+
+        let subjectCredential = transactionFactory.credentialRegistry.addSubjectCredential(this.web3, credentialHash, uri); //aqui no funciona
+        return this.identitySrv.getKnownTransaction(subjectCredential).then((subjectCredentialSigned: string) => {
+            return this.sendSigned(subjectCredentialSigned);
+        }).then(() => {
+            return credentialHash;
         });
+        
     }
 
-    public addSubjectCredential(credential, didIsssuer, uri): Promise<any> {
-
-        return this.createAndAddSubjectCredential(credential[AppConfig.HEADER][AppConfig.KID], didIsssuer,
-            credential[AppConfig.PAYLOAD][AppConfig.SUBJECT], credential[AppConfig.PAYLOAD][AppConfig.VC][AppConfig.context],
-            credential[AppConfig.PAYLOAD][AppConfig.VC][AppConfig.CREDENTIALS_SUBJECT], credential[AppConfig.PAYLOAD][AppConfig.EXP],
-            credential[AppConfig.PAYLOAD][AppConfig.NBF], credential[AppConfig.PAYLOAD][AppConfig.JTI], uri);
+    public addSubjectCredential(credential, didSubject, uri): Promise<any> {
+        return this.createAndAddSubjectCredential(credential, didSubject, uri);
     }
 
 

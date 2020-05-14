@@ -65,20 +65,20 @@ export class Activity {
                 const did = await this.securedStrg.get('userDID');
                 elements.map(async (element) => {
                     const elementObj = JSON.parse(element);
-                    const elementKeys = Object.getOwnPropertyNames(elementObj);
+                    const key = this.getCreedKey(elementObj)
 
                     if (prefix === AppConfig.CREDENTIAL_PREFIX) {
                         promises.push(this.getCredentialStatus(elementObj[AppConfig.PSM_HASH], did)
                             .then((credentialStatus) => {
                                 const statusType = parseInt(credentialStatus[1]);
 
-                                return this.createActivityObject(count++, elementKeys[1], elementObj[elementKeys[1]], elementObj.iss, 
+                                return this.createActivityObject(count++, key, elementObj[key], elementObj.iss, 
                                     "", statusType, elementObj[AppConfig.REMOVE_KEY]);
                             }));
                     } else {
-                        const iat = new Date(elementObj[AppConfig.PAYLOAD][AppConfig.IAT] * 1000);
-                        const iatString = iat.getDay() + "/" + (iat.getMonth() + 1) + "/" + iat.getFullYear();
-                        const title = "Presentación " + count;
+                        const iat = new Date(elementObj[AppConfig.PAYLOAD][AppConfig.NBF]);
+                        const iatString = iat.getDate() + "/" + (iat.getMonth() + 1) + "/" + iat.getFullYear();
+                        const title = "Presentación " + count++;
 
                         promises.push(this.getPresentationStatus(elementObj[AppConfig.PSM_HASH], did)
                             .then((credentialStatus) => {
@@ -92,6 +92,18 @@ export class Activity {
 
                 return Promise.all(promises);
             });
+    }
+    private getCreedKey(credential: any) {
+        let key = '';
+        Object.keys(credential).map((keyCredential) => {
+            if (keyCredential !== 'levelOfAssurance' && keyCredential !== 'iat' && keyCredential !== 'exp' && keyCredential !== 'iss' && 
+            keyCredential !== 'entityName' && keyCredential !== 'PSMHash' && keyCredential !== 'removeKey' && keyCredential !== 'nbf' && 
+            keyCredential !== 'credentialJWT' && keyCredential !== 'sub') {
+                key = keyCredential;
+            }
+        });
+
+        return key;
     }
 
     /**

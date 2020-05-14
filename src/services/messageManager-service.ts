@@ -68,7 +68,7 @@ export class MessageManagerService {
                         })
                     break;
                 case ProtocolTypes.presentationRequest:
-                    this.showConfirmAccess(verifiedToken[AppConfig.ISSUER], verifiedToken[AppConfig.PAYLOAD][AppConfig.PR][AppConfig.DATA], verifiedToken[AppConfig.IAT],
+                    this.showConfirmAccess(verifiedToken[AppConfig.ISSUER], verifiedToken[AppConfig.PAYLOAD][AppConfig.PR][AppConfig.DATA], verifiedToken[AppConfig.NBF],
                         verifiedToken[AppConfig.EXP], true, verifiedToken, verifiedToken[AppConfig.JTI]);
                     break;
                 case ProtocolTypes.alastriaToken:
@@ -116,11 +116,14 @@ export class MessageManagerService {
             
             if (isVerifiedToken) {
                 const identity = await this.securedStrg.getIdentityData();
+                let jti = Math.random().toString(36).substring(2)
+                let currentDate = Math.floor(Date.now());
+                let expDate = currentDate + 86400
 
                 const privKey = identity[AppConfig.USER_PRIV_KEY];
                 const pku = identity[AppConfig.USER_PKU]
                 const subjectDID = identity[AppConfig.USER_DID]
-                const alastriaSession = tokensFactory.tokens.createAlastriaSession("@jwt", subjectDID, pku, alastriaToken);
+                const alastriaSession = tokensFactory.tokens.createAlastriaSession("@jwt", subjectDID, pku, alastriaToken, expDate, currentDate, jti);
                 const signedAlastriaSession = tokensFactory.tokens.signJWT(alastriaSession, privKey.substring(2));
                 const httpOptions = {
                     headers: new HttpHeaders({
@@ -213,7 +216,6 @@ export class MessageManagerService {
 
     private prepareCredentials(verifiedToken: string | object) {
         let credentialsJWT = verifiedToken[AppConfig.VERIFIABLE_CREDENTIAL];
-
         let promises = credentialsJWT.map((credential: any) => {
             let decodedToken = this.tokenSrv.decodeTokenES(credential)
             let issuerDID = decodedToken[AppConfig.PAYLOAD][AppConfig.ISSUER];
@@ -227,7 +229,7 @@ export class MessageManagerService {
                 .then(isIdentityCreated => {
                     if (verifiedJWT && isIdentityCreated) {
                         const credentialSubject = decodedToken[AppConfig.PAYLOAD][AppConfig.VC][AppConfig.CREDENTIALS_SUBJECT];
-                        credentialSubject[AppConfig.IAT] = decodedToken[AppConfig.PAYLOAD][AppConfig.IAT];
+                        credentialSubject[AppConfig.NBF] = decodedToken[AppConfig.PAYLOAD][AppConfig.NBF];
                         credentialSubject[AppConfig.EXP] = decodedToken[AppConfig.PAYLOAD][AppConfig.EXP];
                         credentialSubject[AppConfig.ISSUER] = decodedToken[AppConfig.PAYLOAD][AppConfig.ISSUER]
                         return Promise.resolve(credentialSubject);
@@ -244,7 +246,7 @@ export class MessageManagerService {
 
     private prepareVerfiedJWT(verifiedToken: Array<string>): Array<any> {
         return verifiedToken.map(token => {
-            return this.tokenSrv.decodeTokenES(token);
+            return token;
         });
     }
 }
