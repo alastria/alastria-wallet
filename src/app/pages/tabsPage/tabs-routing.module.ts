@@ -19,7 +19,6 @@ const routes: Routes = [
         },
         {
           path: 'activity',
-          outlet: 'activity',
           component: ActivityPage
         },
         {
