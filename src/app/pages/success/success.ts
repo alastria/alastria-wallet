@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavParams } from '@ionic/angular';
+import { NavParams, ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
 
 @Component({
@@ -13,6 +13,7 @@ export class SuccessPage {
     isDeeplink: any = false;
 
     constructor(
+        public modalCtrl: ModalController,
         private router: Router,
         private navParams: NavParams
     ) {
@@ -29,6 +30,6 @@ export class SuccessPage {
     }
 
     public closeModal() {
-        this.router.navigateByUrl('/tabs');
+        this.modalCtrl.dismiss();
     }
 }

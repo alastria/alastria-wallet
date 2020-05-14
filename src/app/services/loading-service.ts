@@ -1,6 +1,7 @@
 import { LoadingController, ModalController } from '@ionic/angular';
 import { Injectable } from '@angular/core';
 import { SuccessPage } from '../pages/success/success';
+import { Router } from '@angular/router';
 enum State {
     HIDED,
     LOADING,
@@ -22,6 +23,7 @@ export class LoadingService {
     constructor(
         private loadingCtrl: LoadingController,
         private modalCtrl: ModalController,
+        private router: Router
     ) {
         this.currentModalState = State.HIDED;
     }
@@ -38,6 +40,7 @@ export class LoadingService {
     }
 
     public hide() {
+        console.log(' --------- HIDE --------');
         if (this.loadingModal) {
             this.loadingModal.dismiss();
         }
@@ -49,16 +52,15 @@ export class LoadingService {
         const imgPrincipal = 'assets/images/alastria/loading.png';
         const imgSuccess = '';
         const page = 'loading';
-        const modal = await this.presentModal({ titleSuccess, textSuccess, imgPrincipal, imgSuccess, page });
-
+        this.loadingModal = await this.presentModal({ titleSuccess, textSuccess, imgPrincipal, imgSuccess, page });
         this.currentModalState = State.LOADING;
-        this.loadingTimer = new Promise((resolve) => {
-              setTimeout(() => {
-                  resolve();
-              }, this.TIMER_MS);
-          });
 
-        return await modal.present();
+        this.loadingTimer = new Promise((resolve) => {
+            setTimeout(() => {
+                resolve();
+            }, this.TIMER_MS);
+        });
+        return await this.loadingModal.present();
     }
 
     public updateModalState(isDeeplink?: boolean) {
@@ -76,11 +78,14 @@ export class LoadingService {
         const titleSuccess = '¡Hecho!';
         const textSuccess = 'Recuerda que puedes ver todos tus movimientos de AlastriaID en la opción de <strong>"Actividad"</strong>';
         const imgPrincipal = 'assets/images/alastria/success.png';
-        const imgSuccess = 'assets/images/tabIcon/act.png';
+        const imgSuccess = 'assets/svg/tabIcon/activity.svg';
         const page = 'success';
 
         const successModal = await this.presentModal({ titleSuccess, textSuccess, imgPrincipal, imgSuccess, page, isDeeplink });
-
+        successModal.onWillDismiss()
+            .then((res) => {
+                this.router.navigateByUrl('/tabs/index');
+            });
         this.currentModalState = State.SUCCESS;
 
         return await successModal.present();
