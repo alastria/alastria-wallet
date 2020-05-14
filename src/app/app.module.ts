@@ -16,7 +16,6 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { TabsPageModule } from './pages/tabsPage/tabsPage.module';
 import { SuccessPageModule } from './pages/success/success.module';
 import { ConfirmAccessModule } from './pages/confirm-access/confirm-access.module';
-import { HomePageModule } from './pages/home/home.module';
 import { LoginPageModule } from './pages/login/login.module';
 import { EntitiesPageModule } from './pages/entities/entities.module';
 import { UserSettingsModule } from './components/user-info-header/userSettings/user-settings.module';
@@ -43,7 +42,6 @@ import { Web3Service } from './services/web3-service';
         BrowserModule,
         HttpClientModule,
         AppRoutingModule,
-        HomePageModule,
         TabsPageModule,
         NgxQRCodeModule,
         SuccessPageModule,

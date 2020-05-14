@@ -13,10 +13,7 @@ const routes: Routes = [
   { path: 'entities', component: EntitiesPage },
   { path: 'camera', component: CameraPage },
   { path: 'profile', component: ProfilePage },
-  { path: 'settings', component: UserSettingsPage },{
-    path: 'home',
-    loadChildren: () => import('./pages/home/home.module').then( m => m.HomePageModule)
-  },
+  { path: 'settings', component: UserSettingsPage },
   { path: 'tabs',
     loadChildren: () => import('./pages/tabsPage/tabsPage.module').then( m => m.TabsPageModule)
   },
