@@ -65,7 +65,6 @@ export class MessageManagerService {
     }
 
     public launchProtocol(protocolType: ProtocolTypes | string, verifiedToken: Array<string>, alastriaToken: string): void {
-        console.log('protocol type ', protocolType);
         if (verifiedToken) {
             switch (protocolType) {
                 case ProtocolTypes.presentation:
@@ -204,7 +203,6 @@ export class MessageManagerService {
 
                 if (hasKeycallbackUrlPut) {
                     const callbackUrlPut = await this.securedStrg.get('callbackUrlPut');
-
                     const userUpdate = {
                         did: DID,
                         vinculated: true
