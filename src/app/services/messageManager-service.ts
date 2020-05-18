@@ -147,14 +147,13 @@ export class MessageManagerService {
                     })
                 };
                 await this.http.post(callbackUrl, signedAlastriaSession, httpOptions).toPromise();
-                this.loadingSrv.hide();
                 this.loadingSrv.updateModalState(this.isDeeplink);
-
+                this.loadingSrv.hide();
             }
 
         } catch (error) {
-            this.loadingSrv.hide();
             this.showConfirmEror();
+            this.loadingSrv.hide();
         }
     }
 
@@ -212,12 +211,11 @@ export class MessageManagerService {
 
                     await this.http.put(callbackUrlPut, userUpdate).toPromise();
                     await this.securedStrg.remove('callbackUrlPut');
-                    this.loadingSrv.hide();
                     this.loadingSrv.updateModalState(this.isDeeplink);
-
+                    this.loadingSrv.hide();
                 } else {
-                    this.loadingSrv.hide();
                     this.loadingSrv.updateModalState(this.isDeeplink);
+                    this.loadingSrv.hide();
                 }
 
             } else if (!isVerifiedToken) {
