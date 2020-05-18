@@ -65,6 +65,7 @@ export class MessageManagerService {
     }
 
     public launchProtocol(protocolType: ProtocolTypes | string, verifiedToken: Array<string>, alastriaToken: string): void {
+        console.log('protocol type ', protocolType);
         if (verifiedToken) {
             switch (protocolType) {
                 case ProtocolTypes.presentation:
@@ -75,6 +76,7 @@ export class MessageManagerService {
                         })
                         .catch(() => {
                             this.showConfirmEror('No se han podido crear las credenciales');
+                            this.loadingSrv.hide();
                         });
                     break;
                 case ProtocolTypes.presentationRequest:
@@ -106,11 +108,10 @@ export class MessageManagerService {
     }
 
     private async showConfirmEror(message?: string) {
-        this.loadingSrv.hide();
         const error = {
             message: message ? message : 'Error: Contacte con el service provider'
         };
-        const alert = await this.presentModal(ConfirmAccessPage, { error });
+        const alert = await this.presentModal(ConfirmErrorPage, { error });
 
         return await alert.present();
     }
@@ -219,12 +220,16 @@ export class MessageManagerService {
                 }
 
             } else if (!isVerifiedToken) {
-                    this.showConfirmEror('Error: No se puede verificar al Service Provider');
+                this.showConfirmEror('Error: No se puede verificar al Service Provider');
+                this.loadingSrv.hide();
+
             } else {
                 this.showConfirmEror('Error: Identidad ya creada');
+                this.loadingSrv.hide();
             }
         } catch (error) {
             this.showConfirmEror();
+            this.loadingSrv.hide();
         }
 
     }
@@ -270,6 +275,6 @@ export class MessageManagerService {
           component: page,
           componentProps
         });
-        return await modal.present();
+        return modal;
     }
 }
