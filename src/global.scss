@@ -64,6 +64,7 @@
     font-size: 14px;
     color: #325B8E;
 }
+
 .main {
     background: linear-gradient(153.34deg, rgba(50, 91, 142, 0.8) 7.11%, rgba(0, 178, 188, 0.8) 78.61%), url('./assets/images/background/background.png');
     background-repeat: no-repeat;
@@ -71,30 +72,38 @@
     mix-blend-mode: normal;
     filter: blur(1px);
 }
+
 .toolbar img {
     max-height: 37px;
 }
+
 .toolbar-background {
     --ion-background-color: rgba(0,0,0,0);
     color: #FFFFFF;
 }
+
 .mainContent {
     --ion-background-color: rgba(0,0,0,0);
     color: #FFFFFF;
 }
+
 .menu {
     color: #FFFFFF;
 }
+
 .grey,
 .item-inner .input-wrapper .grey {
     color :#cccccc;
 }
+
 .grey input::placeholder {
     color :#cccccc;
 }
+
 .header-ios {
     padding-top:24px;
 }
+
 .label {
     font-family: Roboto;
     font-style: normal;
@@ -103,22 +112,34 @@
     font-size: 18px;
     color: #325B8E;
 }
+
 .logo {
     padding-left: 10px;
 }
+
 .iconLogin {
     height: 27px;
 }
+
 .nameUser {
     font-size: 18px;
     color: #FFFFFF;
     text-align: center;
     padding-bottom: 10%;
 }
+
 .list-md .item-input:last-child {
     border-bottom: 0;
 }
+
 .col {
     width: inherit;
     min-height: inherit;
+}
+
+.without-items {
+    width: 100%;
+    text-align: center;
+    margin-top: 50%;
+    font-size: xx-large;
 }
