@@ -1,19 +1,20 @@
-<ion-content padding>
-  <ion-header>
-    <div class="header-title">
-      <ion-title>
-        <p align="center">Entidades validadoras</p>
-      </ion-title>
-    </div>
-    <ion-searchbar [(ngModel)]="searchTerm" (ionInput)="onSearch($event)"></ion-searchbar>
-  </ion-header>
+<ion-header>
+  <div class="header-title">
+    <ion-title>
+      <p align="center">Entidades validadoras</p>
+    </ion-title>
+  </div>
+  <ion-searchbar [(ngModel)]="searchTerm" (ionInput)="onSearch($event)"></ion-searchbar>
+</ion-header>
 
-  <ion-content #pageContent fullscreen>
-    <item-list [items]="entities" (handleSelectItem)="openBlank($event)">
-    </item-list>
-  </ion-content>
-
-  <ion-footer>
-    <img class="readQr" src="../assets/svg/tabIcon/qr-read.svg" alt="qr image" (click)="readQr()">
-  </ion-footer>
+<ion-content #pageContent fullscreen>
+  <item-list [items]="entities" (handleSelectItem)="openBlank($event)">
+  </item-list>
+  <div *ngIf="!entities || !entities.length" class="without-items">
+    No hay entidades
+  </div>
 </ion-content>
+
+<ion-footer>
+  <img class="readQr" src="../assets/svg/tabIcon/qr-read.svg" alt="qr image" (click)="readQr()">
+</ion-footer>
