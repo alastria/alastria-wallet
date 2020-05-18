@@ -15,6 +15,7 @@ import { SocketService } from '../../services/socket.service';
 
 // Pages - Component
 import { Router, ActivatedRoute } from '@angular/router';
+import { Deeplinks } from '@ionic-native/deeplinks/ngx';
 
 /**
  * Generated class for the EntitiesPage page.
@@ -43,16 +44,34 @@ export class EntitiesPage implements OnDestroy {
               private inAppBrowser: InAppBrowser,
               private messageManagerService: MessageManagerService,
               private securedStrg: SecuredStorageService,
-              private socketService: SocketService) {
+              private socketService: SocketService,
+              private deeplinks: Deeplinks) {
     this.platform.backButton.subscribe(() => {
       this.navCtrl.back();
     });
     this.entities = this.getEntities().pipe(share());
-    this.token = this.activatedRoute.snapshot.paramMap.get('token');
+    this.activatedRoute.queryParams.subscribe(params => {
+      this.token = params.token;
+      if (this.token) {
+        this.messageManagerService.prepareDataAndInit(this.token, false);
+      }
+    });
 
-    if (this.token) {
-      this.messageManagerService.prepareDataAndInit(this.token, false);
-    }
+    this.deeplinks.route({
+      '/createAI': EntitiesPage,
+    }).subscribe(
+        (match) => {
+          this.securedStrg.hasKey('userDID')
+            .then((DID) => {
+              this.token = match.$args.alastriaToken;
+              console.log('controlDeeplink entities ', this.token);
+              this.messageManagerService.prepareDataAndInit(this.token, false);
+            });
+        },
+        (noMatch) => {
+            console.log('No Match ', noMatch);
+        }
+    );
   }
 
   ngOnDestroy() {

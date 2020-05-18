@@ -87,13 +87,6 @@ export class LoginPage {
               this.selectTypeLogin(this.buttons[0].type);
             });
         }
-
-        this.route.queryParams.subscribe(params => {
-          if (this.router.getCurrentNavigation() && this.router.getCurrentNavigation().extras
-              && this.router.getCurrentNavigation().extras.state) {
-              this.token = this.router.getCurrentNavigation().extras.state.token;
-          }
-        });
         this.deeplinks.route({
             '/': LoginPage,
             '/login': LoginPage,
@@ -222,14 +215,14 @@ export class LoginPage {
         const did = await this.securedStrg.hasKey('userDID');
         if (did) {
           const navigationExtras: NavigationExtras = {
-            state: {
+            queryParams: {
                 token: this.token
             }
           };
           this.router.navigate(['/', 'tabs', 'index'], navigationExtras);
         } else {
             const navigationExtras: NavigationExtras = {
-              state: {
+              queryParams: {
                   token: this.token
               }
             };
@@ -241,18 +234,9 @@ export class LoginPage {
   private controlDeeplink(path: string, args: any) {
       switch (path) {
           case '/createAI':
-
               this.securedStrg.hasKey('userDID')
                   .then((DID) => {
-                      if (!DID) {
-                          this.token = args.alastriaToken;
-                          const navigationExtras: NavigationExtras = {
-                            state: {
-                                token: this.token
-                            }
-                          };
-                          this.router.navigate(['/', 'home'], navigationExtras);
-                      }
+                    this.token = args.alastriaToken;
                   });
               break;
           case '/createCredentials':
