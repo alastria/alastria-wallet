@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
-import { NavController, NavParams, Platform, } from '@ionic/angular';
+import { Component, OnDestroy } from '@angular/core';
+import { NavController, Platform, } from '@ionic/angular';
 import { InAppBrowser, InAppBrowserObject } from '@ionic-native/in-app-browser/ngx';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
+import { share, map } from 'rxjs/operators';
 
 // Models
 import { Item } from '../../models/item.model';
@@ -13,7 +14,6 @@ import { SecuredStorageService } from '../../services/securedStorage.service';
 import { SocketService } from '../../services/socket.service';
 
 // Pages - Component
-import { CameraPage } from '../tabsPage/camera/camera';
 import { Router, ActivatedRoute } from '@angular/router';
 
 /**
@@ -28,8 +28,8 @@ import { Router, ActivatedRoute } from '@angular/router';
   templateUrl: 'entities.html',
   styleUrls: ['/entities.scss']
 })
-export class EntitiesPage {
-  entities: Array<Item>;
+export class EntitiesPage implements OnDestroy {
+  entities: Observable<Array<Item>>;
   url: any;
   externalWeb: InAppBrowserObject;
   token: string;
@@ -47,7 +47,7 @@ export class EntitiesPage {
     this.platform.backButton.subscribe(() => {
       this.navCtrl.back();
     });
-    this.getEntities();
+    this.entities = this.getEntities().pipe(share());
     this.token = this.activatedRoute.snapshot.paramMap.get('token');
 
     if (this.token) {
@@ -55,9 +55,13 @@ export class EntitiesPage {
     }
   }
 
-  async getEntities(searchItem?: string) {
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
+
+  getEntities(searchItem?: string) {
     try {
-      this.entities = await this.entityService.getEntities(searchItem);
+      return this.entityService.getEntities(searchItem);
     } catch (error) {
       console.error(error);
     }
@@ -65,7 +69,14 @@ export class EntitiesPage {
 
   onSearch(event: any) {
     const searchTerm = event.target.value;
-    this.getEntities(searchTerm);
+    this.entities = this.getEntities().pipe(map((entities => {
+      return entities.filter((entity: any) => {
+        if (entity.description.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1 ||
+            entity.title.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {
+          return entity;
+        }
+      });
+    })));
   }
 
   readQr() {

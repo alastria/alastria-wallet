@@ -1,5 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Item } from '../models/item.model';
 
 /*
   Generated class for the EntityProvider provider.
@@ -15,17 +17,8 @@ export class EntityService {
   constructor(public http: HttpClient) {
   }
 
-  async getEntities(filter?: string): Promise<any> {
-    let entities: any = await this.http.get('../assets/mocks/entities.json').toPromise();
-    if (filter) {
-      entities = entities.filter((entity: any) => {
-        if (entity.description.toLowerCase().indexOf(filter.toLowerCase()) !== -1 ||
-            entity.title.toLowerCase().indexOf(filter.toLowerCase()) !== -1) {
-          return entity;
-        }
-      });
-    }
-    return entities;
+  getEntities(filter?: string): Observable<any> {
+    return this.http.get('../assets/mocks/entities.json');
   }
 
 }
