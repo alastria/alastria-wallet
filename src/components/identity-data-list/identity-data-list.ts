@@ -6,6 +6,7 @@ import { SelectIdentity } from '../../pages/confirm-access/select-identity/selec
 import { AppConfig } from '../../app.config';
 import { Identity } from '../../models/identity.model'
 import { TransactionService } from '../../services/transaction-service';
+import { Web3Service } from '../../services/web3-service';
 
 @Component({
     selector: 'identity-data-list',
@@ -41,7 +42,8 @@ export class IdentityDataListComponent {
         public navCtrl: NavController,
         public navParams: NavParams,
         private securedStrg: SecuredStorageService,
-        private transactionSrv: TransactionService
+        private transactionSrv: TransactionService,
+        private web3Srv: Web3Service
     ) {
     }
 
@@ -63,6 +65,7 @@ export class IdentityDataListComponent {
         }
         let count = 0;
         let credentialPromises = this.credentials.map(async (credential) => {
+            const web3 = this.web3Srv.getWeb3(AppConfig.nodeURL)
             let level =  this.getLevelOfAssurance(credential.levelOfAssurance)
             let stars = this.createStars(level);
             let key = this.getCreedKey(credential);
@@ -93,7 +96,8 @@ export class IdentityDataListComponent {
                 }
             } else {
                 if(credential[AppConfig.ISSUER]) {
-                    let entity = await this.transactionSrv.getEntity(credential[AppConfig.ISSUER])
+                    let entity = await this.transactionSrv.getEntity(web3, credential[AppConfig.ISSUER])
+                    // let entity = await this.transactionSrv.getEntity(credential[AppConfig.GWU], credential[AppConfig.ISSUER])
                     entityName = entity.name
                 } else {
                     entityName = credential.entityName

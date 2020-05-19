@@ -14,6 +14,7 @@ import { SecuredStorageService } from '../../../services/securedStorage.service'
 import { TransactionService } from '../../../services/transaction-service';
 import { ToastService } from '../../../services/toast-service';
 import { ActivitiesService } from '../../../services/activities.service';
+import { Web3Service } from '../../../services/web3-service';
 
 
 @IonicPage()
@@ -32,19 +33,22 @@ export class Activity {
     public type: string;
     public activitiesSelected: Array<any> = new Array<any>();
     public selection: boolean = false;
+    public web3: any
 
     constructor(private toastCtrl: ToastService,
         private activitiesService: ActivitiesService,
         private securedStrg: SecuredStorageService,
         private transactionSrv: TransactionService,
         public alertCtrl: AlertController,
-        public modalCtrl: ModalController
+        public modalCtrl: ModalController,
+        public web3Srv: Web3Service
     ) {
         this.type = AppConfig.CREDENTIAL_TYPE;
         this.getActivities()
             .then((activities) => {
                 this.activities = activities;
             });
+        this.web3 = this.web3Srv.getWeb3(AppConfig.nodeURL)
     }
 
     /**
@@ -68,23 +72,23 @@ export class Activity {
                     const key = this.getCreedKey(elementObj)
 
                     if (prefix === AppConfig.CREDENTIAL_PREFIX) {
-                        promises.push(this.getCredentialStatus(elementObj[AppConfig.PSM_HASH], did)
+                        promises.push(this.getCredentialStatus(this.web3, elementObj[AppConfig.PSM_HASH], did)
                             .then((credentialStatus) => {
                                 const statusType = parseInt(credentialStatus[1]);
 
                                 return this.createActivityObject(count++, key, elementObj[key], elementObj.iss, 
-                                    "", statusType, elementObj[AppConfig.REMOVE_KEY]);
+                                    elementObj.entityName, statusType, elementObj[AppConfig.REMOVE_KEY]);
                             }));
                     } else {
                         const iat = new Date(elementObj[AppConfig.PAYLOAD][AppConfig.NBF]);
                         const iatString = iat.getDate() + "/" + (iat.getMonth() + 1) + "/" + iat.getFullYear();
                         const title = "Presentación " + count++;
 
-                        promises.push(this.getPresentationStatus(elementObj[AppConfig.PSM_HASH], did)
+                        promises.push(this.getPresentationStatus(this.web3, elementObj[AppConfig.PSM_HASH], did)
                             .then((credentialStatus) => {
                                 const statusType = parseInt(credentialStatus[1]);
 
-                                return this.createActivityObject(count++, title, "", elementObj[AppConfig.PAYLOAD][AppConfig.AUDIENCE], 
+                                return this.createActivityObject(count++, title, elementObj[AppConfig.PAYLOAD][AppConfig.AUDIENCE], elementObj.entityName, 
                                     iatString, statusType, elementObj[AppConfig.REMOVE_KEY]);
                             }));
                     }
@@ -114,8 +118,8 @@ export class Activity {
         this.toastCtrl.presentToast("Folow");
     }
 
-    async getEntity(issuer) {
-        const entity = await this.transactionSrv.getEntity(issuer)
+    async getEntity(web3: any, issuer: string) {
+        const entity = await this.transactionSrv.getEntity(web3, issuer)
         return entity.name
     }
 
@@ -278,12 +282,11 @@ export class Activity {
 
     private async createActivityObject(activityId: number, title: string, subtitle: string, description: string, dateTime: any, statusType: number, removeKey: string) {
         let auxArray = ["Valid", "AskIssuer", "Revoked", "DeletedBySubject"];
-        let entityName = await this.getEntity(description)
         return {
             "activityId": activityId,
             "title": title,
             "subtitle": subtitle,
-            "description": entityName,
+            "description": description,
             "datetime": dateTime,
             "type": this.type,
             "status": AppConfig.ActivityStatus[auxArray[statusType]],
@@ -291,14 +294,14 @@ export class Activity {
         }
     }
 
-    private async getCredentialStatus(psmHash: string, did: string) {
-        let status = await this.transactionSrv.getSubjectPresentationStatus(did, psmHash);
+    private async getCredentialStatus(web3: any, psmHash: string, did: string) {
+        let status = await this.transactionSrv.getSubjectPresentationStatus(web3, did, psmHash);
 
         return status;
     } 
     
-    private async getPresentationStatus(psmHash: string, did: string) {
-        let status = await this.transactionSrv.getSubjectPresentationStatus(did, psmHash);
+    private async getPresentationStatus(web3: any, psmHash: string, did: string) {
+        let status = await this.transactionSrv.getSubjectPresentationStatus(web3, did, psmHash);
 
         return status;
     }

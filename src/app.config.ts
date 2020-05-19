@@ -8,6 +8,7 @@ export class AppConfig {
     public static readonly SUBJECT = "sub";
     public static readonly ISSUER_NAME = "issName";
     public static readonly CBU = "cbu";
+    public static readonly GWU = "gwu";
     public static readonly AS = "as";
     public static readonly DATA_COUNT = "dataCount";
     public static readonly IAT = "iat";

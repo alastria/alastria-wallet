@@ -5,7 +5,6 @@ import { ViewController, NavParams, NavController } from 'ionic-angular';
 import { AppConfig } from '../../app.config';
 
 // Libraries
-import * as Web3 from "web3";
 import { tokensFactory, transactionFactory } from "alastria-identity-lib";
 
 // Components
@@ -58,6 +57,8 @@ export class ConfirmAccess {
         this.isPresentationRequest = this.navParams.get(AppConfig.IS_PRESENTATION_REQ);
         this.verifiedJWT = this.navParams.get(AppConfig.VERIFIED_JWT);
         this.isDeeplink = this.navParams.get('isDeeplink');
+        const web3 = this.web3Srv.getWeb3(AppConfig.nodeURL)
+        // const web3 = this.web3Srv.getWeb3(this.verifiedJWT.payload.gwb)
 
         let credentialJWTArr = []
         if(!this.isPresentationRequest){
@@ -71,7 +72,8 @@ export class ConfirmAccess {
         const did = (this.verifiedJWT && this.verifiedJWT.length) ? this.verifiedJWT[0].payload.iss :
             (this.verifiedJWT && this.verifiedJWT.payload) ? this.verifiedJWT.payload.iss : null;
         if (did) {
-            const entity = await this.transactionSrv.getEntity(did);
+            const entity = await this.transactionSrv.getEntity(web3, did);
+            // const entity = await this.transactionSrv.getEntity(this.verifiedJWT.payload.gbu, did);
             if (entity && entity.name) {
                 this.entitiyName = entity.name;
             }
@@ -112,7 +114,6 @@ export class ConfirmAccess {
             let isAllCredentialsSelected = this.checkIsAllCredentialsSelected();
             
             if (isAllCredentialsSelected) {
-                const web3: Web3 = this.web3Srv.getWeb3();
                 let securedCredentials = new Array<any>();
                 let pendingIdentities = new Array<number>();
                 
@@ -127,6 +128,8 @@ export class ConfirmAccess {
                 if (!pendingIdentities.length) {                    
                     this.showLoading();
                     const callbackUrl = this.verifiedJWT.payload.cbu;
+                    const web3 = this.web3Srv.getWeb3(AppConfig.nodeURL);
+                    // const web3 = this.web3Srv.getWeb3(this.verifiedJWT.payload.gwu);
                     const uri = AppConfig.procUrl
                     const privKey = await this.securedStrg.get('userPrivateKey');
                     const did = await this.securedStrg.get('userDID');
@@ -140,10 +143,10 @@ export class ConfirmAccess {
                     let presentationPSMHash = tokensFactory.tokens.PSMHash(web3, signedPresentation, did);
                     let addPresentationTx = transactionFactory.presentationRegistry.addSubjectPresentation(web3, presentationPSMHash, uri);
                     
-                    await this.identitySrv.init();
-                    const subjectPresentationSigned = await this.identitySrv.getKnownTransaction(addPresentationTx);
-                    await this.transactionSrv.sendSigned(subjectPresentationSigned);
-                    await this.transactionSrv.getSubjectPresentationStatus(did, presentationPSMHash);
+                    await this.identitySrv.init(web3);
+                    const subjectPresentationSigned = await this.identitySrv.getKnownTransaction(web3, addPresentationTx);
+                    await this.transactionSrv.sendSigned(web3, subjectPresentationSigned);
+                    await this.transactionSrv.getSubjectPresentationStatus(web3, did, presentationPSMHash);
                     const httpOptions = {
                         headers: new HttpHeaders({
                           'Content-Type':  'application/json',
@@ -172,10 +175,12 @@ export class ConfirmAccess {
                 this.showLoading();
                 this.identitiesSelected.reduce(async (prevVal: Promise<void>, index: number) => {
                     return prevVal.then(async () => {
+                        const web3 = this.web3Srv.getWeb3(AppConfig.nodeURL)
+                        // const web3 = this.web3Srv.getWeb3(this.verifiedJWT.payload.gwu)
                         let key = this.getCreedKey(this.credentials[index])
                         let currentCredentialKey = AppConfig.CREDENTIAL_PREFIX + key;
                         let finalCredential = this.credentials[index];
-                        let entity = await this.transactionSrv.getEntity(this.verifiedJWT[index][AppConfig.PAYLOAD][AppConfig.ISSUER])
+                        let entity = await this.transactionSrv.getEntity(web3, this.verifiedJWT[index][AppConfig.PAYLOAD][AppConfig.ISSUER])
                         finalCredential.credentialJWT = this.credentialJWT[index]
                         finalCredential.entityName = entity.name
                         finalCredential.sub = this.verifiedJWT[index][AppConfig.PAYLOAD][AppConfig.SUBJECT]
@@ -184,9 +189,9 @@ export class ConfirmAccess {
                             .then(async result => {
                                 let ret;
                                 if (result) {
-                                    ret = await this.existKey(currentCredentialKey, key, index, finalCredential);
+                                    ret = await this.existKey(web3, currentCredentialKey, key, index, finalCredential);
                                 } else {
-                                    ret = await this.notExistKey(currentCredentialKey, index, finalCredential);
+                                    ret = await this.notExistKey(web3, currentCredentialKey, index, finalCredential);
                                 }
                                 return ret;
                             });
@@ -219,13 +224,13 @@ export class ConfirmAccess {
         });
     }
     
-    private async existKey(currentCredentialKey: string,  key: any, index: number, finalCredential: any): Promise<any> {
+    private async existKey(web3: any, currentCredentialKey: string,  key: any, index: number, finalCredential: any): Promise<any> {
         try {
             const result = await this.securedStrg.getJSON(currentCredentialKey);
             const subDID = await this.securedStrg.get('userDID');
 
             if (finalCredential.levelOfAssurance >= result.levelOfAssurance) {
-                return this.transactionSrv.addSubjectCredential(this.credentialJWT[index], subDID, "www.google.com")
+                return this.transactionSrv.addSubjectCredential(web3, this.credentialJWT[index], subDID, "www.google.com")
                     .then(result => {
                         finalCredential[AppConfig.PSM_HASH] = result;
                         return this.securedStrg.setJSON(currentCredentialKey, finalCredential);
@@ -238,8 +243,8 @@ export class ConfirmAccess {
         }
     }
 
-    private async notExistKey(currentCredentialKey: string, index: number, finalCredential: any): Promise<any> {
-        return this.transactionSrv.addSubjectCredential(this.credentialJWT[index], this.verifiedJWT[index][AppConfig.PAYLOAD][AppConfig.SUBJECT], "www.google.com")
+    private async notExistKey(web3: any, currentCredentialKey: string, index: number, finalCredential: any): Promise<any> {
+        return this.transactionSrv.addSubjectCredential(web3, this.credentialJWT[index], this.verifiedJWT[index][AppConfig.PAYLOAD][AppConfig.SUBJECT], "www.google.com")
             .then(result => {
                 finalCredential[AppConfig.PSM_HASH] = result;
                 return this.securedStrg.setJSON(currentCredentialKey, finalCredential);
