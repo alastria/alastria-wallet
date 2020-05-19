@@ -11,7 +11,7 @@ import { NotificationService } from '../../../services/notification.service';
 })
 export class NotificationPage {
 
-  data: any = {};
+  notifications: any = {};
   events: any = {};
 
   constructor(public toastCtrl: ToastService,
@@ -23,19 +23,15 @@ export class NotificationPage {
     this.toastCtrl.presentToast(item);
   }
 
-  delete = (item: any): void => {
-    let index = this.data.items.indexOf(item);
+  delete = (notification: any): void => {
+    const index = this.notifications.indexOf(notification);
     if (index > -1) {
-      this.data.items.splice(index, 1);
+      this.notifications.splice(index, 1);
     }
   }
 
   async getList() {
-    this.data = {
-      title: "Avisos",
-      subtitle: "Deslize cada elemento a la izquierda para ver sus opciones.",
-      items: await this.notificationService.getNotifications()
-    };
+    this.notifications = await this.notificationService.getNotifications();
   }
 
 }

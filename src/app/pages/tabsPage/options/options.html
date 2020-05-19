@@ -1,19 +1,14 @@
 <!--- Settings TAB lauout-1 -->
 <ion-header>
-    <ion-toolbar>
-        <ion-buttons slot="start">
-          <ion-back-button></ion-back-button>
-        </ion-buttons>
-        <div background-size *ngIf="data != null" [ngStyle]="{'background-image': 'url(' + data.headerImage + ')'}">
-            <div search-bar-bcg>
-                <!-- Header Title -->
-                <ion-text no-margin padding-left search-bar-title>{{data.title}}</ion-text>
-            </div>
-        </div>
-    </ion-toolbar>
+    <user-info-header [compact]=true></user-info-header>
+    <div style="margin-left: 20px">
+        <span style="font-size: 20px;">
+            Opciones
+        </span>
+    </div>
 </ion-header>
 <ion-content>
-    <ion-grid no-padding *ngIf="data != null">
+    <ion-grid no-padding>
         <ion-row>
             <ion-col size="12">
                 <ion-list no-margin>

@@ -8,10 +8,6 @@ import { Router } from '@angular/router';
     styleUrls: ['/options.scss']
 })
 export class OptionsPage {
-
-    data: any = {
-        title: 'Más'
-    };
     options = [
         {
             id: 1,
@@ -44,6 +40,6 @@ export class OptionsPage {
     }
 
     goToRoot() {
-        this.router.navigateByUrl('/home');
+        this.router.navigateByUrl('/login');
     }
 }

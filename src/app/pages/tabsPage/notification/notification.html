@@ -1,53 +1,46 @@
-<!--- Settings TAB lauout-1 -->
 <ion-header>
-    <ion-toolbar>
-      <ion-buttons slot="start">
-        <ion-back-button></ion-back-button>
-      </ion-buttons>
-      <div background-size *ngIf="data != null" [ngStyle]="{'background-image': 'url(' + data.headerImage + ')'}">
-            <div search-bar-bcg>
-                <!-- Header Title -->
-                <ion-text no-margin padding-left search-bar-title>{{data.title}}</ion-text>                
-                <!--ion-searchbar (ionInput)="onEvent('onTextChange', $event)"></ion-searchbar-->
-            </div>
-            <h2 no-margin padding-left>{{data.subtitle}}</h2>
-        </div>
-    </ion-toolbar>
+  <user-info-header [compact]=true></user-info-header>
+  <div style="margin-left: 20px">
+      <span style="font-size: 20px;">
+          Avisos
+      </span>
+      <h2 no-margin padding-left>Deliza cada elemento a la izquierda para ver sus opciones.</h2>  
+  </div>
 </ion-header>
 <ion-content>
-    <ion-grid no-padding *ngIf="data != null">
+    <ion-grid no-padding *ngIf="notifications && notifications.length">
         <ion-row>
           <ion-col size="12">
             <!-- Content -->
             <ion-list no-margin>
-              <ion-item-sliding *ngFor="let item of data.items" #slidingItem>
-                <ion-item no-lines (click)="onItemClick(item.title, $event)">
+              <ion-notification-sliding *ngFor="let notification of notifications" #slidingItem>
+                <ion-notification no-lines (click)="onItemClick(notification.title, $event)">
                   <ion-label>
                     <!-- Images -->
                     <ion-thumbnail item-start>
-                      <img src="{{item.image}}">
+                      <img src="{{notification.image}}">
                     </ion-thumbnail>
                     <!-- Title -->
-                    <h2 item-title>{{item.title}}</h2>
+                    <h2 item-title>{{notification.title}}</h2>
                     <!-- Subtitle -->
-                    <p item-subtitle text-wrap>{{item.subtitle}}</p>
+                    <p item-subtitle text-wrap>{{notification.subtitle}}</p>
                     </ion-label>
-                </ion-item>
+                </ion-notification>
                 <!--Action Button-->
-                <ion-item-options no-lines>
+                <ion-notification-options no-lines>
                   <!-- Button -->
                   <ion-button  text-capitalize>
                     <ion-text>
-                      {{item.accept}}
+                      {{notification.accept}}
                     </ion-text>
                   </ion-button>
-                  <ion-button style="background-color: #9e001e" text-capitalize (click)="delete(item)">
+                  <ion-button style="background-color: #9e001e" text-capitalize (click)="delete(notification)">
                     <ion-text>
-                      {{item.delete}}
+                      {{notification.delete}}
                     </ion-text>
                   </ion-button>
-                </ion-item-options>
-              </ion-item-sliding>
+                </ion-notification-options>
+              </ion-notification-sliding>
             </ion-list>
           </ion-col>
         </ion-row>

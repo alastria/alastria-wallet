@@ -7,6 +7,9 @@ import { NotificationPage } from './notification';
 // Services
 import { NotificationService } from '../../../services/notification.service';
 
+// Modules
+import { UserInfoHeaderModule } from 'src/app/components/user-info-header/user-info-header.module';
+
 @NgModule({
     declarations: [
         NotificationPage,
@@ -18,7 +21,8 @@ import { NotificationService } from '../../../services/notification.service';
         NotificationService
     ],
     imports: [
-        CommonModule
+        CommonModule,
+        UserInfoHeaderModule,
     ],
     exports: [
         NotificationPage
