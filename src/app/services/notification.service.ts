@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 
 /*
   Generated class for the EntityProvider provider.
@@ -15,8 +16,8 @@ export class NotificationService {
   constructor(public http: HttpClient) {
   }
 
-  async getNotifications(): Promise<any> {
-    return this.http.get('../assets/mocks/notifications.json').toPromise();
+  getNotifications(): Observable<any> {
+    return this.http.get('../assets/mocks/notifications.json');
   }
 
 }

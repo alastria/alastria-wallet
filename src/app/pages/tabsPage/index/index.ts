@@ -3,6 +3,11 @@ import { ToastService } from '../../../services/toast-service';
 import { Platform, NavController } from '@ionic/angular';
 import { ScrollHideConfig } from '../../../components/parallax/parallax.directive';
 import { ArticleService } from '../../../services/article.service';
+import { Observable } from 'rxjs';
+
+// Model
+import { ArticleModel } from 'src/app/models/article.model';
+import { share } from 'rxjs/operators';
 
 @Component({
     templateUrl: 'index.html',
@@ -11,7 +16,7 @@ import { ArticleService } from '../../../services/article.service';
 })
 export class IndexPage implements OnInit, OnChanges {
 
-    params: any = {};
+    articles: Observable<Array<ArticleModel>>;
     data: any = {};
 
     headerScrollConfig: ScrollHideConfig = { cssProperty: 'margin-top', maxValue: 80 };
@@ -23,23 +28,23 @@ export class IndexPage implements OnInit, OnChanges {
         this.platform.backButton.subscribe(() => {
             this.navCtrl.back();
         });
+        this.articles = this.getArticles().pipe(share());
     }
 
     ngOnInit() {
-        this.getList();
     }
 
     ngOnChanges(changes: { [propKey: string]: any }) {
-        this.params = changes.data.currentValue;
+        // this.params = changes.data.currentValue;
     }
 
     onItemClick(item: any) {
         this.toastCtrl.presentToast('Folow');
     }
 
-    async getList() {
+    getArticles(): Observable<Array<ArticleModel>> {
         try {
-            this.params.data = await this.articleService.getArticles();
+            return this.articleService.getArticles();
         } catch (error) {
             console.error('Error ', error);
         }

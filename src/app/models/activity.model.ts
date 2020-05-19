@@ -1,4 +1,4 @@
-import { AppConfig } from '../../app.config'
+import { AppConfig } from '../../app.config';
 
 export class ActivityM {
     activityId: number;

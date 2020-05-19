@@ -8,12 +8,12 @@
   </div>
 </ion-header>
 <ion-content>
-    <ion-grid no-padding *ngIf="notifications && notifications.length">
+    <ion-grid no-padding *ngIf="(notifications | async) as notificationList">
         <ion-row>
           <ion-col size="12">
             <!-- Content -->
             <ion-list no-margin>
-              <ion-notification-sliding *ngFor="let notification of notifications" #slidingItem>
+              <ion-notification-sliding *ngFor="let notification of notificationList" #slidingItem>
                 <ion-notification no-lines (click)="onItemClick(notification.title, $event)">
                   <ion-label>
                     <!-- Images -->
