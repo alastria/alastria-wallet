@@ -73,24 +73,24 @@ export class Activity {
 
                     if (prefix === AppConfig.CREDENTIAL_PREFIX) {
                         promises.push(this.getCredentialStatus(this.web3, elementObj[AppConfig.PSM_HASH], did)
-                            .then((credentialStatus) => {
-                                const statusType = parseInt(credentialStatus[1]);
+                        .then((credentialStatus) => {
+                            const statusType = parseInt(credentialStatus[1]);
 
-                                return this.createActivityObject(count++, key, elementObj[key], elementObj.iss, 
-                                    elementObj.entityName, statusType, elementObj[AppConfig.REMOVE_KEY]);
-                            }));
+                            return this.createActivityObject(count++, key, elementObj[key], elementObj.entityName, elementObj.iat,
+                                statusType, elementObj[AppConfig.REMOVE_KEY]);
+                        }));
                     } else {
                         const iat = new Date(elementObj[AppConfig.PAYLOAD][AppConfig.NBF]);
                         const iatString = iat.getDate() + "/" + (iat.getMonth() + 1) + "/" + iat.getFullYear();
                         const title = "Presentación " + count++;
 
                         promises.push(this.getPresentationStatus(this.web3, elementObj[AppConfig.PSM_HASH], did)
-                            .then((credentialStatus) => {
-                                const statusType = parseInt(credentialStatus[1]);
-
-                                return this.createActivityObject(count++, title, elementObj[AppConfig.PAYLOAD][AppConfig.AUDIENCE], elementObj.entityName, 
-                                    iatString, statusType, elementObj[AppConfig.REMOVE_KEY]);
-                            }));
+                        .then(async (credentialStatus) => {
+                            const statusType = parseInt(credentialStatus[1]);
+                            const entityName = await this.transactionSrv.getEntity(this.web3, elementObj[AppConfig.PAYLOAD][AppConfig.AUDIENCE])
+                            
+                            return this.createActivityObject(count++, title, '', entityName.name, iatString, statusType, elementObj[AppConfig.REMOVE_KEY]);
+                        }));
                     }
                 });
 
@@ -284,7 +284,7 @@ export class Activity {
         let auxArray = ["Valid", "AskIssuer", "Revoked", "DeletedBySubject"];
         return {
             "activityId": activityId,
-            "title": title,
+            "title": (title) ? title.toUpperCase().replace(/_/g, " ") : '',
             "subtitle": subtitle,
             "description": description,
             "datetime": dateTime,
