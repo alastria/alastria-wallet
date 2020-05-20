@@ -152,5 +152,12 @@ ion-header {
     --border-radius: 30px;
     --background: white;
     color: #3A6D96;
-    font-size: larger;
+}
+
+ion-searchbar.normal-search {
+    --border-radius: 30px;
+}
+
+ion-searchbar.normal-search  ion-icon {
+    color: #325B8E !important;
 }
