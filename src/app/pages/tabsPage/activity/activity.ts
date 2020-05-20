@@ -13,6 +13,8 @@ import { SecuredStorageService } from '../../../services/securedStorage.service'
 import { TransactionService } from '../../../services/transaction-service';
 import { ToastService } from '../../../services/toast-service';
 import { ActivitiesService } from '../../../services/activities.service';
+import { from, Observable } from 'rxjs';
+import { share, map } from 'rxjs/operators';
 
 @Component({
     templateUrl: 'activity.html',
@@ -25,7 +27,7 @@ export class ActivityPage {
     @ViewChild(OptionsComponent, {read: '', static: false})
     public optionsComponent: OptionsComponent;
 
-    public activities: Array<ActivityM>;
+    public activities: Observable<Array<ActivityM>>;
     public searchTerm: string;
     public type: string;
     public activitiesSelected: Array<any> = new Array<any>();
@@ -39,10 +41,7 @@ export class ActivityPage {
                 public modalCtrl: ModalController
     ) {
         this.type = AppConfig.CREDENTIAL_TYPE;
-        this.getActivities()
-            .then((activities) => {
-                this.activities = activities;
-            });
+        this.activities = from(this.getActivities()).pipe(share());
     }
 
     /**
@@ -71,7 +70,7 @@ export class ActivityPage {
                                 // tslint:disable-next-line: radix
                                 const statusType = parseInt(credentialStatus[1]);
 
-                                return this.createActivityObject(count++, key, elementObj[key], elementObj.iss, 
+                                return this.createActivityObject(count++, key, elementObj[key], elementObj.iss,
                                     '', statusType, elementObj[AppConfig.REMOVE_KEY]);
                             }));
                     } else {
@@ -131,16 +130,19 @@ export class ActivityPage {
         }
 
         try {
-            this.activities = await this.getActivities();
-            if (searchTerm) {
-                this.activities = this.activities.filter(activity => {
-                    if (activity.description.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1
-                        || activity.subtitle.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1
-                        || activity.title.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {
-                        return activity;
-                    }
-                });
-            }
+            this.activities = from(this.getActivities()).pipe(map((activities) => {
+                if (searchTerm) {
+                    return activities.filter(activity => {
+                        if (activity.description.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1
+                            || activity.subtitle.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1
+                            || activity.title.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {
+                            return activity;
+                        }
+                    });
+                } else  {
+                    return activities;
+                }
+            }));
         } catch (err) {
             console.error(err);
         }
@@ -159,21 +161,23 @@ export class ActivityPage {
      */
     forceChangeSelectAll(): void {
         if (this.optionsComponent) {
-            if (this.activitiesSelected && this.activitiesSelected.length) {
-                if (this.activities && this.activities.length === this.activitiesSelected.length) {
-                    let isSelectAllActivities = true;
-                    for (let i = 0, length = this.activitiesSelected.length; i < length; i++) {
-                        if (!this.activitiesSelected[i]) {
-                            isSelectAllActivities = false;
+            this.activities.pipe(map(activities => {
+                if (this.activitiesSelected && this.activitiesSelected.length) {
+                    if (activities.length === this.activitiesSelected.length) {
+                        let isSelectAllActivities = true;
+                        for (let i = 0, length = this.activitiesSelected.length; i < length; i++) {
+                            if (!this.activitiesSelected[i]) {
+                                isSelectAllActivities = false;
+                            }
+                        }
+                        if (isSelectAllActivities) {
+                            this.optionsComponent.isSelectAll = true;
+                        } else {
+                            this.optionsComponent.isSelectAll = null;
                         }
                     }
-                    if (isSelectAllActivities) {
-                        this.optionsComponent.isSelectAll = true;
-                    } else {
-                        this.optionsComponent.isSelectAll = null;
-                    }
                 }
-            }
+            }));
         }
     }
 
@@ -208,11 +212,13 @@ export class ActivityPage {
      */
     handleSelectAll(isSelectAll: boolean): void {
         if (isSelectAll) {
-            this.activities.forEach((activity, i) => {
-                if (!this.activitiesSelected[i]) {
-                    this.activitiesSelected[i] = activity.activityId;
-                }
-            });
+            this.activities.pipe(map((activities, i) => {
+                activities.map((activity) => {
+                    if (!this.activitiesSelected[i]) {
+                        this.activitiesSelected[i] = activity.activityId;
+                    }
+                });
+            }));
         } else {
             if (isSelectAll !== null) {
                 this.resetSelection();
@@ -326,13 +332,13 @@ export class ActivityPage {
                     return this.activities[element][AppConfig.JTI];
                 }
             }).map(key => {
-                    return this.securedStrg.removePresentation(key);
-                });
+                return this.securedStrg.removePresentation(key);
+            });
 
             Promise.all(keysToRemove)
                 .then(async () => {
-                    this.activities = await this.getActivities();
-                    return this.getActivities();
+                    this.activities = from(this.getActivities()).pipe(share());
+                    return true;
                 })
                 .then(() => {
                     this.resetSelection();
