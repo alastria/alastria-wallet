@@ -9,40 +9,40 @@
 </ion-header>
 <ion-content>
     <ion-grid no-padding *ngIf="(notifications | async) as notificationList">
-        <ion-row>
-          <ion-col size="12">
-            <!-- Content -->
-            <ion-list no-margin>
-              <ion-notification-sliding *ngFor="let notification of notificationList" #slidingItem>
-                <ion-notification no-lines (click)="onItemClick(notification.title, $event)">
-                  <ion-label>
-                    <!-- Images -->
-                    <ion-thumbnail item-start>
-                      <img src="{{notification.image}}">
-                    </ion-thumbnail>
-                    <!-- Title -->
-                    <h2 item-title>{{notification.title}}</h2>
-                    <!-- Subtitle -->
-                    <p item-subtitle text-wrap>{{notification.subtitle}}</p>
-                    </ion-label>
-                </ion-notification>
-                <!--Action Button-->
-                <ion-notification-options no-lines>
-                  <!-- Button -->
-                  <ion-button  text-capitalize>
-                    <ion-text>
-                      {{notification.accept}}
-                    </ion-text>
-                  </ion-button>
-                  <ion-button style="background-color: #9e001e" text-capitalize (click)="delete(notification)">
-                    <ion-text>
-                      {{notification.delete}}
-                    </ion-text>
-                  </ion-button>
-                </ion-notification-options>
-              </ion-notification-sliding>
-            </ion-list>
-          </ion-col>
-        </ion-row>
+      <!-- Content -->
+      <ion-list>
+        <ion-notification-sliding *ngFor="let notification of notificationList" #slidingItem>
+          <ion-notification no-lines (click)="onItemClick(notification.title, $event)">
+            <ion-row>
+              <ion-col size=4>
+                <!-- Images -->
+                <ion-thumbnail item-start>
+                  <img src="{{notification.image}}">
+                </ion-thumbnail>
+              </ion-col>
+              <ion-col size=8>
+                <!-- Title -->
+                <h2 item-title>{{notification.title}}</h2>
+                <!-- Subtitle -->
+                <p item-subtitle text-wrap>{{notification.subtitle}}</p>
+              </ion-col>
+            </ion-row>
+          </ion-notification>
+          <!--Action Button-->
+          <!-- <ion-notification-options no-lines> -->
+            <!-- Button -->
+            <!-- <ion-button  text-capitalize>
+              <ion-text>
+                {{notification.accept}}
+              </ion-text>
+            </ion-button>
+            <ion-button style="background-color: #9e001e" text-capitalize (click)="delete(notification)">
+              <ion-text>
+                {{notification.delete}}
+              </ion-text>
+            </ion-button>
+          </ion-notification-options> -->
+        </ion-notification-sliding>
+      </ion-list>
       </ion-grid>
 </ion-content>
