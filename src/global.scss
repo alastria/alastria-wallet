@@ -147,3 +147,10 @@ ion-header {
     margin-top: 50%;
     font-size: xx-large;
 }
+
+.white-button {
+    --border-radius: 30px;
+    --background: white;
+    color: #3A6D96;
+    font-size: larger;
+}
