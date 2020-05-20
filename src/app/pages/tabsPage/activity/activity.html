@@ -8,7 +8,7 @@
         <options class="options" *ngIf="selection" (handleSelectAll)="handleSelectAll($event)"
             (handleDeleteActivities)="handleDeleteOrBackup('delete')"
             (handleBackupActivities)="handleDeleteOrBackup('backup')"></options>
-        <ion-searchbar *ngIf="!selection" [(ngModel)]="searchTerm" (ionInput)="onSearch($event)"></ion-searchbar>
+        <ion-searchbar class="normal-search" *ngIf="!selection" [(ngModel)]="searchTerm" (ionInput)="onSearch($event)"></ion-searchbar>
     </div>
 </ion-header>
 <ion-content>
