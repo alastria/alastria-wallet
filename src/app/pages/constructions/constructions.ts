@@ -12,8 +12,7 @@ export class ConstructionsPage {
     text: string;
     img: string;
 
-    constructor(public navCtrl: NavController,
-                public modalCtrl: ModalController) {
+    constructor(public modalCtrl: ModalController) {
 
         this.text = 'Página en construcción'
         this.img = 'assets/images/alastria/underConstruction.jpg'
@@ -21,7 +20,7 @@ export class ConstructionsPage {
     }
 
     closeModal(): void {
-        this.navCtrl.back();
+        this.modalCtrl.dismiss();
     }
 
     async presentModal(componentProps: any) {
@@ -42,7 +41,7 @@ export class ConstructionsPage {
             titleSuccess = '¡Hecho!';
             textSuccess = 'Recuerda que puedes ver todos tus movimientos de AlastriaID en la opción de "Actividad".';
             imgPrincipal = 'assets/images/alastria/success.png';
-            imgSuccess = 'assets/images/tabIcon/act.png';
+            imgSuccess = 'assets/svg/tabIcon/activity.svg';
             page = 'success';
 
             this.presentModal({ titleSuccess, textSuccess, imgPrincipal, imgSuccess, page });
