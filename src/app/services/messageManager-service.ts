@@ -119,26 +119,27 @@ export class MessageManagerService {
         const decodedToken = this.tokenSrv.decodeTokenES(alastriaToken);
         const issuerDID = decodedToken[AppConfig.PAYLOAD][AppConfig.ISSUER];
         const callbackUrl = decodedToken[AppConfig.PAYLOAD][AppConfig.CBU];
+        const web3 = this.web3Srv.getWeb3(decodedToken[AppConfig.PAYLOAD][AppConfig.GWU]);
         let isVerifiedToken: string | object;
         this.loadingSrv.showModal();
 
         try {
 
-            const issuerPKU = await this.transactionSrv.getCurrentPublicKey(issuerDID);
+            const issuerPKU = await this.transactionSrv.getCurrentPublicKey(web3, issuerDID);
 
             isVerifiedToken = this.tokenSrv.verifyTokenES(alastriaToken, `04${issuerPKU}`);
 
             if (isVerifiedToken) {
                 const identity = await this.securedStrg.getIdentityData();
-                const jti = Math.random().toString(36).substring(2)
+                const jti = Math.random().toString(36).substring(2);
                 const currentDate = Math.floor(Date.now());
                 const expDate = currentDate + 86400;
 
                 const privKey = identity[AppConfig.USER_PRIV_KEY];
-                const pku = identity[AppConfig.USER_PKU]
-                const subjectDID = identity[AppConfig.USER_DID]
+                const pku = identity[AppConfig.USER_PKU];
+                const subjectDID = identity[AppConfig.USER_DID];
                 const alastriaSession =
-                    tokensFactory.tokens.createAlastriaSession("@jwt", subjectDID, pku, alastriaToken, expDate, currentDate, jti);
+                    tokensFactory.tokens.createAlastriaSession('@jwt', subjectDID, `0x${pku}`, alastriaToken, expDate, currentDate, jti);
                 const signedAlastriaSession = tokensFactory.tokens.signJWT(alastriaSession, privKey.substring(2));
                 const httpOptions = {
                     headers: new HttpHeaders({
@@ -161,27 +162,27 @@ export class MessageManagerService {
         const decodedToken = this.tokenSrv.decodeTokenES(alastriaToken);
         const issuerDID = decodedToken[AppConfig.PAYLOAD][AppConfig.ISSUER];
         const callbackUrl = decodedToken[AppConfig.PAYLOAD][AppConfig.CBU];
+        const web3 = this.web3Srv.getWeb3(decodedToken[AppConfig.PAYLOAD][AppConfig.GWU]);
         let isVerifiedToken: any;
         try {
-            const issuerPKU = await this.transactionSrv.getCurrentPublicKey(issuerDID);
+            const issuerPKU = await this.transactionSrv.getCurrentPublicKey(web3, issuerDID);
+
             isVerifiedToken = this.tokenSrv.verifyTokenES(alastriaToken, `04${issuerPKU}`);
             const isIdentityCreated = await this.securedStrg.hasKey(AppConfig.IS_IDENTITY_CREATED);
 
             if (isVerifiedToken && !isIdentityCreated) {
                 this.loadingSrv.showModal();
-                const account = this.web3Srv.getWeb3().eth.accounts.create();
+                const account = web3.eth.accounts.create();
                 const address = account[AppConfig.ADDRESS];
                 const privKey = account[AppConfig.PRIVATE_KEY];
                 const pku = '0x' + privateToPublic(toBuffer(privKey)).toString('hex');
-
-
                 // Get a public key
-                const subjectIdentity = new UserIdentity(this.web3Srv.getWeb3(), address, privKey.substring(2), 0);
-                const createTx = transactionFactory.identityManager.createAlastriaIdentity(this.web3Srv.getWeb3(), pku.substring(2));
+                const subjectIdentity = new UserIdentity(web3, address, privKey.substring(2), 0);
+                const createTx = transactionFactory.identityManager.createAlastriaIdentity(web3, pku.substring(2));
 
                 const signedCreateTx = await subjectIdentity.getKnownTransaction(createTx);
 
-                const alastriaAIC = tokensFactory.tokens.createAIC(signedCreateTx, alastriaToken, pku.substring(2));
+                const alastriaAIC = tokensFactory.tokens.createAIC(signedCreateTx, alastriaToken, pku);
                 const signedToken = tokensFactory.tokens.signJWT(alastriaAIC, privKey.substring(2));
                 let DID = null;
                 const httpOptions = {
@@ -235,11 +236,13 @@ export class MessageManagerService {
     private prepareCredentials(verifiedToken: string | object) {
         const credentialsJWT = verifiedToken[AppConfig.VERIFIABLE_CREDENTIAL];
         const promises = credentialsJWT.map((credential: any) => {
-            const decodedToken = this.tokenSrv.decodeTokenES(credential)
+            const decodedToken = this.tokenSrv.decodeTokenES(credential);
             const issuerDID = decodedToken[AppConfig.PAYLOAD][AppConfig.ISSUER];
+            const web3 = this.web3Srv.getWeb3(AppConfig.nodeURL);
+            // const web3 = this.web3Srv.getWeb3(decodedToken[AppConfig.PAYLOAD][AppConfig.GWU]);
             let verifiedJWT = null;
 
-            return this.transactionSrv.getCurrentPublicKey(issuerDID)
+            return this.transactionSrv.getCurrentPublicKey(web3, issuerDID)
                 .then(issuerPKU => {
                     verifiedJWT = this.tokenSrv.verifyTokenES(credential, `04${issuerPKU}`);
                     return this.securedStrg.hasKey('isIdentityCreated');
@@ -249,7 +252,7 @@ export class MessageManagerService {
                         const credentialSubject = decodedToken[AppConfig.PAYLOAD][AppConfig.VC][AppConfig.CREDENTIALS_SUBJECT];
                         credentialSubject[AppConfig.NBF] = decodedToken[AppConfig.PAYLOAD][AppConfig.NBF];
                         credentialSubject[AppConfig.EXP] = decodedToken[AppConfig.PAYLOAD][AppConfig.EXP];
-                        credentialSubject[AppConfig.ISSUER] = decodedToken[AppConfig.PAYLOAD][AppConfig.ISSUER]
+                        credentialSubject[AppConfig.ISSUER] = decodedToken[AppConfig.PAYLOAD][AppConfig.ISSUER];
                         return Promise.resolve(credentialSubject);
                     }
                 })

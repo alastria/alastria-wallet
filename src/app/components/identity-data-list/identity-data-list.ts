@@ -10,6 +10,7 @@ import { Identity } from '../../models/identity.model';
 import { SelectIdentityPage } from '../../pages/confirm-access/select-identity/select-identity';
 import { TransactionService } from '../../services/transaction-service';
 import { NavParams } from '@ionic/angular';
+import { Web3Service } from '../../services/web3-service';
 
 @Component({
     selector: 'identity-data-list',
@@ -47,7 +48,8 @@ export class IdentityDataListComponent implements OnInit {
         private route: ActivatedRoute,
         private securedStrg: SecuredStorageService,
         private transactionSrv: TransactionService,
-        private navParams: NavParams
+        private navParams: NavParams,
+        private web3Srv: Web3Service
     ) {
         this.isPresentationRequest = this.navParams.get(AppConfig.IS_PRESENTATION_REQ);
         this.credentials = this.navParams.get(AppConfig.CREDENTIALS);
@@ -74,6 +76,7 @@ export class IdentityDataListComponent implements OnInit {
         }
         let count = 0;
         const credentialPromises = this.credentials.map(async (credential) => {
+            const web3 = this.web3Srv.getWeb3(AppConfig.nodeURL);
             const level =  this.getLevelOfAssurance(credential.levelOfAssurance);
             const stars = this.createStars(level);
             const key = this.getCreedKey(credential);
@@ -104,7 +107,8 @@ export class IdentityDataListComponent implements OnInit {
                 }
             } else {
                 if (credential[AppConfig.ISSUER]) {
-                    const entity = await this.transactionSrv.getEntity(credential[AppConfig.ISSUER]);
+                    const entity = await this.transactionSrv.getEntity(web3, credential[AppConfig.ISSUER]);
+                    // let entity = await this.transactionSrv.getEntity(credential[AppConfig.GWU], credential[AppConfig.ISSUER])
                     entityName = entity.name;
                 } else {
                     entityName = credential.entityName;
