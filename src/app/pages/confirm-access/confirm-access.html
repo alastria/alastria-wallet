@@ -1,8 +1,8 @@
 <ion-header>
-    <ion-row justify-content-center>
-        <img src="assets/images/logo/alastria-icon.png" class="alastria-logo">
+    <ion-row id="logo-row">
+        <img src="assets/images/logo/alastria-icon.png" id="alastria-logo">
     </ion-row>
-    <ion-row *ngIf="isPresentationRequest; else credentialOffer" text-center>
+    <ion-row *ngIf="isPresentationRequest; else credentialOffer">
         <h2 class="description"> {{issName | uppercase}} ha <strong>solicitado acceso</strong> a {{dataNumberAccess}}
             dato/s de tu identidad</h2>
     </ion-row>
@@ -14,7 +14,13 @@
     </ng-template>
 </ion-header>
 <ion-content class="tutorial-page">
-    <identity-data-list isSelectable="true" (handleIdentitySelect)="handleIdentitySelect($event)" (loadCredential)="loadCredential($event)"></identity-data-list>
+    <identity-data-list 
+        *ngIf="credentials && credentials.length"
+        isSelectable="true"
+        [allCredentials]="credentials"
+        (handleIdentitySelect)="handleIdentitySelect($event)"
+        (loadCredential)="loadCredential($event)">
+    </identity-data-list>
     <ion-footer>
         <ion-row justify-content-center>
             <ion-button class="btnConfirm" style="width: 80%" (click)="manageCredentials()">ACEPTAR</ion-button>

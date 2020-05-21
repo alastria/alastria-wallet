@@ -3,15 +3,13 @@
     margin-right: 10px;
 }
 
-.checkbox-md .checkbox-checked {
-    border-color: #327EFF !important;
-    background-color: #327EFF !important;
+ion-checkbox {
+    --border-color-checked: #325B8E;
+    --background-checked: #325B8E;
 }
 
-.checkbox-md .checkbox-icon {
-    border-width: 2px !important;
-    border-color: #327EFF ;
-    background-color: #ffffff ;
+ion-icon {
+    color: #325B8E;
 }
 
 .description-notSelectable {
@@ -52,4 +50,9 @@
 .center-vertical-col {
     align-self: center;
     color: gray;
+}
+
+#detail-image {
+    position: absolute;
+    bottom: 0px;
 }

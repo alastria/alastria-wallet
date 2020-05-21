@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { AppConfig } from '../../../app.config';
-import { Router } from '@angular/router';
+import { NavParams, ModalController } from '@ionic/angular';
 
 // Libraries
 import * as Web3 from 'web3';
@@ -16,7 +16,6 @@ import { IdentityService } from '../../services/identity-service';
 import { LoadingService } from '../../services/loading-service';
 import { ToastService } from '../../services/toast-service';
 import { SecuredStorageService } from '../../services/securedStorage.service';
-import { NavParams } from '@ionic/angular';
 
 @Component({
     selector: 'confirm-access',
@@ -37,7 +36,7 @@ export class ConfirmAccessPage {
     private auth: string = AppConfig.AUTH_TOKEN;
 
     constructor(
-        private router: Router,
+        private modalCtrl: ModalController,
         private navParams: NavParams,
         private toastCtrl: ToastService,
         private securedStrg: SecuredStorageService,
@@ -48,32 +47,39 @@ export class ConfirmAccessPage {
         private identitySrv: IdentityService,
         private tokenSrv: TokenService
     ) {
-        this.initiateVariables();
-    }
-
-    private async initiateVariables(): Promise<void> {
+        console.log('nav params data --> ', this.navParams.data);
         this.dataNumberAccess = this.navParams.get(AppConfig.DATA_COUNT);
         this.credentials = this.navParams.get(AppConfig.CREDENTIALS);
         this.isPresentationRequest = this.navParams.get(AppConfig.IS_PRESENTATION_REQ);
         this.verifiedJWT = this.navParams.get(AppConfig.VERIFIED_JWT);
         this.isDeeplink = this.navParams.get('isDeeplink');
+        this.initiateVariables();
+    }
 
+    private async initiateVariables(): Promise<void> {
         const credentialJWTArr = [];
         if (!this.isPresentationRequest) {
             this.credentialJWT = this.navParams.get(AppConfig.VERIFIED_JWT);
-            this.credentialJWT.map(item => {
-                credentialJWTArr.push(this.tokenSrv.decodeTokenES(item));
-            });
+            console.log('credentials jwt ', this.credentialJWT);
+            if (this.credentialJWT) {
+                this.credentialJWT.map(item => {
+                    credentialJWTArr.push(this.tokenSrv.decodeTokenES(item));
+                });
+            }
             this.verifiedJWT = credentialJWTArr;
+            console.log('credentials jwt ', this.verifiedJWT);
+
         }
 
         const did = (this.verifiedJWT && this.verifiedJWT.length) ? this.verifiedJWT[0].payload.iss :
             (this.verifiedJWT && this.verifiedJWT.payload) ? this.verifiedJWT.payload.iss : null;
+        console.log('did ', did);
         if (did) {
             const entity = await this.transactionSrv.getEntity(did);
             if (entity && entity.name) {
                 this.entitiyName = entity.name;
             }
+            console.log('entity name ', this.entitiyName);
         }
     }
 
@@ -123,8 +129,8 @@ export class ConfirmAccessPage {
                         pendingIdentities.push(id);
                     }
                 }
-                
-                if (!pendingIdentities.length) {                    
+
+                if (!pendingIdentities.length) {
                     this.showLoading();
                     const callbackUrl = this.verifiedJWT.payload.cbu;
                     const uri = AppConfig.procUrl;
@@ -273,8 +279,6 @@ export class ConfirmAccessPage {
     }
 
     public dismiss() {
-        if (this.isDeeplink) {
-            this.router.navigate(['/', 'tabs']);
-        }
+        this.modalCtrl.dismiss();
     }
 }

@@ -10,12 +10,14 @@
     text-align: center;
     margin-top: 30px;
     font-size: x-large;
+    padding: 5px;
 }
 
 .btnConfirm {
-    background: linear-gradient(90deg, #325B8E 0%, #00CAD6 100%);
-    border-radius: 30px;
+    --background: linear-gradient(90deg, #325B8E 0%, #00CAD6 100%);
+    --border-radius: 30px;
     height: 50px;
+    margin: auto;
 }
 
 .btnConfirm:before {

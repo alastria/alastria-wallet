@@ -3,24 +3,34 @@ img {
   padding-bottom: 15px;
 }
 
+h2 {
+  text-align: center;
+}
+
 .footer-md::before {
   background-image: none;
 }
 
 .btnConfirm {
-  background: linear-gradient(90deg, #325b8e 0%, #00cad6 100%);
-  border-radius: 30px;
+  --background: linear-gradient(90deg, #325b8e 0%, #00cad6 100%);
+  --border-radius: 30px;
   height: 50px;
+  margin: auto;
 }
 
 .btnCancel {
   margin-top: 15px;
   font-weight: 500;
+  margin: auto;
 }
 
-.alastria-logo {
+#logo-row {
   margin-top: 15px;
+}
+
+#alastria-logo {
   height: 110px;
+  margin: auto;
 }
 
 .btnConfirm:before {
@@ -37,6 +47,12 @@ img {
 
 ion-footer {
   height: 110px;
+  position: absolute;
+  bottom: 10px;
+  
+  ion-row {
+    margin-top: 30px;
+  }
 }
 
 .description {

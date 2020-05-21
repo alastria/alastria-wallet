@@ -9,6 +9,7 @@ import { AppConfig } from '../../../app.config';
 import { Identity } from '../../models/identity.model';
 import { SelectIdentityPage } from '../../pages/confirm-access/select-identity/select-identity';
 import { TransactionService } from '../../services/transaction-service';
+import { NavParams } from '@ionic/angular';
 
 @Component({
     selector: 'identity-data-list',
@@ -45,16 +46,17 @@ export class IdentityDataListComponent implements OnInit {
         private router: Router,
         private route: ActivatedRoute,
         private securedStrg: SecuredStorageService,
-        private transactionSrv: TransactionService
+        private transactionSrv: TransactionService,
+        private navParams: NavParams
     ) {
-        this.route.queryParams.subscribe(params => {
-            if (this.router.getCurrentNavigation().extras.state) {
-                this.isPresentationRequest = this.router.getCurrentNavigation().extras.state[AppConfig.IS_PRESENTATION_REQ];
-                this.credentials = this.router.getCurrentNavigation().extras.state[AppConfig.CREDENTIALS];
-                this.iat = this.router.getCurrentNavigation().extras.state[AppConfig.IAT];
-                this.exp = this.router.getCurrentNavigation().extras.state[AppConfig.EXP];
-            }
-        });
+        this.isPresentationRequest = this.navParams.get(AppConfig.IS_PRESENTATION_REQ);
+        this.credentials = this.navParams.get(AppConfig.CREDENTIALS);
+        this.iat = this.navParams.get(AppConfig.IAT);
+        this.exp = this.navParams.get(AppConfig.EXP);
+        console.log(this.credentials);
+        console.log(this.isPresentationRequest);
+        console.log(this.iat);
+        console.log(this.exp);
     }
 
     ngOnInit() {
@@ -127,6 +129,7 @@ export class IdentityDataListComponent implements OnInit {
                     };
                     this.changeIdentitySelect(event, identity.id);
                 });
+                console.log('identityDisplay ', this.identityDisplay);
             });
     }
 
@@ -184,8 +187,8 @@ export class IdentityDataListComponent implements OnInit {
         const iconActive = 'iconActive';
         const iconInactive = 'iconInactive';
         const isActive = 'isActive';
-        const iconStar = 'icon-star';
-        const iconStarOutline = 'icon-star-outline';
+        const iconStar = '../../../../assets/svg/star.svg';
+        const iconStarOutline = '../../../../assets/svg/star-outline.svg';
 
         const stars = [{
             [iconActive]: iconStar,
