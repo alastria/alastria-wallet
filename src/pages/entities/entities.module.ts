@@ -1,5 +1,7 @@
+import { TokenService } from './../../services/token-service';
 import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
+import { InAppBrowser } from '@ionic-native/in-app-browser';
 
 // COMPONENTS
 import { EntitiesPage } from './entities';
@@ -12,6 +14,7 @@ import { TabsModule } from '../../components/tabs/tabs.module';
 import { EntityService } from '../../services/entity.service';
 import { CameraModule } from '../tabsPage/camera/camera.module';
 import { MessageManagerService } from '../../services/messageManager-service';
+import { SocketService } from '../../services/socket.service';
 
 @NgModule({
   declarations: [
@@ -25,7 +28,10 @@ import { MessageManagerService } from '../../services/messageManager-service';
   ],
   providers: [
     EntityService,
-    MessageManagerService
+    MessageManagerService,
+    TokenService,
+    SocketService,
+    InAppBrowser
   ]
 })
 export class EntitiesPageModule {}

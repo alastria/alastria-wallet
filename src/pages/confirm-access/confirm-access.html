@@ -1,9 +1,9 @@
 <ion-header>
     <ion-row justify-content-center>
-        <img src="assets/images/logo/logo1.png" class="alastria-logo">
+        <img src="assets/images/logo/alastria-icon.png" class="alastria-logo">
     </ion-row>
     <ion-row *ngIf="isPresentationRequest; else credentialOffer" text-center>
-        <h2 class="description"> {{issName | uppercase}} ha <strong>solicitado acceso</strong> a {{dataNumberAccess}}
+        <h2 class="description"> {{entitiyName | uppercase}} ha <strong>solicitado acceso</strong> a {{dataNumberAccess}}
             dato/s de tu identidad</h2>
     </ion-row>
     <ng-template #credentialOffer>

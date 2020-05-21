@@ -10,10 +10,6 @@ export class TermsConditionsPage {
     constructor(public navCtrl: NavController, public navParams: NavParams, public viewCtrl: ViewController) {
     }
 
-    ionViewDidLoad() {
-        console.log('ionViewDidLoad TermsConditionsPage');
-    }
-
     dismiss() {
         let data = { 'accept': 'true' };
         this.viewCtrl.dismiss(data);

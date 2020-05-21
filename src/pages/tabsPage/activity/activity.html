@@ -25,24 +25,19 @@
             (click)=!selection?onItemClick(activity):selectActivity(i,activity) (press)=selectActivity(i,activity)
             [ngStyle]="{'background-color': activitiesSelected[i] === activity.activityId ? '#F2F2F2' : '#FFFFFF'}">
             <span class="title">{{ activity.title }}</span>
-            <div class="activityStatus">
-                <ion-icon [ngClass]="{
-                    'status-valid':activity.status === 'Valid',
-                    'status-askissuer':activity.status === 'AskIssuer',
-                    'status-revoked':activity.status === 'Revoked',
-                    'status-deleted-by-subject':activity.status === 'DeletedBySubject'
-                  }" name="radio-button-on"></ion-icon>
-                <span [ngClass]="{
-                    'status-valid':activity.status === 'Valid',
-                    'status-askissuer':activity.status === 'AskIssuer',
-                    'status-revoked':activity.status === 'Revoked',
-                    'status-deleted-by-subject':activity.status === 'DeletedBySubject'
-                  }">{{ activity.status }}</span>
+            <div class="activityStatus" [ngClass]="{
+                'status-valid':activity.status === 'Valid',
+                'status-askissuer':activity.status === 'AskIssuer',
+                'status-revoked':activity.status === 'Revoked',
+                'status-deleted-by-subject':activity.status === 'DeletedBySubject'
+              }" name="radio-button-on">
+                <ion-icon name="radio-button-on"></ion-icon>
+                <span>{{ activity.status }}</span>
                 <ion-icon name="ios-arrow-forward"></ion-icon>
             </div>
             <br>
             <span class="title">{{ activity.subtitle }}</span>
-            <h3 item-subtitle text-wrap>{{ activity.description }}</h3>
+            <h3 item-subtitle text-wrap>Issuer: {{ activity.description }}</h3>
             <span class="datetime">{{ activity.datetime }}</span>
         </ion-item>
     </ion-list>

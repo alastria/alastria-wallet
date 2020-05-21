@@ -1,18 +1,26 @@
-import { ModalController, App } from 'ionic-angular';
+import { ModalController } from 'ionic-angular';
 import { Component, ViewChild } from '@angular/core';
 import { IonicPage, AlertController } from 'ionic-angular';
-import { ToastService } from '../../../services/toast-service';
-import { TabsService } from '../../../services/tabs-service';
-import { Activities } from './../../../services/activities/activities.service';
+
+// MODELS
 import { ActivityM } from './../../../models/activity.model';
-import { OptionsComponent } from './options/options';
-import { IdentitySecuredStorageService } from '../../../services/securedStorage.service';
 import { AppConfig } from '../../../app.config';
+
+// COMPONENTS - PAGES
+import { OptionsComponent } from './options/options';
+
+// SERVICES
+import { SecuredStorageService } from '../../../services/securedStorage.service';
+import { TransactionService } from '../../../services/transaction-service';
+import { ToastService } from '../../../services/toast-service';
+import { ActivitiesService } from '../../../services/activities.service';
+import { Web3Service } from '../../../services/web3-service';
+
 
 @IonicPage()
 @Component({
     templateUrl: 'activity.html',
-    providers: [TabsService, ToastService]
+    providers: [ToastService]
 })
 
 export class Activity {
@@ -25,15 +33,81 @@ export class Activity {
     public type: string;
     public activitiesSelected: Array<any> = new Array<any>();
     public selection: boolean = false;
+    public web3: any
 
     constructor(private toastCtrl: ToastService,
-        private activitiesService: Activities,
+        private activitiesService: ActivitiesService,
+        private securedStrg: SecuredStorageService,
+        private transactionSrv: TransactionService,
         public alertCtrl: AlertController,
         public modalCtrl: ModalController,
-        private securedStrg: IdentitySecuredStorageService
+        public web3Srv: Web3Service
     ) {
         this.type = AppConfig.CREDENTIAL_TYPE;
-        this.getActivities();
+        this.getActivities()
+            .then((activities) => {
+                this.activities = activities;
+            });
+        this.web3 = this.web3Srv.getWeb3(AppConfig.nodeURL)
+    }
+
+    /**
+     * Function for get activities
+    */
+   public getActivities() {
+        let prefix: string;
+        if (this.type === AppConfig.CREDENTIAL_TYPE) {
+            prefix = AppConfig.CREDENTIAL_PREFIX;
+        } else {
+            prefix = AppConfig.PRESENTATION_PREFIX;
+        }
+
+        return this.securedStrg.matchAndGetJSON(prefix)
+            .then(async (elements) => {
+                let count = 0;
+                const promises = [];
+                const did = await this.securedStrg.get('userDID');
+                elements.map(async (element) => {
+                    const elementObj = JSON.parse(element);
+                    const key = this.getCreedKey(elementObj)
+
+                    if (prefix === AppConfig.CREDENTIAL_PREFIX) {
+                        promises.push(this.getCredentialStatus(this.web3, elementObj[AppConfig.PSM_HASH], did)
+                        .then((credentialStatus) => {
+                            const statusType = parseInt(credentialStatus[1]);
+
+                            return this.createActivityObject(count++, key, elementObj[key], elementObj.entityName, elementObj.iat,
+                                statusType, elementObj[AppConfig.REMOVE_KEY]);
+                        }));
+                    } else {
+                        const iat = new Date(elementObj[AppConfig.PAYLOAD][AppConfig.NBF]);
+                        const iatString = iat.getDate() + "/" + (iat.getMonth() + 1) + "/" + iat.getFullYear();
+                        const title = "Presentación " + count++;
+
+                        promises.push(this.getPresentationStatus(this.web3, elementObj[AppConfig.PSM_HASH], did)
+                        .then(async (credentialStatus) => {
+                            const statusType = parseInt(credentialStatus[1]);
+                            const entityName = await this.transactionSrv.getEntity(this.web3, elementObj[AppConfig.PAYLOAD][AppConfig.AUDIENCE])
+                            
+                            return this.createActivityObject(count++, title, '', entityName.name, iatString, statusType, elementObj[AppConfig.REMOVE_KEY]);
+                        }));
+                    }
+                });
+
+                return Promise.all(promises);
+            });
+    }
+    private getCreedKey(credential: any) {
+        let key = '';
+        Object.keys(credential).map((keyCredential) => {
+            if (keyCredential !== 'levelOfAssurance' && keyCredential !== 'iat' && keyCredential !== 'exp' && keyCredential !== 'iss' && 
+            keyCredential !== 'entityName' && keyCredential !== 'PSMHash' && keyCredential !== 'removeKey' && keyCredential !== 'nbf' && 
+            keyCredential !== 'credentialJWT' && keyCredential !== 'sub') {
+                key = keyCredential;
+            }
+        });
+
+        return key;
     }
 
     /**
@@ -42,6 +116,11 @@ export class Activity {
     */
     onItemClick(item: any): void {
         this.toastCtrl.presentToast("Folow");
+    }
+
+    async getEntity(web3: any, issuer: string) {
+        const entity = await this.transactionSrv.getEntity(web3, issuer)
+        return entity.name
     }
 
     /**
@@ -56,7 +135,7 @@ export class Activity {
         }
 
         try {
-            await this.getActivities();
+            this.activities = await this.getActivities();
             if (searchTerm) {
                 this.activities = this.activities.filter(activity => {
                     if (activity.description.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1
@@ -67,7 +146,7 @@ export class Activity {
                 });
             }
         } catch (err) {
-            console.log(err);
+            console.error(err);
         }
     }
 
@@ -201,102 +280,82 @@ export class Activity {
         this.activitiesSelected = [];
     }
 
-    /**
-     * Function for get activities
-    */
-    public getActivities() {
-        let prefix: string;
-        if (this.type === AppConfig.CREDENTIAL_TYPE) {
-            prefix = AppConfig.CREDENTIAL_PREFIX;
-        } else {
-            prefix = AppConfig.PRESENTATION_PREFIX;
+    private async createActivityObject(activityId: number, title: string, subtitle: string, description: string, dateTime: any, statusType: number, removeKey: string) {
+        let auxArray = ["Valid", "AskIssuer", "Revoked", "DeletedBySubject"];
+        return {
+            "activityId": activityId,
+            "title": (title) ? title.toUpperCase().replace(/_/g, " ") : '',
+            "subtitle": subtitle,
+            "description": description,
+            "datetime": dateTime,
+            "type": this.type,
+            "status": AppConfig.ActivityStatus[auxArray[statusType]],
+            "removeKey": removeKey,
         }
+    }
 
-        return this.securedStrg.matchAndGetJSON(prefix)
-            .then((elements) => {
-                console.log("Secure storage elements:" + elements);
-                console.log("Secure storage elements:", elements);
-                let count = 0;
-                this.activities = elements.map(element => {
-                    let elementObj = JSON.parse(element);
-                    let elementKeys = Object.getOwnPropertyNames(elementObj);
-                    let auxArray = ["Valid", "AskIssuer", "Revoked", "DeletedBySubject"];
-                    if (prefix === AppConfig.CREDENTIAL_PREFIX) {
-                        return {
-                            "activityId": count++,
-                            "title": elementKeys[1],
-                            "subtitle": elementObj[elementKeys[1]],
-                            "description": elementObj.issuer,
-                            "datetime": "",
-                            "type": this.type,
-                            "removeKey": elementObj[AppConfig.REMOVE_KEY],
-                            "status": AppConfig.ActivityStatus[auxArray[Math.round(Math.random() * (3 - 0) + 0)]]
-                        }
-                    } else {
-                        let iat = new Date(elementObj[AppConfig.PAYLOAD][AppConfig.IAT] * 1000);
-                        let iatString = iat.getDay() + "/" + (iat.getMonth() + 1) + "/" + iat.getFullYear();
-                        return {
-                            "activityId": count++,
-                            "title": "Presentación " + count,
-                            "subtitle": "",
-                            "description": elementObj[AppConfig.PAYLOAD][AppConfig.ISSUER],
-                            "datetime": iatString,
-                            "type": this.type,
-                            "jti": elementObj[AppConfig.PAYLOAD][AppConfig.JTI],
-                            "status": AppConfig.ActivityStatus[auxArray[Math.round(Math.random() * (3 - 0) + 0)]]
-                        }
-                    }
-                });
-            });
+    private async getCredentialStatus(web3: any, psmHash: string, did: string) {
+        let status = await this.transactionSrv.getSubjectPresentationStatus(web3, did, psmHash);
+
+        return status;
+    } 
+    
+    private async getPresentationStatus(web3: any, psmHash: string, did: string) {
+        let status = await this.transactionSrv.getSubjectPresentationStatus(web3, did, psmHash);
+
+        return status;
     }
 
     /**
      * Function that call service for delete activities selected
      * @param {Array<number>} ids - ids of the activities selected
     */
-    async deleteActivities(ids: Array<number>) {
-        const messageSuccess = 'Se han borrado las actividades correctamente';
-
-        let prefix: string;
-        if (this.type === AppConfig.CREDENTIAL_TYPE) {
-            prefix = AppConfig.CREDENTIAL_PREFIX;
-        } else {
-            prefix = AppConfig.PRESENTATION_PREFIX;
-        }
-
-        let keysToRemove = ids.map(element => {
-            if (prefix === AppConfig.CREDENTIAL_PREFIX) {
-                return this.activities[element][AppConfig.REMOVE_KEY];
-            }else{
-                return this.activities[element][AppConfig.JTI];
+    async deleteActivities(ids: Array<number>): Promise<void> {
+        try {
+            const messageSuccess = 'Se han borrado las actividades correctamente';
+            let prefix: string;
+            if (this.type === AppConfig.CREDENTIAL_TYPE) {
+                prefix = AppConfig.CREDENTIAL_PREFIX;
+            } else {
+                prefix = AppConfig.PRESENTATION_PREFIX;
             }
-        })
-            .map(key => {
-                return this.securedStrg.removePresentation(key);
-            });
-
-        Promise.all(keysToRemove)
-            .then(() => {
-                return this.getActivities();
-            })
-            .then(() => {
-                this.resetSelection();
-                this.toastCtrl.presentToast(messageSuccess);
-            });
+    
+            let keysToRemove = ids.map(element => {
+                if (prefix === AppConfig.CREDENTIAL_PREFIX) {
+                    return this.activities[element][AppConfig.REMOVE_KEY];
+                } else{
+                    return this.activities[element][AppConfig.JTI];
+                }
+            }).map(key => {
+                    return this.securedStrg.removePresentation(key);
+                });
+    
+            Promise.all(keysToRemove)
+                .then(async () => {
+                    this.activities = await this.getActivities();
+                    return this.getActivities();
+                })
+                .then(() => {
+                    this.resetSelection();
+                    this.toastCtrl.presentToast(messageSuccess);
+                });
+        } catch(error) {
+            console.error('error delete activities ', error);
+        }
     }
 
     /**
      * Function that call service for backuo activities selected
      * @param {Array<number>} ids - ids of the activities selected
     */
-    async backupActivities(ids: Array<number>) {
+    async backupActivities(ids: Array<number>): Promise<void> {
         const messageSuccess = 'Se ha realizado el backup correctamente';
         try {
             await this.activitiesService.backupActivities(ids);
             this.resetSelection();
             this.toastCtrl.presentToast(messageSuccess);
         } catch (err) {
-            console.log(err);
+            console.error('backupActivities ', err);
         }
     }
 }

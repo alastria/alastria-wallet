@@ -8,4 +8,5 @@ export class ActivityM {
     datetime: string;
     type: string;
     status: AppConfig.ActivityStatus;
+    removeKey: string;
 }

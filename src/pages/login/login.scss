@@ -75,13 +75,18 @@ login-page {
       flex: 2;
       align-content: flex-end;
     }
+    .row4 {
+      flex: 2;
+      align-content: flex-end;
+      margin: auto;
+    }
   }
   
   .fingerPrint {
     font-size: 18px;
     color: #FFFFFF;
     margin: auto;
-    width: 235px;
+    width: 100%;
   }
   
   .fingerPrint > img {

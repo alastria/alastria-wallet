@@ -27,7 +27,9 @@ export class LoadingService {
     }
 
     public hide() {
-        this.loadingModal.dismiss();
+        if (this.loadingModal) {
+            this.loadingModal.dismiss();
+        }
     }
 
     public showModal() {
@@ -54,10 +56,10 @@ export class LoadingService {
         this.loadingModal.present();
     }
 
-    public updateModalState() {
+    public updateModalState(isDeeplink?: boolean) {
         this.loadingTimer.then(() => {
             if (this.currentModalState !== State.SUCCESS) {
-                this.showSuccess();
+                this.showSuccess(isDeeplink);
             } else {
                 this.loadingModal.dismiss();
             }
@@ -65,7 +67,7 @@ export class LoadingService {
         });
     }
 
-    private showSuccess() {
+    private showSuccess(isDeeplink: boolean) {
         let titleSuccess = '¡Hecho!';
         let textSuccess = 'Recuerda que puedes ver todos tus movimientos de AlastriaID en la opción de <strong>"Actividad"</strong>';
         let imgPrincipal = 'assets/images/alastria/success.png';
@@ -78,7 +80,8 @@ export class LoadingService {
             imgPrincipal: imgPrincipal,
             imgSuccess: imgSuccess,
             page: page,
-            callback: ""
+            callback: "",
+            isDeeplink
         });
         this.currentModalState = State.SUCCESS;
         succesModal.present();

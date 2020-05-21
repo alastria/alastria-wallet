@@ -1,4 +1,5 @@
 confirm-access {
+
   img {
     object-fit: fill;
     padding-bottom: 15px;
@@ -40,11 +41,6 @@ confirm-access {
     height: 110px;
   }
 
-  .cross {
-    margin-top: 15px;
-    margin-right: 15px;
-  }
-
   .description {
     color: $blueT;
     padding: 2%;
@@ -55,7 +51,4 @@ confirm-access {
     }
   }
 
-  .logo {
-    height: 70px;
-  }
 }
