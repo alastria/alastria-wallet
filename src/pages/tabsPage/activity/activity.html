@@ -6,7 +6,7 @@
             Tu actividad reciente con AlastriaId
         </span>
         <options class="options" *ngIf="selection" (handleSelectAll)="handleSelectAll($event)"
-            (handleDeleteActivities)="handleDeleteOrBackup('delete')"
+            (handleDeleteActivities)="handleDeleteOrBackup('delete', type == 'presentations')"
             (handleBackupActivities)="handleDeleteOrBackup('backup')"></options>
         <ion-searchbar *ngIf="!selection" [(ngModel)]="searchTerm" (ionInput)="onSearch($event)"></ion-searchbar>
     </div>

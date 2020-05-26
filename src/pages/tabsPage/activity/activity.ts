@@ -1,4 +1,4 @@
-import { ModalController } from 'ionic-angular';
+import { ModalController, NavController } from 'ionic-angular';
 import { Component, ViewChild } from '@angular/core';
 import { IonicPage, AlertController } from 'ionic-angular';
 
@@ -15,6 +15,8 @@ import { TransactionService } from '../../../services/transaction-service';
 import { ToastService } from '../../../services/toast-service';
 import { ActivitiesService } from '../../../services/activities.service';
 import { Web3Service } from '../../../services/web3-service';
+import { CredentialDetailPage } from '../../credential-detail/credential-detail';
+import { LoadingService } from '../../../services/loading-service';
 
 
 @IonicPage()
@@ -39,9 +41,11 @@ export class Activity {
         private activitiesService: ActivitiesService,
         private securedStrg: SecuredStorageService,
         private transactionSrv: TransactionService,
+        private navCtrl: NavController,
         public alertCtrl: AlertController,
         public modalCtrl: ModalController,
-        public web3Srv: Web3Service
+        public web3Srv: Web3Service,
+        private loadingSrv: LoadingService
     ) {
         this.type = AppConfig.CREDENTIAL_TYPE;
         this.getActivities()
@@ -49,6 +53,13 @@ export class Activity {
                 this.activities = activities;
             });
         this.web3 = this.web3Srv.getWeb3(AppConfig.nodeURL)
+    }
+
+    ionViewWillEnter() {
+        this.getActivities()
+        .then((activities) => {
+            this.activities = activities;
+        });
     }
 
     /**
@@ -114,8 +125,29 @@ export class Activity {
      * Go item click  
      * @param {*} item - activity selected
     */
-    onItemClick(item: any): void {
-        this.toastCtrl.presentToast("Folow");
+    async onItemClick(item: any) {
+        if (item.type === AppConfig.PRESENTATION_TYPE){
+            let presentation = await this.securedStrg.getJSON(item.removeKey);
+
+            let entityName;
+            if(presentation[AppConfig.PAYLOAD][AppConfig.AUDIENCE]) {
+                let issuer = presentation[AppConfig.PAYLOAD][AppConfig.AUDIENCE];
+                let entity = await this.transactionSrv.getEntity(this.web3, issuer);
+                //let entity = await this.transactionSrv.getEntity(presentation[AppConfig.PAYLOAD][AppConfig.GWU], presentation[AppConfig.PAYLOAD][AppConfig.ISSUER])
+                entityName = entity.name
+            } else {
+                entityName = presentation.entityName
+            }
+            let iatString = this.parseFormatDate(presentation[AppConfig.PAYLOAD][AppConfig.NBF]);
+            let expString = this.parseFormatDate(presentation[AppConfig.PAYLOAD][AppConfig.EXP]);
+            let credentialRes = this.parseCredential(0, item.title, entityName, iatString,
+            expString, entityName, 3, this.createStars(3), true);
+            //Send credentialRes to creadential detail.
+            this.navCtrl.push(CredentialDetailPage, {PSMHash: presentation[AppConfig.PSM_HASH], item: credentialRes, showDeleteAndShare: true, 
+                isRevoked: item.status == AppConfig.ActivityStatus.Revoked || item.status == AppConfig.ActivityStatus.DeletedBySubject });
+        } else {
+            this.toastCtrl.presentToast("Folow");
+        }
     }
 
     async getEntity(web3: any, issuer: string) {
@@ -148,6 +180,38 @@ export class Activity {
         } catch (err) {
             console.error(err);
         }
+    }
+
+    private parseFormatDate(date: any): string {
+        let result = '';
+        if (date) {
+            const newDate = new Date(date); 
+            result = newDate.getDate() + "/" + (newDate.getMonth() + 1) + "/" + newDate.getFullYear();
+        }
+
+        return result;
+    }
+
+    private parseCredential(id: number, title: string, value: any, addDate: string, endDate: string, issuer: string, level: number, stars: Array<any>, credentialAssigned: boolean) {
+        return {
+            id: id,
+            titleP: (title) ? title.toUpperCase().replace(/_/g, " ") : '',
+            emitter: "Emisor del testimonio",
+            valueT: "Valor",
+            value: (value) ? value : "Credencial no selecionada o no disponible",
+            place: "Emisor",
+            issuer: issuer,
+            addDateT: "Fecha incorporación del testimonio",
+            addDate: addDate,
+            endDateT: "Fecha fin de vigencia",
+            endDate: endDate,
+            level: "Nivel " + level,
+            iconsStars: stars,
+            credentialAssigned: credentialAssigned,
+            isExpanded: false,
+            isHidden: false,
+            isChecked: true
+        };
     }
 
     /**
@@ -228,16 +292,16 @@ export class Activity {
      * Function that listening if delete or backup click in options component
      * @param {string} type - delete or backup
     */
-    handleDeleteOrBackup(type: string): void {
+    handleDeleteOrBackup(type: string, isPresentation): void {
         const deleteType = 'delete';
         let title = '';
         let message = '';
-        if (type.toLowerCase() === deleteType.toLowerCase()) {
+        if (type.toLowerCase() === deleteType.toLowerCase() && !isPresentation) {
             title = 'Borrar actividades';
             message = '¿Estas seguro de eliminar las actividades seleccionadas?';
         } else {
-            title = 'Backup de actividades';
-            message = '¿Estas seguro de hacer un backup de las actividades seleccionadas?';
+            title = 'Revocar presentacion';
+            message = '¿Estas seguro de que quieres revocar esta presentación? El proveedor deberá borrar las credenciales de esta presentación si solicitas la revocación.';
         }
         this.showConfirm(title, message, type);
     }
@@ -298,7 +362,35 @@ export class Activity {
         let status = await this.transactionSrv.getSubjectPresentationStatus(web3, did, psmHash);
 
         return status;
-    } 
+    }
+
+    private createStars(level: number): Array<any> {
+        let iconActive = "iconActive";
+        let iconInactive = "iconInactive";
+        let isActive = "isActive";
+        let iconStar = "icon-star";
+        let iconStarOutline = "icon-star-outline";
+
+        let stars = [{
+            [iconActive]: iconStar,
+            [iconInactive]: iconStarOutline,
+            [isActive]: true
+        }, {
+            [iconActive]: iconStar,
+            [iconInactive]: iconStarOutline,
+            [isActive]: true
+        }, {
+            [iconActive]: iconStar,
+            [iconInactive]: iconStarOutline,
+            [isActive]: true
+        }];
+
+        for (let z = 0; z < stars.length; z++) {
+            stars[z].isActive = ((z + 1 <= level) ? true : false);
+        }
+
+        return stars;
+    }
     
     private async getPresentationStatus(web3: any, psmHash: string, did: string) {
         let status = await this.transactionSrv.getSubjectPresentationStatus(web3, did, psmHash);
@@ -312,34 +404,49 @@ export class Activity {
     */
     async deleteActivities(ids: Array<number>): Promise<void> {
         try {
-            const messageSuccess = 'Se han borrado las actividades correctamente';
+            let keysToRemove;
+            let messageSuccess;
+            const messageSuccessCred = 'Se han borrado las actividades correctamente';
+            const messageSuccessPresent = 'Se han revocado las actividades correctamente';
             let prefix: string;
+            this.loadingSrv.showModal()
             if (this.type === AppConfig.CREDENTIAL_TYPE) {
-                prefix = AppConfig.CREDENTIAL_PREFIX;
-            } else {
-                prefix = AppConfig.PRESENTATION_PREFIX;
-            }
-    
-            let keysToRemove = ids.map(element => {
-                if (prefix === AppConfig.CREDENTIAL_PREFIX) {
+                keysToRemove = ids.map(element => {
                     return this.activities[element][AppConfig.REMOVE_KEY];
-                } else{
-                    return this.activities[element][AppConfig.JTI];
-                }
-            }).map(key => {
+                }).map(key => {
                     return this.securedStrg.removePresentation(key);
                 });
-    
-            Promise.all(keysToRemove)
-                .then(async () => {
-                    this.activities = await this.getActivities();
-                    return this.getActivities();
-                })
-                .then(() => {
-                    this.resetSelection();
-                    this.toastCtrl.presentToast(messageSuccess);
-                });
+                messageSuccess = messageSuccessCred
+
+                keysToRemove = Promise.all(keysToRemove)
+            } else {
+                keysToRemove = ids.reduce(
+                    (prevVal, element, i) => {
+                        return prevVal.then(() => {
+                            if (element && this.activities[i].status !== AppConfig.ActivityStatus.Revoked){
+                                return this.securedStrg.getJSON(this.activities[i][AppConfig.REMOVE_KEY])
+                                .then(presentation => this.revokePresentation(presentation[AppConfig.PSM_HASH]))
+                            }
+                        });
+                    },
+                    Promise.resolve());
+                
+                messageSuccess = messageSuccessPresent
+            }
+            
+            keysToRemove
+            .then(async () => {
+                this.loadingSrv.updateModalState();
+                this.resetSelection();
+                this.activities = await this.getActivities();
+                return this.getActivities();
+            })
+            .then(() => {
+                //this.toastCtrl.presentToast(messageSuccess);
+            });
+            
         } catch(error) {
+            this.loadingSrv.hide();
             console.error('error delete activities ', error);
         }
     }
@@ -357,5 +464,9 @@ export class Activity {
         } catch (err) {
             console.error('backupActivities ', err);
         }
+    }
+
+    private async revokePresentation(PSMHash) {
+        return this.transactionSrv.revokeSubjectPresentation(this.web3, PSMHash);
     }
 }
