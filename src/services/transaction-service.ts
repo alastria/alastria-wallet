@@ -7,6 +7,7 @@ import { IdentityService } from "./identity-service";
 // Models
 import { PresentationStatus } from './../models/presentation-status.model';
 import { CredentialStatus } from './../models/credential-status.model';
+import { AppConfig } from "../app.config";
 
 @Injectable()
 export class TransactionService {
@@ -66,6 +67,15 @@ export class TransactionService {
             let presentationStatus: PresentationStatus = resultStatus;
             return presentationStatus;
         })
+    }
+
+    public revokeSubjectPresentation(web3: any, PSMHash: string): Promise<any> {
+        let presentationRevoke = transactionFactory.presentationRegistry.updateSubjectPresentation(web3, PSMHash, AppConfig.ActivityStatusIndex.Revoked);
+        return this.identitySrv.getKnownTransaction(web3, presentationRevoke).then((presentationRevokeSigned: string) => {
+            return this.sendSigned(web3, presentationRevokeSigned);
+        }).then(result => {
+            return result;
+        });
     }
 
     public getSubjectCredentialStatus(web3: any, subject: string, credentialHash: string): Promise<CredentialStatus> {

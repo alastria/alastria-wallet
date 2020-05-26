@@ -24,6 +24,8 @@ export class IdentityDataListComponent {
     public iat: any;
     @Input()
     public exp: any;
+    @Input()
+    public canRevoke = false;
 
     @Output()
     public handleIdentitySelect = new EventEmitter();
@@ -251,7 +253,7 @@ export class IdentityDataListComponent {
                     }
                 });
             } else {
-                this.navCtrl.push(CredentialDetailPage, { item });
+                this.navCtrl.push(CredentialDetailPage, { item, showDeleteAndShare: this.canRevoke });
             }
         } catch (error) {
             console.error('Detail error ', error);
