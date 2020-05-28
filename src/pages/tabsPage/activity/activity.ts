@@ -408,7 +408,6 @@ export class Activity {
             let messageSuccess;
             const messageSuccessCred = 'Se han borrado las actividades correctamente';
             const messageSuccessPresent = 'Se han revocado las actividades correctamente';
-            let prefix: string;
             this.loadingSrv.showModal()
             if (this.type === AppConfig.CREDENTIAL_TYPE) {
                 keysToRemove = ids.map(element => {
@@ -442,7 +441,7 @@ export class Activity {
                 return this.getActivities();
             })
             .then(() => {
-                //this.toastCtrl.presentToast(messageSuccess);
+                // this.toastCtrl.presentToast(messageSuccess);
             });
             
         } catch(error) {
