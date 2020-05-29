@@ -1,5 +1,5 @@
 import { Router, NavigationExtras, ActivatedRoute } from '@angular/router';
-import { Component, Input, EventEmitter, Output, OnInit } from '@angular/core';
+import { Component, Input, EventEmitter, Output, OnInit, ɵConsole } from '@angular/core';
 
 // SERVICES
 import { SecuredStorageService } from '../../services/securedStorage.service';
@@ -55,10 +55,6 @@ export class IdentityDataListComponent implements OnInit {
         this.credentials = this.navParams.get(AppConfig.CREDENTIALS);
         this.iat = this.navParams.get(AppConfig.IAT);
         this.exp = this.navParams.get(AppConfig.EXP);
-        console.log(this.credentials);
-        console.log(this.isPresentationRequest);
-        console.log(this.iat);
-        console.log(this.exp);
     }
 
     ngOnInit() {
@@ -289,7 +285,7 @@ export class IdentityDataListComponent implements OnInit {
         const isChecked = 'isChecked';
         const result: any = {
             id,
-            value: event.checked
+            value: (event && event.detail) ? event.detail.checked : false
         };
 
         if (this.isManualSelection) {

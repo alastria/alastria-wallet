@@ -11,6 +11,7 @@ export class CredentialDetailPage implements OnInit {
     data: any;
 
   constructor(private activatedRoute: ActivatedRoute) {
+    console.log('CREDENTIAL DETAAAAAIL !');
   }
 
   ngOnInit() {

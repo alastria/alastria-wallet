@@ -24,6 +24,8 @@ export class TransactionService {
             return this.sendSigned(web3, subjectCredentialSigned);
         }).then(() => {
             return credentialHash;
+        }).catch((error) => {
+            throw error;
         });
     }
 
