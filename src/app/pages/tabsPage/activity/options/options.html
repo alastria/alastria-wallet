@@ -1,9 +1,13 @@
 <!-- Generated template for the OptionsComponent component -->
-<div>
-  <ion-label>Todos</ion-label>
-  <ion-checkbox [(ngModel)]="isSelectAll" (ionChange)="clickSelectAll()" color="dark"></ion-checkbox>
-  <div class="icons">
-    <ion-icon name="cloud-upload" (click)="backupActivities()"></ion-icon>
-    <ion-icon name="trash" (click)="deleteActivities()"></ion-icon>
-  </div>
-</div>
+<ion-row>
+  <ion-col size="8">
+    <ion-label>Todos</ion-label>
+    <ion-checkbox [(ngModel)]="isSelectAll" (ionChange)="clickSelectAll()" color="dark"></ion-checkbox>
+  </ion-col>
+  <ion-col size="3">
+    <div id="icons">
+      <ion-icon name="cloud-upload" (click)="backupActivities()"></ion-icon>
+      <ion-icon name="trash" (click)="deleteActivities()"></ion-icon>
+    </div>
+  </ion-col>
+</ion-row>
