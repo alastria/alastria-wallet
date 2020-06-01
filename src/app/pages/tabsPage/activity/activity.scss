@@ -10,19 +10,31 @@ ion-segment-button > ion-label.label {
     margin-top: 4px;
 }
 
-.title {
-    font-weight: bold !important;
-    color: black;
-    font-size: 18px !important;
+#description {
+    color: #8e8e93;
 }
 
-.activityStatus {
+#activity-status {
     position: relative;
     float: right;
     color: #8e8e93;
 }
 
-.activityStatus > ion-icon {
+#activity-status > ion-icon {
+    font-size: 18px !important;
+}
+
+#activity-status span {
+    margin-right: 3px;
+}
+
+#item-row {
+    width: 100%;
+}
+
+.title {
+    font-weight: bold !important;
+    color: black;
     font-size: 18px !important;
 }
 

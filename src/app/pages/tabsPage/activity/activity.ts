@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { AlertController, ModalController } from '@ionic/angular';
 
 // MODELS
@@ -38,6 +38,7 @@ export class ActivityPage {
                 private activitiesService: ActivitiesService,
                 private securedStrg: SecuredStorageService,
                 private transactionSrv: TransactionService,
+                private changeDetectorRef: ChangeDetectorRef,
                 public alertCtrl: AlertController,
                 public web3Srv: Web3Service,
                 public modalCtrl: ModalController
@@ -63,7 +64,7 @@ export class ActivityPage {
                 let count = 0;
                 const promises = [];
                 const did = await this.securedStrg.get('userDID');
-                elements.map(async (element) => {
+                elements.map(async (element: any) => {
                     const elementObj = JSON.parse(element);
                     const key = this.getCreedKey(elementObj);
 
@@ -131,10 +132,12 @@ export class ActivityPage {
         if (event) {
             searchTerm = event.target.value;
         }
+        this.changeDetectorRef.detectChanges();
 
         try {
             this.activities = from(this.getActivities()).pipe(map((activities) => {
                 if (searchTerm) {
+                    this.changeDetectorRef.detectChanges();
                     return activities.filter(activity => {
                         if (activity.description.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1
                             || activity.subtitle.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1
@@ -143,6 +146,7 @@ export class ActivityPage {
                         }
                     });
                 } else  {
+                    this.changeDetectorRef.detectChanges();
                     return activities;
                 }
             }));
@@ -155,6 +159,7 @@ export class ActivityPage {
      * Function that listens when change the segment
      */
     segmentChanged(event: any): void {
+        this.type = (event && event.detail) ? event.detail.value : AppConfig.CREDENTIALS;
         this.resetSelection();
         this.onSearch();
     }

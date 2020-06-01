@@ -24,23 +24,45 @@
         <ion-item border no-lines *ngFor="let activity of activityList; let i = index" tappable text-wrap
             (click)=!selection?onItemClick(activity):selectActivity(i,activity) (press)=selectActivity(i,activity)
             [ngStyle]="{'background-color': activitiesSelected[i] === activity.activityId ? '#F2F2F2' : '#FFFFFF'}">
-            <ion-label>
-                {{ activity.title }}
-            </ion-label>
-            <div class="activityStatus" [ngClass]="{
-                'status-valid':activity.status === 'Valid',
-                'status-askissuer':activity.status === 'AskIssuer',
-                'status-revoked':activity.status === 'Revoked',
-                'status-deleted-by-subject':activity.status === 'DeletedBySubject'
-              }" name="radio-button-on">
-                <ion-icon name="radio-button-on"></ion-icon>
-                <span>{{ activity.status }}</span>
-                <ion-icon name="ios-arrow-forward"></ion-icon>
-            </div>
-            <br>
-            <span class="title">{{ activity.subtitle }}</span>
-            <h3 item-subtitle text-wrap>Issuer: {{ activity.description }}</h3>
-            <span class="datetime">{{ activity.datetime }}</span>
+            <ion-row id="item-row">
+                <ion-col size=9>
+                    <ion-row>
+                        <ion-col>    
+                            <span class="title">
+                                {{ activity.title }}
+                            </span>
+                        </ion-col>
+                    </ion-row>
+                    <ion-row>
+                        <ion-col>    
+                            <span class="title">{{ activity.subtitle }}</span>
+                        </ion-col>
+                    </ion-row>
+                    <ion-row>
+                        <ion-col>
+                            <ion-label id="description">
+                                Issuer: {{ activity.description }}
+                            </ion-label>
+                        </ion-col>
+                    </ion-row>
+                </ion-col>
+                <ion-col size=3>
+                    <ion-row id="activity-status">
+                        <ion-col>
+                            <div [ngClass]="{
+                                'status-valid':activity.status === 'Valid',
+                                'status-askissuer':activity.status === 'AskIssuer',
+                                'status-revoked':activity.status === 'Revoked',
+                                'status-deleted-by-subject':activity.status === 'DeletedBySubject'}">
+                                <ion-icon name="radio-button-on"></ion-icon>
+                                <span>{{ activity.status }}</span>
+                                <ion-icon name="arrow-forward-outline"></ion-icon>
+                            </div>
+                        </ion-col>
+                    </ion-row>
+                </ion-col>
+            </ion-row>
+            <!-- <span class="datetime">{{ activity.datetime }}</span> -->
         </ion-item>
     </ion-list>
     <div class="without-items" *ngIf="!(activities | async)?.length">
