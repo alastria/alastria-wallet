@@ -5,13 +5,14 @@
         <span style="font-size: 20px;">
             Tu actividad reciente con AlastriaId
         </span>
-        <options class="options" *ngIf="selection" (handleSelectAll)="handleSelectAll($event)"
+        <options class="options" *ngIf="selection"
+            (handleSelectAll)="handleSelectAll($event)"
             (handleDeleteActivities)="handleDeleteOrBackup('delete')"
             (handleBackupActivities)="handleDeleteOrBackup('backup')"></options>
         <ion-searchbar class="normal-search" *ngIf="!selection" [(ngModel)]="searchTerm" (ionInput)="onSearch($event)"></ion-searchbar>
     </div>
 </ion-header>
-<ion-content>
+<ion-content scrollX="true">
     <ion-segment (ionChange)="segmentChanged($event)" [value]="type">
         <ion-segment-button value="credentials">
             <ion-label>Credentials</ion-label>
@@ -22,9 +23,9 @@
     </ion-segment>
     <ion-list tabPage1 *ngIf="(activities | async) as activityList">
         <ion-item border no-lines *ngFor="let activity of activityList; let i = index" tappable text-wrap
-            (click)=!selection?onItemClick(activity):selectActivity(i,activity) (press)=selectActivity(i,activity)
-            [ngStyle]="{'background-color': activitiesSelected[i] === activity.activityId ? '#F2F2F2' : '#FFFFFF'}">
-            <ion-row id="item-row">
+            (click)=!selection?onItemClick(activity):selectActivity(i,activity) (press)=selectActivity(i,activity)>
+            <ion-row id="item-row"
+                [ngStyle]="{'background-color': activitiesSelected[i] === activity.activityId ? '#F2F2F2' : '#FFFFFF'}">
                 <ion-col size=9>
                     <ion-row>
                         <ion-col>    

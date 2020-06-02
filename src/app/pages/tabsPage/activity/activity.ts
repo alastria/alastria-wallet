@@ -132,12 +132,10 @@ export class ActivityPage {
         if (event) {
             searchTerm = event.target.value;
         }
-        this.changeDetectorRef.detectChanges();
 
         try {
             this.activities = from(this.getActivities()).pipe(map((activities) => {
                 if (searchTerm) {
-                    this.changeDetectorRef.detectChanges();
                     return activities.filter(activity => {
                         if (activity.description.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1
                             || activity.subtitle.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1
@@ -169,23 +167,19 @@ export class ActivityPage {
      */
     forceChangeSelectAll(): void {
         if (this.optionsComponent) {
-            this.activities.pipe(map(activities => {
+            this.activities.forEach(activities => {
                 if (this.activitiesSelected && this.activitiesSelected.length) {
                     if (activities.length === this.activitiesSelected.length) {
                         let isSelectAllActivities = true;
                         for (let i = 0, length = this.activitiesSelected.length; i < length; i++) {
-                            if (!this.activitiesSelected[i]) {
+                            if (this.activitiesSelected[i] === null || this.activitiesSelected[i] === undefined) {
                                 isSelectAllActivities = false;
                             }
                         }
-                        if (isSelectAllActivities) {
-                            this.optionsComponent.isSelectAll = true;
-                        } else {
-                            this.optionsComponent.isSelectAll = null;
-                        }
+                        this.optionsComponent.clickSelectAll(true);
                     }
                 }
-            }));
+            });
         }
     }
 
@@ -220,13 +214,13 @@ export class ActivityPage {
      */
     handleSelectAll(isSelectAll: boolean): void {
         if (isSelectAll) {
-            this.activities.pipe(map((activities, i) => {
-                activities.map((activity) => {
+            this.activities.forEach((activities) => {
+                activities.map((activity, i) => {
                     if (!this.activitiesSelected[i]) {
                         this.activitiesSelected[i] = activity.activityId;
                     }
                 });
-            }));
+            });
         } else {
             if (isSelectAll !== null) {
                 this.resetSelection();
@@ -322,6 +316,7 @@ export class ActivityPage {
      * @param ids - ids of the activities selected
      */
     async deleteActivities(ids: Array<number>): Promise<void> {
+        console.log('ids ', ids);
         try {
             const messageSuccess = 'Se han borrado las actividades correctamente';
             let prefix: string;
@@ -332,14 +327,17 @@ export class ActivityPage {
             }
 
             const keysToRemove = ids.map(element => {
+                console.log('element ', element);
                 if (prefix === AppConfig.CREDENTIAL_PREFIX) {
-                    return this.activities[element][AppConfig.REMOVE_KEY];
+                    return from(this.activities).pipe(map((activities) => {
+                        return this.securedStrg.removePresentation(this.activities[element][AppConfig.REMOVE_KEY]);
+                    }));
                 } else {
-                    return this.activities[element][AppConfig.JTI];
+                    return from(this.activities).pipe(map((activities) => {
+                        return this.securedStrg.removePresentation(this.activities[element][AppConfig.JTI]);
+                    }));
                 }
-            }).map(key => {
-                return this.securedStrg.removePresentation(key);
-            });
+            })
 
             Promise.all(keysToRemove)
                 .then(async () => {
