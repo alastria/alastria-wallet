@@ -10,6 +10,10 @@ ion-segment-button > ion-label.label {
     margin-top: 4px;
 }
 
+ion-header {
+    background-color: white;
+}
+
 #description {
     color: #8e8e93;
 }
@@ -68,4 +72,3 @@ ion-segment-button > ion-label.label {
 .status-deleted-by-subject {
     color: grey;
 }
-

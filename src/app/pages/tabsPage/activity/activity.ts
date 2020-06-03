@@ -1,9 +1,10 @@
 import { Component, ViewChild, ChangeDetectorRef } from '@angular/core';
-import { AlertController, ModalController } from '@ionic/angular';
+import { AlertController, ModalController, IonVirtualScroll } from '@ionic/angular';
 
 // MODELS
 import { ActivityM } from './../../../models/activity.model';
 import { AppConfig } from '../../../../app.config';
+import { ScrollHideConfig } from './../../../components/parallax/parallax.directive';
 
 // COMPONENTS - PAGES
 import { OptionsComponent } from './options/options';
@@ -33,6 +34,7 @@ export class ActivityPage {
     public type: string;
     public activitiesSelected: Array<any> = new Array<any>();
     public selection = false;
+    headerScrollConfig: ScrollHideConfig = { cssProperty: 'margin-top', maxValue: 80 };
 
     constructor(private toastCtrl: ToastService,
                 private activitiesService: ActivitiesService,

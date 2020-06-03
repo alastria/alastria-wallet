@@ -16,6 +16,8 @@ import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
+import { ScrollHideDirective } from 'src/app/components/parallax/parallax.directive';
+
 @NgModule({
     imports: [
         CommonModule,
@@ -30,7 +32,8 @@ import { CommonModule } from '@angular/common';
         CameraModule
     ],
     declarations: [
-        TabsPage
+        TabsPage,
+        ScrollHideDirective
     ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
