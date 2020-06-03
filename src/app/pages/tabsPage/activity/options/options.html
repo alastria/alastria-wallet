@@ -2,7 +2,10 @@
 <ion-row>
   <ion-col size="8">
     <ion-label>Todos</ion-label>
-    <ion-checkbox checked="false" (ionChange)="clickSelectAll()"></ion-checkbox>
+    <ion-checkbox 
+      [(ngModel)]="isSelectAll"
+      [indeterminate]="isIndeterminate"
+      (click)="clickSelectAll()"></ion-checkbox>
   </ion-col>
   <ion-col size="3">
     <div id="icons">

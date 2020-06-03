@@ -16,9 +16,8 @@ export class OptionsComponent {
   @Output() handleSelectAll: EventEmitter<boolean> = new EventEmitter();
   @Output() handleDeleteActivities: EventEmitter<any> = new EventEmitter();
   @Output() handleBackupActivities: EventEmitter<any> = new EventEmitter();
-  item = {
-    isSelectAll: false
-  };
+  isSelectAll: boolean;
+  isIndeterminate = true;
 
   constructor() {
   }
@@ -26,13 +25,15 @@ export class OptionsComponent {
   /**
    * Function that emit event when click in checkbox 'todos'
    */
-  public clickSelectAll(isFatherCall?: boolean): void {
-    this.item.isSelectAll = !this.item.isSelectAll;
-    if (isFatherCall) {
-      this.handleSelectAll.emit(null);
-    } else {
-      this.handleSelectAll.emit(this.item.isSelectAll);
-    }
+  public clickSelectAll(): void {
+    this.isSelectAll = !this.isSelectAll;
+    this.handleSelectAll.emit(this.isSelectAll);
+  }
+
+  public clickSelectAllFromParent(isIndeterminate: boolean, isSelectAll): void {
+    this.isIndeterminate = isIndeterminate;
+    this.isSelectAll = isSelectAll;
+    this.handleSelectAll.emit(null);
   }
 
   /**

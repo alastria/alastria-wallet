@@ -176,8 +176,12 @@ export class ActivityPage {
                                 isSelectAllActivities = false;
                             }
                         }
-                        this.optionsComponent.clickSelectAll(true);
+                        this.optionsComponent.clickSelectAllFromParent(!isSelectAllActivities, isSelectAllActivities);
+                    } else {
+                        this.optionsComponent.clickSelectAllFromParent(true, false);
                     }
+                } else {
+                    this.optionsComponent.clickSelectAllFromParent(false, false);
                 }
             });
         }
