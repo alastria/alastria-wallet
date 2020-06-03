@@ -93,10 +93,11 @@ export class Activity {
                     } else {
                         const iat = new Date(elementObj[AppConfig.PAYLOAD][AppConfig.NBF]);
                         const iatString = iat.getDate() + "/" + (iat.getMonth() + 1) + "/" + iat.getFullYear();
-                        const title = "Presentación " + count++;
-
+                        
                         promises.push(this.getPresentationStatus(this.web3, elementObj[AppConfig.PSM_HASH], did)
                         .then(async (credentialStatus) => {
+                            const title = `${elementObj[AppConfig.PAYLOAD][AppConfig.JTI]}`;
+                            // const title = "Presentación " + count++;
                             const statusType = parseInt(credentialStatus[1]);
                             const entityName = await this.transactionSrv.getEntity(this.web3, elementObj[AppConfig.PAYLOAD][AppConfig.AUDIENCE])
                             
