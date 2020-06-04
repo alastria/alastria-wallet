@@ -332,22 +332,24 @@ export class ActivityPage {
                 prefix = AppConfig.PRESENTATION_PREFIX;
             }
 
-            const keysToRemove = ids.map(element => {
-                console.log('element ', element);
-                if (prefix === AppConfig.CREDENTIAL_PREFIX) {
-                    return from(this.activities).pipe(map((activities) => {
-                        return this.securedStrg.removePresentation(this.activities[element][AppConfig.REMOVE_KEY]);
-                    }));
-                } else {
-                    return from(this.activities).pipe(map((activities) => {
-                        return this.securedStrg.removePresentation(this.activities[element][AppConfig.JTI]);
-                    }));
-                }
-            })
+            const keysToRemove = await ids.map(id => {
+                return this.activities.forEach((activities) => {
+                    const activityRemove = activities.filter((activity) => activity.activityId === id);
+                    if (prefix === AppConfig.CREDENTIAL_PREFIX) {
+                            if (activityRemove) {
+                                return this.securedStrg.removePresentation(activityRemove[0][AppConfig.REMOVE_KEY]);
+                            }
+                    } else {
+                        if (activityRemove) {
+                            return this.securedStrg.removePresentation(activityRemove[0][AppConfig.JTI]);
+                        }
+                    }
+                });
+            });
 
             Promise.all(keysToRemove)
                 .then(async () => {
-                    this.activities = from(this.getActivities()).pipe(share());
+                    this.activities = await from(this.getActivities()).pipe(share());
                     return true;
                 })
                 .then(() => {
