@@ -10,7 +10,8 @@
 
     <identity-data-list *ngIf="credentials && credentials.length && isHaveCredentials"
         [allCredentials]="credentials"
-        isManualSelection=true>
+        isManualSelection=true
+        [canRevoke]=true>
     </identity-data-list>
 
     <ion-row justify-content-center *ngIf="(!credentials || !credentials.length) && isHaveCredentials" class="without-credentials-search">

@@ -42,7 +42,7 @@ export class LoadingService {
     public hide() {
         console.log(' --------- HIDE --------');
         if (this.loadingModal) {
-            this.loadingModal.dismiss();
+            return this.modalCtrl.dismiss();
         }
     }
 
@@ -64,6 +64,14 @@ export class LoadingService {
     }
 
     public updateModalState(isDeeplink?: boolean) {
+        if (!this.loadingTimer) {
+            this.loadingTimer = new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve();
+                }, this.TIMER_MS);
+            });
+        }
+
         this.loadingTimer.then(() => {
             if (this.currentModalState !== State.SUCCESS) {
                 this.showSuccess(isDeeplink);
@@ -74,13 +82,12 @@ export class LoadingService {
         });
     }
 
-    private async showSuccess(isDeeplink: boolean) {
+    public async showSuccess(isDeeplink: boolean) {
         const titleSuccess = '¡Hecho!';
         const textSuccess = 'Recuerda que puedes ver todos tus movimientos de AlastriaID en la opción de <strong>"Actividad"</strong>';
         const imgPrincipal = 'assets/images/alastria/success.png';
         const imgSuccess = 'assets/svg/tabIcon/activity.svg';
         const page = 'success';
-
         const successModal = await this.presentModal({ titleSuccess, textSuccess, imgPrincipal, imgSuccess, page, isDeeplink });
         successModal.onWillDismiss()
             .then((res) => {

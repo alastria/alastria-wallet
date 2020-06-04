@@ -7,6 +7,7 @@ import { IdentityService } from './identity-service';
 // Models
 import { PresentationStatus } from './../models/presentation-status.model';
 import { CredentialStatus } from './../models/credential-status.model';
+import { AppConfig } from 'src/app.config';
 
 @Injectable()
 export class TransactionService {
@@ -64,9 +65,18 @@ export class TransactionService {
         const presentationStatus = transactionFactory.presentationRegistry.getSubjectPresentationStatus(web3, subject, presentationHash);
         return web3.eth.call(presentationStatus).then(result => {
             const resultStatus = web3.eth.abi.decodeParameters(['bool', 'uint8'], result);
-            // tslint:disable-next-line: no-shadowed-variable
             const presentationStatus: PresentationStatus = resultStatus;
             return presentationStatus;
+        });
+    }
+
+    public revokeSubjectPresentation(web3: any, PSMHash: string): Promise<any> {
+        const presentationRevoke = transactionFactory.presentationRegistry.updateSubjectPresentation(web3, PSMHash,
+            AppConfig.ActivityStatusIndex.Revoked);
+        return this.identitySrv.getKnownTransaction(web3, presentationRevoke).then((presentationRevokeSigned: string) => {
+            return this.sendSigned(web3, presentationRevokeSigned);
+        }).then(result => {
+            return result;
         });
     }
 

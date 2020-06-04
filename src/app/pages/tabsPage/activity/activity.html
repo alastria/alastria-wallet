@@ -7,7 +7,7 @@
         </span>
         <options class="options" *ngIf="selection"
             (handleSelectAll)="handleSelectAll($event)"
-            (handleDeleteActivities)="handleDeleteOrBackup('delete')"
+            (handleDeleteActivities)="handleDeleteOrBackup('delete',  type == 'presentations')"
             (handleBackupActivities)="handleDeleteOrBackup('backup')"></options>
         <ion-searchbar class="normal-search" *ngIf="!selection" [(ngModel)]="searchTerm" (ionInput)="onSearch($event)"></ion-searchbar>
     </div>

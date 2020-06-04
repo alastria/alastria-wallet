@@ -29,6 +29,8 @@ export class IdentityDataListComponent implements OnInit {
     public iat: any;
     @Input()
     public exp: any;
+    @Input()
+    public canRevoke = false;
 
     @Output()
     public handleIdentitySelect = new EventEmitter();
@@ -266,7 +268,8 @@ export class IdentityDataListComponent implements OnInit {
             } else {
                 const navigationExtras: NavigationExtras = {
                     state: {
-                      item
+                      item,
+                      showDeleteAndShare: this.canRevoke
                     }
                 };
                 this.router.navigate(['/', 'credentialDetail', navigationExtras]);
