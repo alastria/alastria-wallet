@@ -27,10 +27,10 @@ export class ConfirmAccessPage {
     public isPresentationRequest: boolean;
     public issName = 'Empresa X';
     public entitiyName = 'Entidad publica Ejemplo';
+    public credentials: Array<any>;
     public isDeeplink = false;
     private identitiesSelected: Array<number> = [];
     private identityLoaded = new Array<any>();
-    private credentials: Array<any>;
     private verifiedJWTDecode: any;
     private credentialJWT: any;
     private auth: string = AppConfig.AUTH_TOKEN;

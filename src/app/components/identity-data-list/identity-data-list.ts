@@ -1,5 +1,5 @@
 import { Router, NavigationExtras, ActivatedRoute } from '@angular/router';
-import { Component, Input, EventEmitter, Output, OnInit, ɵConsole } from '@angular/core';
+import { Component, Input, EventEmitter, Output, OnInit, ɵConsole, Inject } from '@angular/core';
 
 // SERVICES
 import { SecuredStorageService } from '../../services/securedStorage.service';
@@ -9,7 +9,6 @@ import { AppConfig } from '../../../app.config';
 import { Identity } from '../../models/identity.model';
 import { SelectIdentityPage } from '../../pages/confirm-access/select-identity/select-identity';
 import { TransactionService } from '../../services/transaction-service';
-import { NavParams } from '@ionic/angular';
 import { Web3Service } from '../../services/web3-service';
 
 @Component({
@@ -31,6 +30,8 @@ export class IdentityDataListComponent implements OnInit {
     public exp: any;
     @Input()
     public canRevoke = false;
+    @Input()
+    public isPresentationRequest: boolean;
 
     @Output()
     public handleIdentitySelect = new EventEmitter();
@@ -43,20 +44,21 @@ export class IdentityDataListComponent implements OnInit {
     public isDataSetted = false;
     public isOrderInverted = false;
 
-    private isPresentationRequest: boolean;
-
     constructor(
         private router: Router,
         private route: ActivatedRoute,
         private securedStrg: SecuredStorageService,
         private transactionSrv: TransactionService,
-        private navParams: NavParams,
         private web3Srv: Web3Service
     ) {
-        this.isPresentationRequest = this.navParams.get(AppConfig.IS_PRESENTATION_REQ);
-        this.credentials = this.navParams.get(AppConfig.CREDENTIALS);
-        this.iat = this.navParams.get(AppConfig.IAT);
-        this.exp = this.navParams.get(AppConfig.EXP);
+        // if (!this.isManualSelection) {
+        //     this.isPresentationRequest = this.navParams.get(AppConfig.IS_PRESENTATION_REQ);
+        //     this.credentials = this.navParams.get(AppConfig.CREDENTIALS);
+        //     this.iat = this.navParams.get(AppConfig.IAT);
+        //     this.exp = this.navParams.get(AppConfig.EXP);
+        // }
+        console.log('ispresentation request ', this.isPresentationRequest);
+        console.log('credentials all', this.allCredentials);
     }
 
     ngOnInit() {
@@ -71,6 +73,8 @@ export class IdentityDataListComponent implements OnInit {
             this.credentials = this.allCredentials.map(cred => JSON.parse(cred));
             iatString = this.parseFormatDate(this.iat);
             expString = this.parseFormatDate(this.exp);
+        } else {
+            this.credentials = this.allCredentials;
         }
         let count = 0;
         const credentialPromises = this.credentials.map(async (credential) => {
