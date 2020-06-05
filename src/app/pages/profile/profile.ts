@@ -1,6 +1,9 @@
+import { ActivityM } from './../../models/activity.model';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { SecuredStorageService } from '../../services/securedStorage.service';
+import { Observable, from } from 'rxjs';
+import { share, map } from 'rxjs/operators';
 
 @Component({
     selector: 'page-profile',
@@ -9,13 +12,20 @@ import { SecuredStorageService } from '../../services/securedStorage.service';
 })
 export class ProfilePage {
 
-    credentials: Array<any> = [];
+    credentials: Observable<Array<ActivityM>>;
     searchTerm: string;
     isHaveCredentials: boolean;
 
     constructor(private securedStrg: SecuredStorageService,
                 private router: Router) {
-        this.getAllCredentials();
+    }
+
+
+    ionViewWillEnter() {
+        this.credentials = from(this.getAllCredentials()).pipe(share());
+        this.credentials.forEach((credentials) => {
+            this.isHaveCredentials = (credentials && credentials.length) ? true : false;
+        });
     }
 
     /**
@@ -32,21 +42,28 @@ export class ProfilePage {
         try {
             await this.getAllCredentials();
             if (searchTerm) {
-                this.credentials = this.credentials.filter(credential => {
-                    const credentialJson = JSON.parse(credential);
-                    const coincidence = Object.keys(credentialJson).filter(key => {
-                        if (key !== 'levelOfAssurance' && key !== 'iat' && key !== 'exp' && key !== 'issuer' && key !== 'PSMHash') {
-                            if (key.indexOf(searchTerm.toLowerCase()) !== -1
-                                || credentialJson[key].indexOf(searchTerm.toLowerCase()) !== -1) {
-                                return credential;
+                this.credentials = this.credentials.pipe(map((credentials) => {
+                    const result = credentials.filter((credential: any) => {
+                        const credentialJson = JSON.parse(credential);
+                        const resultKey = Object.keys(credentialJson).filter(key => {
+                            if (key !== 'levelOfAssurance' && key !== 'iat' && key !== 'exp'
+                                && key !== 'issuer' && key !== 'PSMHash' && key !== 'nbf'
+                                && key !== 'iss' && key !== 'sub' && key !== 'credentialJWT') {
+                                    if (key.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1
+                                        || credentialJson[key].toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {
+                                        return credential;
+                                    }
                             }
+                        });
+                        if (resultKey && resultKey.length) {
+                            return resultKey ;
                         }
                     });
 
-                    if (coincidence && coincidence.length) {
-                        return credential;
-                    }
-                });
+                    return result;
+                }));
+            } else  {
+                this.credentials = from(this.getAllCredentials()).pipe(share());
             }
         } catch (err) {
             console.error(err);
@@ -57,9 +74,7 @@ export class ProfilePage {
        this.router.navigateByUrl('/entities');
     }
 
-    private async getAllCredentials(): Promise<void> {
-        this.credentials = [];
-        this.credentials = await this.securedStrg.getAllCredentials();
-        this.isHaveCredentials = (this.credentials && this.credentials.length) ? true : false;
+    private async getAllCredentials() {
+        return this.securedStrg.getAllCredentials();
     }
 }
