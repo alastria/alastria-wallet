@@ -11,7 +11,7 @@
     <identity-data-list *ngIf="(credentials | async) as credentialList"
         [allCredentials]="credentialList"
         isManualSelection=true
-        [canRevoke]=true>
+        [canRevoke]=false>
     </identity-data-list>
 
     <ion-row *ngIf="!(credentials | async)?.length" justify-content-center class="without-credentials-search">

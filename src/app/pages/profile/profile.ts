@@ -63,7 +63,7 @@ export class ProfilePage {
                     return result;
                 }));
             } else  {
-                this.credentials = from(this.getAllCredentials()).pipe(share());
+                this.credentials = from(this.getAllCredentials());
             }
         } catch (err) {
             console.error(err);

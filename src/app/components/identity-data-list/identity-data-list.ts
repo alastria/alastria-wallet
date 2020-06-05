@@ -46,19 +46,10 @@ export class IdentityDataListComponent implements OnInit {
 
     constructor(
         private router: Router,
-        private route: ActivatedRoute,
         private securedStrg: SecuredStorageService,
         private transactionSrv: TransactionService,
         private web3Srv: Web3Service
     ) {
-        // if (!this.isManualSelection) {
-        //     this.isPresentationRequest = this.navParams.get(AppConfig.IS_PRESENTATION_REQ);
-        //     this.credentials = this.navParams.get(AppConfig.CREDENTIALS);
-        //     this.iat = this.navParams.get(AppConfig.IAT);
-        //     this.exp = this.navParams.get(AppConfig.EXP);
-        // }
-        console.log('ispresentation request ', this.isPresentationRequest);
-        console.log('credentials all', this.allCredentials);
     }
 
     ngOnInit() {
@@ -271,12 +262,13 @@ export class IdentityDataListComponent implements OnInit {
                 });
             } else {
                 const navigationExtras: NavigationExtras = {
-                    state: {
-                      item,
+                    queryParams: {
+                      item: JSON.stringify(item),
                       showDeleteAndShare: this.canRevoke
                     }
                 };
-                this.router.navigate(['/', 'credentialDetail', navigationExtras]);
+
+                this.router.navigate(['credential-detail'], navigationExtras);
             }
         } catch (error) {
             console.error('Detail error ', error);

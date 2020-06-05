@@ -33,10 +33,10 @@ export class CredentialDetailPage implements OnInit {
 
     ngOnInit() {
         this.activatedRoute.queryParams.subscribe(params => {
-          this.data = params.item;
-          this.PSMHash = params.PSMHash;
-          this.isRevoked = params.isRevoked;
-          this.showDeleteAndShare = params.showDeleteAndShare;
+            this.data = (params.item) ? JSON.parse(params.item) : {};
+            this.PSMHash = params.PSMHash;
+            this.isRevoked = (params.isRevoked) ? JSON.parse(params.isRevoked) : false;
+            this.showDeleteAndShare = (params.showDeleteAndShare) ?  JSON.parse(params.showDeleteAndShare) : false;
         });
     }
 
