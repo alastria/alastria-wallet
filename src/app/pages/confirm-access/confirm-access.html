@@ -18,6 +18,7 @@
         *ngIf="credentials && credentials.length"
         isSelectable="true"
         [allCredentials]="credentials"
+        [isPresentationRequest]="isPresentationRequest"
         (handleIdentitySelect)="handleIdentitySelect($event)"
         (loadCredential)="loadCredential($event)">
     </identity-data-list>

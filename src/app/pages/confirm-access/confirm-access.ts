@@ -48,8 +48,8 @@ export class ConfirmAccessPage {
         private tokenSrv: TokenService
     ) {
         this.dataNumberAccess = this.navParams.get(AppConfig.DATA_COUNT);
-        this.credentials = this.navParams.get(AppConfig.CREDENTIALS);
         this.isPresentationRequest = this.navParams.get(AppConfig.IS_PRESENTATION_REQ);
+        this.credentials = this.navParams.get(AppConfig.CREDENTIALS);
         this.isDeeplink = this.navParams.get('isDeeplink');
         this.initiateVariables();
     }
@@ -57,13 +57,16 @@ export class ConfirmAccessPage {
     private async initiateVariables(): Promise<void> {
         const web3 = this.web3Srv.getWeb3(AppConfig.nodeURL);
         const credentialJWTArr = [];
-        if (!this.isPresentationRequest) {
+        if (this.isPresentationRequest) {
+            this.verifiedJWTDecode = this.navParams.get(AppConfig.VERIFIED_JWT);
+        } else {
             this.credentialJWT = this.navParams.get(AppConfig.VERIFIED_JWT);
             if (this.credentialJWT) {
                 this.credentialJWT.map(item => {
                     credentialJWTArr.push(this.tokenSrv.decodeTokenES(item));
                 });
             }
+            console.log('credentialJWTArr ', credentialJWTArr);
             this.verifiedJWTDecode = credentialJWTArr;
 
         }
@@ -109,8 +112,10 @@ export class ConfirmAccessPage {
 
 
     private async sendPresentation(): Promise<any> {
+        console.log('------ SEND PRESENTATION -----');
         try {
             const isAllCredentialsSelected = this.checkIsAllCredentialsSelected();
+            console.log('------ isAllCredentialsSelected -----', isAllCredentialsSelected);
 
             if (isAllCredentialsSelected) {
                 const securedCredentials = new Array<any>();
@@ -126,13 +131,15 @@ export class ConfirmAccessPage {
 
                 if (!pendingIdentities.length) {
                     this.showLoading();
+                    console.log('------ this.verifiedJWTDecode -----', this.verifiedJWTDecode);
                     const callbackUrl = this.verifiedJWTDecode.payload.cbu;
+                    console.log('------ callbackUrl -----', callbackUrl);
                     const web3 = this.web3Srv.getWeb3(AppConfig.nodeURL);
                     const uri = AppConfig.procUrl;
                     const privKey = await this.securedStrg.get('userPrivateKey');
                     const did = await this.securedStrg.get('userDID');
                     const jti = Math.random().toString(36).substring(2);
-                    const signedCredentialJwts = this.getSingalCredentials(securedCredentials);
+                    const signedCredentialJwts = this.getSignedCredentials(securedCredentials);
                     const presentation = tokensFactory.tokens.createPresentation(`${did}#keys-1`, did, this.verifiedJWTDecode.payload.iss,
                         this.verifiedJWTDecode.payload.pr['@context'], signedCredentialJwts,
                         AppConfig.procUrl, this.verifiedJWTDecode.payload.pr.procHash,
@@ -228,7 +235,7 @@ export class ConfirmAccessPage {
         return key;
     }
 
-    private getSingalCredentials(securedCredentials: Array<any>) {
+    private getSignedCredentials(securedCredentials: Array<any>) {
         return securedCredentials.map(securedCredential => {
             return securedCredential.credJWT;
         });
