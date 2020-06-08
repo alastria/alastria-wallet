@@ -66,7 +66,6 @@ export class ConfirmAccessPage {
                     credentialJWTArr.push(this.tokenSrv.decodeTokenES(item));
                 });
             }
-            console.log('credentialJWTArr ', credentialJWTArr);
             this.verifiedJWTDecode = credentialJWTArr;
 
         }
@@ -112,10 +111,8 @@ export class ConfirmAccessPage {
 
 
     private async sendPresentation(): Promise<any> {
-        console.log('------ SEND PRESENTATION -----');
         try {
             const isAllCredentialsSelected = this.checkIsAllCredentialsSelected();
-            console.log('------ isAllCredentialsSelected -----', isAllCredentialsSelected);
 
             if (isAllCredentialsSelected) {
                 const securedCredentials = new Array<any>();
@@ -131,9 +128,7 @@ export class ConfirmAccessPage {
 
                 if (!pendingIdentities.length) {
                     this.showLoading();
-                    console.log('------ this.verifiedJWTDecode -----', this.verifiedJWTDecode);
                     const callbackUrl = this.verifiedJWTDecode.payload.cbu;
-                    console.log('------ callbackUrl -----', callbackUrl);
                     const web3 = this.web3Srv.getWeb3(AppConfig.nodeURL);
                     const uri = AppConfig.procUrl;
                     const privKey = await this.securedStrg.get('userPrivateKey');

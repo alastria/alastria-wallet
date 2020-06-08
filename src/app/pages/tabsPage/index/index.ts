@@ -1,3 +1,4 @@
+import { MessageManagerService } from './../../../services/messageManager-service';
 import { Component, OnInit, OnChanges } from '@angular/core';
 import { ToastService } from '../../../services/toast-service';
 import { Platform, NavController } from '@ionic/angular';
@@ -8,6 +9,7 @@ import { Observable } from 'rxjs';
 // Model
 import { ArticleModel } from 'src/app/models/article.model';
 import { share } from 'rxjs/operators';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
     templateUrl: 'index.html',
@@ -24,11 +26,20 @@ export class IndexPage implements OnInit, OnChanges {
     constructor(private toastCtrl: ToastService,
                 private articleService: ArticleService,
                 private platform: Platform,
-                private navCtrl: NavController) {
+                private navCtrl: NavController,
+                private activatedRoute: ActivatedRoute,
+                private router: Router,
+                private messageManagerService: MessageManagerService) {
         this.platform.backButton.subscribe(() => {
             this.navCtrl.back();
         });
-        this.articles = this.getArticles().pipe(share());
+        this.articles = this.getArticles().pipe();
+
+        this.activatedRoute.queryParams.subscribe((params) => {
+            if (params && params.token) {
+                this.messageManagerService.prepareDataAndInit(params.token, true);
+            }
+        });
     }
 
     ngOnInit() {

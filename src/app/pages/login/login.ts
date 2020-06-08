@@ -68,6 +68,7 @@ export class LoginPage {
     this.platform.ready()
       .then(async () => {
         await this.securedStrg.initSecureStorage();
+        this.isLogged = await this.securedStrg.get('isLogged');
         this.hashKeyLoginType = await this.securedStrg.hasKey('loginType');
 
         if (this.hashKeyLoginType) {
@@ -96,7 +97,6 @@ export class LoginPage {
         }).subscribe(
             (match) => {
                 const path = (match &&  match.$link) ? match.$link.path : null;
-
                 if (!this.isLogged) {
                     this.controlDeeplink(path, match.$args);
                 }
@@ -211,6 +211,7 @@ export class LoginPage {
 
   async handleLogin(isLogged: boolean): Promise<any> {
     this.isLogged = isLogged;
+    const result = await this.securedStrg.set('isLogged', this.isLogged.toString());
     if (isLogged) {
         const did = await this.securedStrg.hasKey('userDID');
         if (did) {

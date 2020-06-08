@@ -27,8 +27,14 @@ export class SecuredStorageService {
 
     // GETTERS
 
-    get(key: string): Promise<any> {
-        return this.securedStorageObject.get(key);
+    async get(key: string): Promise<any> {
+        let result = null;
+        const hasKey = await this.hasKey(key);
+        if (hasKey) {
+            result = this.securedStorageObject.get(key);
+        }
+
+        return result;
     }
 
     getAccessKey(): Promise<string> {
