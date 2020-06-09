@@ -4,6 +4,8 @@ import { TransactionService } from '../../services/transaction-service';
 import { Web3Service } from '../../services/web3-service';
 import { AppConfig } from '../../../app.config';
 import { ActivatedRoute } from '@angular/router';
+import { ToastService } from 'src/app/services/toast-service';
+import { LoadingService } from 'src/app/services/loading-service';
 
 @Component({
     selector: 'credential-detail-page',
@@ -27,7 +29,9 @@ export class CredentialDetailPage implements OnInit {
         public activatedRoute: ActivatedRoute,
         private transactionSrv: TransactionService,
         private web3Srv: Web3Service,
-        private alertCtrl: AlertController
+        private alertCtrl: AlertController,
+        private toastCtrl: ToastService,
+        private loadingSrv: LoadingService,
     ) {
         this.web3 = this.web3Srv.getWeb3(AppConfig.nodeURL);
     }
@@ -64,7 +68,15 @@ export class CredentialDetailPage implements OnInit {
     }
 
     private async revokePresentation() {
-        const result = await this.transactionSrv.revokeSubjectPresentation(this.web3, this.PSMHash);
-        this.isRevoked = true;
+        try {
+            this.loadingSrv.showModal();
+            await this.transactionSrv.revokeSubjectPresentation(this.web3, this.PSMHash);
+            this.isRevoked = true;
+            this.loadingSrv.hide();
+            this.toastCtrl.presentToast('La presentación se ha revocado!');
+        } catch (error) {
+            this.loadingSrv.hide();
+            this.toastCtrl.presentToast('Ha ocurrido un error');
+        }
     }
 }

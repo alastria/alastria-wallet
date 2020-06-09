@@ -21,9 +21,9 @@
     </ion-segment>
 </ion-header>
 <ion-content #pageContent fullscreen>
-    <div *ngIf="(activities | async) as activityList">
+    <div *ngIf="activities?.length">
         <ion-list>
-            <ion-card *ngFor="let activity of activityList; let i = index"
+            <ion-card *ngFor="let activity of activities; let i = index"
             (click)=!selection?onItemClick(activity):selectActivity(i,activity) (press)=selectActivity(i,activity)>
                 <ion-row id="item-row"
                     [ngStyle]="{'background-color': activitiesSelected[i] === activity.activityId ? '#F2F2F2' : '#FFFFFF'}">
@@ -67,7 +67,7 @@
             </ion-card>
         </ion-list>
     </div>
-    <div class="without-items" *ngIf="!(activities | async)?.length">
+    <div class="without-items" *ngIf="!activities?.length">
         No se han encontrado actividades
     </div>
 </ion-content>

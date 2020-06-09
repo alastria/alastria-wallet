@@ -38,6 +38,7 @@ export class IndexPage implements OnInit, OnChanges {
         this.activatedRoute.queryParams.subscribe((params) => {
             if (params && params.token) {
                 this.messageManagerService.prepareDataAndInit(params.token, true);
+                this.router.navigate([], {queryParams: {token: null}, queryParamsHandling: 'merge'});
             }
         });
     }

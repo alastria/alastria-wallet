@@ -2,7 +2,7 @@ import { Component, ViewChild, OnInit } from '@angular/core';
 import { AlertController, ModalController } from '@ionic/angular';
 import { Router, NavigationExtras } from '@angular/router';
 import { from, Observable } from 'rxjs';
-import { share, map } from 'rxjs/operators';
+import { map, flatMap } from 'rxjs/operators';
 
 // MODELS
 import { ActivityM } from './../../../models/activity.model';
@@ -32,7 +32,7 @@ export class ActivityPage {
     @ViewChild(OptionsComponent, {read: '', static: false})
     public optionsComponent: OptionsComponent;
     public web3: any;
-    public activities: Observable<Array<ActivityM>>;
+    public activities: Array<ActivityM>;
     public searchTerm: string;
     public type: string;
     public activitiesSelected: Array<any> = new Array<any>();
@@ -55,13 +55,16 @@ export class ActivityPage {
 
     ionViewWillEnter() {
         console.log('------- ionViewWillEnter --------');
-        this.activities = from(this.getActivities()).pipe(share());
+        from(this.getActivities()).subscribe((activities => {
+            this.activities = activities;
+        }));
     }
 
     /**
      * Function for get activities
      */
    public getActivities() {
+        console.log('-------- GET ACTIVITIES --------');
         let prefix: string;
         if (this.type === AppConfig.CREDENTIAL_TYPE) {
             prefix = AppConfig.CREDENTIAL_PREFIX;
@@ -104,7 +107,11 @@ export class ActivityPage {
                     }
                 });
 
-                return Promise.all(promises);
+                return Promise.all(promises)
+                    .then((res) => {
+                        console.log('res ', res);
+                        return res;
+                    });
             });
     }
     private getCreedKey(credential: any) {
@@ -125,33 +132,62 @@ export class ActivityPage {
      * @param  item - activity selected
      */
     async onItemClick(item: any) {
-        if (item.type === AppConfig.PRESENTATION_TYPE) {
-            const presentation = await this.securedStrg.getJSON(item.removeKey);
+        console.log('item ', item);
+        let itemDetail = await this.securedStrg.getJSON(item.removeKey);
+        let showDeleteAndShare: boolean;
+        let entityName: string;
+        let issuer: string;
+        let PSMHash: string;
 
-            let entityName;
-            if (presentation[AppConfig.PAYLOAD][AppConfig.AUDIENCE]) {
-                const issuer = presentation[AppConfig.PAYLOAD][AppConfig.AUDIENCE];
-                const entity = await this.transactionSrv.getEntity(this.web3, issuer);
-                entityName = entity.name;
+        if (itemDetail.entityName) {
+            entityName = itemDetail.entityName;
+        } else {
+            if (item.type === AppConfig.PRESENTATION_TYPE) {
+                console.log('item detail ', itemDetail);
+                PSMHash = itemDetail[AppConfig.PSM_HASH];
+                itemDetail = itemDetail[AppConfig.PAYLOAD];
+                issuer = itemDetail[AppConfig.AUDIENCE];
+                showDeleteAndShare = true;
             } else {
-                entityName = presentation.entityName;
+                issuer = itemDetail[AppConfig.AUDIENCE];
+                showDeleteAndShare = false;
             }
-            const iatString = this.parseFormatDate(presentation[AppConfig.PAYLOAD][AppConfig.NBF]);
-            const expString = this.parseFormatDate(presentation[AppConfig.PAYLOAD][AppConfig.EXP]);
-            const credentialRes = this.parseCredential(0, item.title, entityName, iatString,
+            const entity = await this.transactionSrv.getEntity(this.web3, issuer);
+            entityName = entity.name;
+        }
+        const iatString = this.parseFormatDate(itemDetail[AppConfig.NBF]);
+        const expString = this.parseFormatDate(itemDetail[AppConfig.EXP]);
+        const credentialRes = this.parseCredential(0, item.title, entityName, iatString,
             expString, entityName, 3, this.createStars(3), true);
 
-            // Send credentialRes to creadential detail.
-            const navigationExtras: NavigationExtras = {
-                state: {
-                    item: credentialRes, showDeleteAndShare: true,
-                    isRevoked: item.status == AppConfig.ActivityStatus.Revoked || item.status == AppConfig.ActivityStatus.DeletedBySubject
-                }
-            };
-            this.router.navigate(['/', 'credentialDetail', navigationExtras]);
-        } else {
-            this.toastCtrl.presentToast('Folow');
-        }
+        console.log({
+            item: credentialRes,
+            showDeleteAndShare: true,
+            isRevoked: item.status === AppConfig.ActivityStatus.Revoked || item.status === AppConfig.ActivityStatus.DeletedBySubject
+        });
+        // Send credentialRes to creadential detail.
+        const navigationExtras: NavigationExtras = {
+            queryParams: {
+                item: JSON.stringify(credentialRes),
+                showDeleteAndShare,
+                isRevoked: item.status === AppConfig.ActivityStatus.Revoked || item.status === AppConfig.ActivityStatus.DeletedBySubject,
+                PSMHash
+            }
+        };
+        this.router.navigate(['/', 'credential-detail'], navigationExtras);
+    // } else {
+        // const credential = await this.securedStrg.getJSON(item.removeKey);
+        // console.log('credential --> ', credential);
+        // let entityName;
+        // if (credential[AppConfig.PAYLOAD][AppConfig.issuer]) {
+        //     const issuer = credential[AppConfig.PAYLOAD][AppConfig.issuer];
+        //     const entity = await this.transactionSrv.getEntity(this.web3, issuer);
+        //     entityName = entity.name;
+        // } else {
+        //     entityName = credential.entityName;
+        // }
+        // this.toastCtrl.presentToast('Folow');
+    // }
     }
 
     async getEntity(web3: any, issuer: string) {
@@ -171,7 +207,7 @@ export class ActivityPage {
         }
 
         try {
-            this.activities = from(this.getActivities()).pipe(map((activities) => {
+            from(this.getActivities()).pipe(map((activities) => {
                 if (searchTerm) {
                     return activities.filter(activity => {
                         if (activity.description.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1
@@ -183,7 +219,9 @@ export class ActivityPage {
                 } else  {
                     return activities;
                 }
-            }));
+            })).subscribe((activities) => {
+                this.activities = activities;
+            });
         } catch (err) {
             console.error(err);
         }
@@ -226,10 +264,15 @@ export class ActivityPage {
      * Function that listens when change the segment
      */
     async segmentChanged(event: any): Promise<void> {
-        this.resetSelection();
-        this.type = (event && event.detail) ? event.detail.value : AppConfig.CREDENTIALS;
-        // await this.onSearch();
-        this.activities = from(this.getActivities()).pipe(share());
+        try {
+            this.resetSelection();
+            this.type = (event && event.detail) ? event.detail.value : AppConfig.CREDENTIALS;
+            from(this.getActivities()).subscribe((activities) => {
+                this.activities = activities;
+            })
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     /**
@@ -237,9 +280,9 @@ export class ActivityPage {
      */
     forceChangeSelectAll(): void {
         if (this.optionsComponent) {
-            this.activities.forEach(activities => {
+            this.activities.forEach(activity => {
                 if (this.activitiesSelected && this.activitiesSelected.length) {
-                    if (activities.length === this.activitiesSelected.length) {
+                    if (this.activities.length === this.activitiesSelected.length) {
                         let isSelectAllActivities = true;
                         for (let i = 0, length = this.activitiesSelected.length; i < length; i++) {
                             if (this.activitiesSelected[i] === null || this.activitiesSelected[i] === undefined) {
@@ -288,13 +331,13 @@ export class ActivityPage {
      */
     handleSelectAll(isSelectAll: boolean): void {
         if (isSelectAll) {
-            this.activities.forEach((activities) => {
-                activities.map((activity, i) => {
+            this.activities.forEach((activity, i) => {
+                // activities.map((activity, i) => {
                     if (!this.activitiesSelected[i]) {
                         this.activitiesSelected[i] = activity.activityId;
                     }
                 });
-            });
+            // });
         } else {
             if (isSelectAll !== null) {
                 this.resetSelection();
@@ -420,7 +463,7 @@ export class ActivityPage {
      */
     async deleteActivities(ids: Array<number>): Promise<void> {
         try {
-            const keysToRemove = [];
+            let keysToRemove: any = [];
             let messageSuccess;
             const messageSuccessCred = 'Se han borrado las actividades correctamente';
             const messageSuccessPresent = 'Se han revocado las actividades correctamente';
@@ -433,24 +476,31 @@ export class ActivityPage {
                         keysToRemove.push(this.securedStrg.removePresentation(key));
                     });
 
+                    keysToRemove = Promise.all(keysToRemove);
+
                     messageSuccess = messageSuccessCred;
 
                 } else {
-                    ids.map((id, i) => {
-                            if (id && activities[i].status !== AppConfig.ActivityStatus.Revoked) {
-                                keysToRemove.push(this.securedStrg.getJSON(activities[i][AppConfig.REMOVE_KEY])
-                                    .then(presentation => this.revokePresentation(presentation[AppConfig.PSM_HASH])));
-                            }
-                        }
-                    );
+                    keysToRemove = ids.reduce(
+                        (prevVal, element, i) => {
+                            return prevVal.then(() => {
+                                if (element && this.activities[i].status !== AppConfig.ActivityStatus.Revoked) {
+                                    return this.securedStrg.getJSON(this.activities[i][AppConfig.REMOVE_KEY])
+                                    .then(presentation => this.revokePresentation(presentation[AppConfig.PSM_HASH]));
+                                }
+                            });
+                        },
+                        Promise.resolve());
 
                     messageSuccess = messageSuccessPresent;
                 }
 
-                Promise.all(keysToRemove)
+                keysToRemove
                     .then(async (res) => {
                         this.resetSelection();
-                        this.activities = from(this.getActivities()).pipe(share());
+                        from(this.getActivities()).subscribe((activitiesRes) => {
+                            this.activities = activitiesRes;
+                        })
                         return this.activities;
                     })
                     .then(() => {
