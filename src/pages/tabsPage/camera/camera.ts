@@ -44,9 +44,11 @@ export class Camera {
         this.barcodeScanner.scan(options).then(async barcodeData => {
             let alastriaToken = barcodeData.text;
             if (barcodeData.text && !barcodeData.cancelled) {
-        if (alastriaToken.match(/(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/gi)) {
-                    this.http.get(alastriaToken).subscribe(data => {
-                        this.messageManagerService.prepareDataAndInit(data)
+                let alastriTokenPrepared = alastriaToken.replace(/['"]+/g, '')
+                if (alastriTokenPrepared.match(/(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/gi)) {
+                    this.http.get(alastriTokenPrepared).subscribe(data => {
+                        let dataStringified = (data['jwt']) ? data['jwt'] : JSON.stringify(data)
+                        this.messageManagerService.prepareDataAndInit(dataStringified)
                             .catch((error) => {
                                 throw error;
                             })

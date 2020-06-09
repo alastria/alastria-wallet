@@ -24,7 +24,7 @@
         <ion-item border no-lines *ngFor="let activity of activities; let i = index" tappable text-wrap
             (click)=!selection?onItemClick(activity):selectActivity(i,activity) (press)=selectActivity(i,activity)
             [ngStyle]="{'background-color': activitiesSelected[i] === activity.activityId ? '#F2F2F2' : '#FFFFFF'}">
-            <span class="title">{{ activity.title }}</span>
+            <span class="title" maxlength="10">{{ (activity.title.length > 20) ? (activity.title | slice:0:20) + '...' : activity.title }}</span>
             <div class="activityStatus" [ngClass]="{
                 'status-valid':activity.status === 'Valid',
                 'status-askissuer':activity.status === 'AskIssuer',

@@ -196,7 +196,7 @@ export class Activity {
     private parseCredential(id: number, title: string, value: any, addDate: string, endDate: string, issuer: string, level: number, stars: Array<any>, credentialAssigned: boolean) {
         return {
             id: id,
-            titleP: (title) ? title.toUpperCase().replace(/_/g, " ") : '',
+            titleP: (title) ? title.replace(/_/g, " ") : '',
             emitter: "Emisor del testimonio",
             valueT: "Valor",
             value: (value) ? value : "Credencial no selecionada o no disponible",
