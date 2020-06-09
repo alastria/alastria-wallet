@@ -28,7 +28,8 @@ export class TabsPage {
             }).subscribe(
                 async (match: any) => {
                     const path = (match &&  match.$link) ? match.$link.path : null;
-                    const isLogged = await this.securedStrg.get('isLogged');
+                    let isLogged = await this.securedStrg.get('isLogged');
+                    isLogged = (isLogged) ? JSON.parse(isLogged) : false;
 
                     if (isLogged) {
                         this.controlDeeplink(path, match.$args);
@@ -43,7 +44,6 @@ export class TabsPage {
     checkTokenAndPrepare(token: any) {
         if (token) {
             this.messageManagerService.prepareDataAndInit(token, true);
-            this.router.getCurrentNavigation().extras.state.token = null;
         }
     }
 

@@ -1,3 +1,4 @@
+import { SecuredStorageService } from './../../../services/securedStorage.service';
 import { Component } from '@angular/core';
 import { ToastService } from '../../../services/toast-service';
 import { Router } from '@angular/router';
@@ -36,10 +37,12 @@ export class OptionsPage {
         }
     ];
 
-    constructor(private router: Router) {
+    constructor(private router: Router,
+                private securedStrg: SecuredStorageService) {
     }
 
-    goToRoot() {
+    async goToRoot() {
+        await this.securedStrg.set('isLogged', 'false');
         this.router.navigateByUrl('/login');
     }
 }

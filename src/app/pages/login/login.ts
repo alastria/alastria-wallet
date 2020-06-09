@@ -25,7 +25,7 @@ import { parseCredentials } from 'src/utils';
   styleUrls: ['/login.scss']
 })
 export class LoginPage {
-  isLogged: boolean;
+  isLogged = false;
   token: string;
   credentials: string;
   accessKeyForm: FormGroup;
@@ -68,7 +68,7 @@ export class LoginPage {
     this.platform.ready()
       .then(async () => {
         await this.securedStrg.initSecureStorage();
-        this.isLogged = await this.securedStrg.get('isLogged');
+        await this.securedStrg.set('isLogged', 'false');
         this.hashKeyLoginType = await this.securedStrg.hasKey('loginType');
 
         if (this.hashKeyLoginType) {
@@ -95,11 +95,11 @@ export class LoginPage {
             '/createCredentials': LoginPage,
             '/createPresentations': LoginPage
         }).subscribe(
-            (match) => {
+            async (match) => {
                 const path = (match &&  match.$link) ? match.$link.path : null;
-                if (!this.isLogged) {
-                    this.controlDeeplink(path, match.$args);
-                }
+                const isLogged = await this.securedStrg.get('isLogged');
+                this.isLogged = (isLogged) ? JSON.parse(isLogged) : false;
+                this.controlDeeplink(path, match.$args);
             },
             (noMatch) => {
                 console.log('No Match ', noMatch);
@@ -211,7 +211,7 @@ export class LoginPage {
 
   async handleLogin(isLogged: boolean): Promise<any> {
     this.isLogged = isLogged;
-    const result = await this.securedStrg.set('isLogged', this.isLogged.toString());
+    await this.securedStrg.set('isLogged', this.isLogged.toString());
     if (isLogged) {
         const did = await this.securedStrg.hasKey('userDID');
         if (did) {
@@ -220,6 +220,7 @@ export class LoginPage {
                 token: this.token
             }
           };
+
           this.router.navigate(['/', 'tabs', 'index'], navigationExtras);
         } else {
             const navigationExtras: NavigationExtras = {
@@ -233,34 +234,34 @@ export class LoginPage {
   }
 
   private controlDeeplink(path: string, args: any) {
-      switch (path) {
-          case '/createAI':
-              this.securedStrg.hasKey('userDID')
-                  .then((DID) => {
-                    this.token = args.alastriaToken;
-                  });
-              break;
-          case '/createCredentials':
-              this.token = parseCredentials(args.credentials);
+    switch (path) {
+        case '/createAI':
+            this.securedStrg.hasKey('userDID')
+                .then((DID) => {
+                  this.token = args.alastriaToken;
+                });
+            break;
+        case '/createCredentials':
+            this.token = parseCredentials(args.credentials);
 
-              if (this.isLogged) {
-                  this.handleLogin(this.isLogged);
-              }
-              break;
+            if (!this.isLogged) {
+                this.handleLogin(this.isLogged);
+            }
+            break;
 
-          case '/login':
-          case '/createPresentations':
-              this.token = args.alastriaToken;
+        case '/login':
+        case '/createPresentations':
+            this.token = args.alastriaToken;
 
-              if (this.isLogged) {
-                  this.handleLogin(this.isLogged);
-              }
-              break;
+            if (!this.isLogged) {
+                this.handleLogin(this.isLogged);
+            }
+            break;
 
-          default:
+        default:
 
-              break;
-      }
+            break;
+    }
   }
 
 
