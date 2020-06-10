@@ -53,7 +53,6 @@ export class CredentialDetailPage implements OnInit {
                 {
                     text: 'Cancelar',
                     handler: () => {
-                        console.log('Disagree clicked');
                     }
                 },
                 {

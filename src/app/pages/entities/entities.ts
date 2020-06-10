@@ -64,12 +64,10 @@ export class EntitiesPage implements OnDestroy {
           this.securedStrg.hasKey('userDID')
             .then((DID) => {
               this.token = match.$args.alastriaToken;
-              console.log('controlDeeplink entities ', this.token);
               this.messageManagerService.prepareDataAndInit(this.token, false);
             });
         },
         (noMatch) => {
-            console.log('No Match ', noMatch);
         }
     );
   }

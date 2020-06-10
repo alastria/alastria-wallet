@@ -16,10 +16,8 @@ export class SecuredStorageService {
     }
 
     initSecureStorage(): Promise<void> {
-        console.log('---- initSecureStorage -----');
         return this.securedStorage.create('identitySecureStorage').then(
             (securedStorageObject) => {
-            console.log('---- securedStorageObject ----- ', securedStorageObject);
             this.securedStorageObject = securedStorageObject;
             }
         );

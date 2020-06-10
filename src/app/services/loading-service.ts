@@ -35,12 +35,9 @@ export class LoadingService {
         await this.loading.present();
 
         const { role, data } = await this.loading.onDidDismiss();
-
-        console.log('Loading dismissed!');
     }
 
     public hide() {
-        console.log(' --------- HIDE --------');
         if (this.loadingModal) {
             return this.modalCtrl.dismiss();
         }

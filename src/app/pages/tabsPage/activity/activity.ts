@@ -54,7 +54,6 @@ export class ActivityPage {
     }
 
     ionViewWillEnter() {
-        console.log('------- ionViewWillEnter --------');
         from(this.getActivities()).subscribe((activities => {
             this.activities = activities;
         }));
@@ -64,7 +63,6 @@ export class ActivityPage {
      * Function for get activities
      */
    public getActivities() {
-        console.log('-------- GET ACTIVITIES --------');
         let prefix: string;
         if (this.type === AppConfig.CREDENTIAL_TYPE) {
             prefix = AppConfig.CREDENTIAL_PREFIX;
@@ -109,7 +107,7 @@ export class ActivityPage {
 
                 return Promise.all(promises)
                     .then((res) => {
-                        console.log('res ', res);
+
                         return res;
                     });
             });
@@ -132,7 +130,6 @@ export class ActivityPage {
      * @param  item - activity selected
      */
     async onItemClick(item: any) {
-        console.log('item ', item);
         let itemDetail = await this.securedStrg.getJSON(item.removeKey);
         let showDeleteAndShare: boolean;
         let entityName: string;
@@ -143,7 +140,6 @@ export class ActivityPage {
             entityName = itemDetail.entityName;
         } else {
             if (item.type === AppConfig.PRESENTATION_TYPE) {
-                console.log('item detail ', itemDetail);
                 PSMHash = itemDetail[AppConfig.PSM_HASH];
                 itemDetail = itemDetail[AppConfig.PAYLOAD];
                 issuer = itemDetail[AppConfig.AUDIENCE];
@@ -160,11 +156,6 @@ export class ActivityPage {
         const credentialRes = this.parseCredential(0, item.title, entityName, iatString,
             expString, entityName, 3, this.createStars(3), true);
 
-        console.log({
-            item: credentialRes,
-            showDeleteAndShare: true,
-            isRevoked: item.status === AppConfig.ActivityStatus.Revoked || item.status === AppConfig.ActivityStatus.DeletedBySubject
-        });
         // Send credentialRes to creadential detail.
         const navigationExtras: NavigationExtras = {
             queryParams: {
@@ -175,19 +166,6 @@ export class ActivityPage {
             }
         };
         this.router.navigate(['/', 'credential-detail'], navigationExtras);
-    // } else {
-        // const credential = await this.securedStrg.getJSON(item.removeKey);
-        // console.log('credential --> ', credential);
-        // let entityName;
-        // if (credential[AppConfig.PAYLOAD][AppConfig.issuer]) {
-        //     const issuer = credential[AppConfig.PAYLOAD][AppConfig.issuer];
-        //     const entity = await this.transactionSrv.getEntity(this.web3, issuer);
-        //     entityName = entity.name;
-        // } else {
-        //     entityName = credential.entityName;
-        // }
-        // this.toastCtrl.presentToast('Folow');
-    // }
     }
 
     async getEntity(web3: any, issuer: string) {
@@ -379,7 +357,6 @@ export class ActivityPage {
                 {
                     text: 'Cancelar',
                     handler: () => {
-                        console.log('Disagree clicked');
                     }
                 },
                 {

@@ -36,7 +36,6 @@ export class TabsPage {
                     }
                 },
                 (noMatch: any) => {
-                    console.log('No Match ', noMatch);
                 }
             );
     }

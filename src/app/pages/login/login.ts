@@ -102,7 +102,6 @@ export class LoginPage {
                 this.controlDeeplink(path, match.$args);
             },
             (noMatch) => {
-                console.log('No Match ', noMatch);
             }
         );
       });
