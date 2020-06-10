@@ -1,6 +1,6 @@
 <!-- Lista de elementos -->
 <!-- <ion-content *ngIf="isDataSetted"> -->
-    <ion-card *ngFor="let item of identityDisplay">
+    <ion-card (click)="expandItem(item)" *ngFor="let item of identityDisplay">
         <div *ngIf="isDataSetted && !item.isHidden" style="padding-bottom: 10px;">
             <ion-card-content class="credential-card-content">
                 <ion-row class="row-check">
@@ -42,6 +42,28 @@
                         <img id="detail-image" src="assets/images/alastria/more.png" (click)="detail(item)" />
                     </ion-col>
                 </ion-row>
+            </ion-card-content>
+            <ion-card-content>
+                <app-expandable-card [expanded]="item.isExpanded">
+                    <p>
+                      Hello there.
+                    </p>
+                    <p>
+                      Hello there.
+                    </p>
+                    <p>
+                      Hello there.
+                    </p>
+                    <p>
+                      Hello there.
+                    </p>
+                    <p>
+                      Hello there.
+                    </p>
+                    <p>
+                      Hello there.
+                    </p>
+                </app-expandable-card>
             </ion-card-content>
         </div>
     </ion-card>

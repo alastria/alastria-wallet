@@ -276,9 +276,20 @@ export class IdentityDataListComponent implements OnInit {
 
     }
 
-    public expandCredential(item: Identity) {
-        item.isExpanded = !item.isExpanded;
-    }
+    expandItem(item: Identity): void {
+        if (item.isExpanded) {
+          item.isExpanded = false;
+        } else {
+          this.identityDisplay.map(listItem => {
+            if (item === listItem) {
+              listItem.isExpanded = !listItem.isExpanded;
+            } else {
+              listItem.isExpanded = false;
+            }
+            return listItem;
+          });
+        }
+      }
 
     public changeIdentitySelect(event: any, id: number): void {
         const isChecked = 'isChecked';
