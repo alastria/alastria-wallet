@@ -22,7 +22,9 @@ export class ProfilePage {
 
 
     ionViewWillEnter() {
-        this.credentials = from(this.getAllCredentials()).pipe(share());
+        this.credentials = from(this.getAllCredentials()).pipe(map((credentials) => {
+            return credentials.map((cred) => JSON.parse(cred));
+        }));
         this.credentials.forEach((credentials) => {
             this.isHaveCredentials = (credentials && credentials.length) ? true : false;
         });
@@ -51,7 +53,7 @@ export class ProfilePage {
                                 && key !== 'iss' && key !== 'sub' && key !== 'credentialJWT') {
                                     if (key.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1
                                         || credentialJson[key].toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {
-                                        return credential;
+                                        return credentialJson;
                                     }
                             }
                         });
@@ -63,7 +65,9 @@ export class ProfilePage {
                     return result;
                 }));
             } else  {
-                this.credentials = from(this.getAllCredentials());
+                this.credentials = from(this.getAllCredentials()).pipe(map((credentials) => {
+                    return credentials.map((cred) => JSON.parse(cred));
+                }));
             }
         } catch (err) {
             console.error(err);

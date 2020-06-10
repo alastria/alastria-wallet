@@ -31,7 +31,7 @@ export class SecuredStorageService {
         let result = null;
         const hasKey = await this.hasKey(key);
         if (hasKey) {
-            result = this.securedStorageObject.get(key);
+            result = await this.securedStorageObject.get(key);
         }
 
         return result;

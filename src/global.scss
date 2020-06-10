@@ -161,3 +161,42 @@ ion-searchbar.normal-search {
 ion-searchbar.normal-search  ion-icon {
     color: #325B8E !important;
 }
+
+#logo-row {
+    margin-top: 15px;
+}
+
+#alastria-logo {
+    height: 110px;
+    margin: auto;
+}
+
+ion-footer.modal-buttons {
+    position: absolute;
+    bottom: 50px;
+    
+    ion-row {
+      margin-top: 30px;
+    }
+}
+
+.btnConfirm {
+    --background: linear-gradient(90deg, #325b8e 0%, #00cad6 100%);
+    --border-radius: 30px;
+    height: 50px;
+    margin: auto;
+}
+  
+.btnCancel {
+    margin-top: 15px;
+    font-weight: 500;
+    margin: auto;
+}
+  
+.btnConfirm:before {
+    content: ">";
+    position: absolute;
+    left: 90%;
+    top: 10px;
+    font-size: 25px;
+}

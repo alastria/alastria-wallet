@@ -38,32 +38,10 @@
                             <span *ngIf="item.endDate"> , {{ item.endDate }} </span>
                         </div>
                     </ion-col>
-                    <ion-col size="2">
+                    <ion-col size="2" *ngIf="isPresentationRequest">
                         <img id="detail-image" src="assets/images/alastria/more.png" (click)="detail(item)" />
                     </ion-col>
                 </ion-row>
-            </ion-card-content>
-            <ion-card-content>
-                <app-expandable-card [expanded]="item.isExpanded">
-                    <p>
-                      Hello there.
-                    </p>
-                    <p>
-                      Hello there.
-                    </p>
-                    <p>
-                      Hello there.
-                    </p>
-                    <p>
-                      Hello there.
-                    </p>
-                    <p>
-                      Hello there.
-                    </p>
-                    <p>
-                      Hello there.
-                    </p>
-                </app-expandable-card>
             </ion-card-content>
         </div>
     </ion-card>

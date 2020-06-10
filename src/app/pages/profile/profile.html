@@ -10,7 +10,6 @@
 
     <identity-data-list *ngIf="(credentials | async) as credentialList"
         [allCredentials]="credentialList"
-        isManualSelection=true
         [canRevoke]=false>
     </identity-data-list>
 

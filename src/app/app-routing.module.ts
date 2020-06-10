@@ -7,7 +7,6 @@ import { UserSettingsPage } from './components/user-info-header/userSettings/use
 import { LoginPage } from './pages/login/login';
 import { EntitiesPage } from './pages/entities/entities';
 import { CameraPage } from './pages/tabsPage/camera/camera';
-import { SelectIdentityPage } from './pages/confirm-access/select-identity/select-identity';
 import { CredentialDetailPage } from './pages/credential-detail/credential-detail';
 
 const routes: Routes = [
@@ -16,7 +15,6 @@ const routes: Routes = [
   { path: 'camera', component: CameraPage },
   { path: 'profile', component: ProfilePage },
   { path: 'settings', component: UserSettingsPage },
-  { path: 'selectIdentity', component: SelectIdentityPage },
   { path: 'credential-detail', component: CredentialDetailPage },
   { path: 'tabs',
     loadChildren: () => import('./pages/tabsPage/tabsPage.module').then( m => m.TabsPageModule)

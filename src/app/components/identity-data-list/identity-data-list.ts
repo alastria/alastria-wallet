@@ -7,9 +7,10 @@ import { AppConfig } from '../../../app.config';
 
 // MODELS
 import { Identity } from '../../models/identity.model';
-import { SelectIdentityPage } from '../../pages/confirm-access/select-identity/select-identity';
 import { TransactionService } from '../../services/transaction-service';
 import { Web3Service } from '../../services/web3-service';
+import { ModalController } from '@ionic/angular';
+import { SelectIdentityPage } from 'src/app/pages/confirm-access/select-identity/select-identity';
 
 @Component({
     selector: 'identity-data-list',
@@ -22,8 +23,6 @@ export class IdentityDataListComponent implements OnInit {
     public isSelectable = false;
     @Input()
     public allCredentials: any[];
-    @Input()
-    public isManualSelection: boolean;
     @Input()
     public iat: any;
     @Input()
@@ -48,7 +47,8 @@ export class IdentityDataListComponent implements OnInit {
         private router: Router,
         private securedStrg: SecuredStorageService,
         private transactionSrv: TransactionService,
-        private web3Srv: Web3Service
+        private web3Srv: Web3Service,
+        private modalCtrl: ModalController
     ) {
     }
 
@@ -60,13 +60,9 @@ export class IdentityDataListComponent implements OnInit {
         let iatString: any;
         let expString: any;
         let entityName: any;
-        if (this.isManualSelection) {
-            this.credentials = this.allCredentials.map(cred => JSON.parse(cred));
-            iatString = this.parseFormatDate(this.iat);
-            expString = this.parseFormatDate(this.exp);
-        } else {
-            this.credentials = this.allCredentials;
-        }
+        iatString = this.parseFormatDate(this.iat);
+        expString = this.parseFormatDate(this.exp);
+        this.credentials = this.allCredentials;
         let count = 0;
         const credentialPromises = this.credentials.map(async (credential) => {
             const web3 = this.web3Srv.getWeb3(AppConfig.nodeURL);
@@ -114,9 +110,6 @@ export class IdentityDataListComponent implements OnInit {
                 return Promise.resolve();
             }
         });
-        if (this.isManualSelection) {
-            this.identityDisplay.sort();
-        }
         Promise.all(credentialPromises)
             .then(() => {
                 this.isDataSetted = true;
@@ -126,7 +119,6 @@ export class IdentityDataListComponent implements OnInit {
                     };
                     this.changeIdentitySelect(event, identity.id);
                 });
-                console.log('identityDisplay ', this.identityDisplay);
             });
     }
 
@@ -234,37 +226,39 @@ export class IdentityDataListComponent implements OnInit {
     public async detail(item: any): Promise<void> {
         try {
             if (this.isPresentationRequest) {
-                const credentials = await this.securedStrg.getAllCredentials();
-
-                new Promise((resolve) => {
-                    const navigationExtras: NavigationExtras = {
-                        state: {
-                            item,
-                            isManualSelection: true,
-                            allCredentials: credentials,
-                            iat: this.iat,
-                            exp: this.exp,
-                            resolve
-                        }
-                    };
-                    this.router.navigate(['/', 'selectIdentity'], navigationExtras);
-                }).then((data: any) => {
-                    if (data.mock && data.credential) {
-                        data.mock.isChecked = item.isChecked;
-                        data.mock.id = item.id;
-                        this.identityDisplay[item.id] = data.mock;
-                        const result: any = {
-                            credential: data.credential,
-                            index: item.id
-                        };
-                        this.loadCredential.emit(result);
+                const allCredentials = await this.securedStrg.getAllCredentials();
+                const modal = await this.modalCtrl.create({
+                    component: SelectIdentityPage,
+                    componentProps: {
+                        allCredentials: allCredentials.map(cred => JSON.parse(cred)),
+                        iat: this.iat,
+                        exp: this.exp,
+                        securedCredentials: this.credentials
                     }
                 });
+
+                await modal.present();
+
+                const { data } = await modal.onWillDismiss();
+
+                if (data && data.mock && data.credential) {
+                    data.mock.isChecked = item.isChecked;
+                    data.mock.id = item.id;
+                    this.identityDisplay[item.id] = data.mock;
+
+
+                    const credentialSelected: any = {
+                        credential: this.credentials[item.id],
+                        index: item.id
+                    };
+                    credentialSelected.credential.credJWT = data.credential.credentialJWT;
+                    this.loadCredential.emit(credentialSelected);
+                }
             } else {
                 const navigationExtras: NavigationExtras = {
                     queryParams: {
-                      item: JSON.stringify(item),
-                      showDeleteAndShare: this.canRevoke
+                        item: JSON.stringify(item),
+                        showDeleteAndShare: this.canRevoke
                     }
                 };
 
@@ -298,14 +292,12 @@ export class IdentityDataListComponent implements OnInit {
             value: (event && event.detail) ? event.detail.checked : false
         };
 
-        if (this.isManualSelection) {
-            if (event.checked) {
-                result.data = this.identityDisplay[id];
-                this.chosenIndex = id;
-                for (let i = 0; i < this.identityDisplay.length; i++) {
-                    if (i !== id) {
-                        this.identityDisplay[i][isChecked] = null;
-                    }
+        if (event.checked || event.detail.checked) {
+            result.data = this.identityDisplay[id];
+            this.chosenIndex = id;
+            for (let i = 0; i < this.identityDisplay.length; i++) {
+                if (i !== id) {
+                    this.identityDisplay[i][isChecked] = null;
                 }
             }
         }
