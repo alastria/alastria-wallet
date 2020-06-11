@@ -14,7 +14,7 @@
         [canRevoke]=false>
     </identity-data-list>
 
-    <ion-row *ngIf="!(credentials | async)?.length" justify-content-center class="without-credentials-search">
+    <ion-row *ngIf="!(credentials | async)?.length && this.isHaveCredentials" justify-content-center class="without-credentials-search">
         No se han encontrado credenciales para esa búsqueda
     </ion-row>
 
