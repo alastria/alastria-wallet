@@ -18,7 +18,6 @@ import { TransactionService } from '../../../services/transaction-service';
 import { ToastService } from '../../../services/toast-service';
 import { ActivitiesService } from '../../../services/activities.service';
 import { Web3Service } from '../../../services/web3-service';
-import { CredentialDetailPage } from '../../credential-detail/credential-detail';
 import { LoadingService } from '../../../services/loading-service';
 
 @Component({
@@ -56,6 +55,7 @@ export class ActivityPage {
     ionViewWillEnter() {
         from(this.getActivities()).subscribe((activities => {
             this.activities = activities;
+            console.log('activities ', this.activities);
         }));
     }
 
@@ -285,11 +285,12 @@ export class ActivityPage {
      */
     selectActivity(index: number, activity: any): void {
         this.selection = true;
-        if (this.activitiesSelected && this.activitiesSelected.length && this.activitiesSelected[index]) {
+        if (this.activitiesSelected && this.activitiesSelected.length &&
+            (this.activitiesSelected[index] || this.activitiesSelected[index] === 0)) {
             this.activitiesSelected[index] = undefined;
             let unselectAll = true;
             this.activitiesSelected.forEach(activityId => {
-                if (activityId) {
+                if (activityId || activityId === 0) {
                     unselectAll = false;
                 }
             });

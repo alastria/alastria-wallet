@@ -30,7 +30,7 @@ export class OptionsComponent {
     this.handleSelectAll.emit(this.isSelectAll);
   }
 
-  public clickSelectAllFromParent(isIndeterminate: boolean, isSelectAll): void {
+  public clickSelectAllFromParent(isIndeterminate: boolean, isSelectAll: boolean): void {
     this.isIndeterminate = isIndeterminate;
     this.isSelectAll = isSelectAll;
     this.handleSelectAll.emit(null);
