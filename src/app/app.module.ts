@@ -29,6 +29,8 @@ import { ConfirmErrorPage } from './pages/confirmError/confirmError';
 // SERVICES
 import { ToastService } from './services/toast-service';
 import { Web3Service } from './services/web3-service';
+import { AuthGuardService } from './services/auth-guard.service';
+import { AuthenticationService } from './services/authentication.service';
 
 @NgModule({
     declarations: [
@@ -66,7 +68,9 @@ import { Web3Service } from './services/web3-service';
       SplashScreen,
       StatusBar,
       { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-      ToastService
+      ToastService,
+      AuthGuardService,
+      AuthenticationService
     ],
     schemas: [
       CUSTOM_ELEMENTS_SCHEMA

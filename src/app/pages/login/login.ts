@@ -1,3 +1,4 @@
+import { AuthenticationService } from './../../services/authentication.service';
 import { Component, Output, EventEmitter } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { FingerprintAIO } from '@ionic-native/fingerprint-aio/ngx';
@@ -53,6 +54,7 @@ export class LoginPage {
   constructor(private platform: Platform,
               private faio: FingerprintAIO,
               private securedStrg: SecuredStorageService,
+              private authenticationService: AuthenticationService,
               private fb: FormBuilder,
               private router: Router,
               private route: ActivatedRoute,
@@ -130,7 +132,7 @@ export class LoginPage {
       if (!hasKey) {
         await this.securedStrg.setAccessKey(this.accessKeyForm.get('key').value.toString());
       }
-      const isAuthorized = await this.securedStrg.isAuthorized(this.accessKeyForm.get('key').value);
+      const isAuthorized = await this.authenticationService.login(this.accessKeyForm.get('key').value);
       if (!isAuthorized) {
         this.accessKeyForm.get('key').setErrors({incorrect: true});
       }

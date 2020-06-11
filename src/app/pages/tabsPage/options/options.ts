@@ -1,7 +1,6 @@
-import { SecuredStorageService } from './../../../services/securedStorage.service';
+import { AuthenticationService } from './../../../services/authentication.service';
 import { Component } from '@angular/core';
 import { ToastService } from '../../../services/toast-service';
-import { Router } from '@angular/router';
 
 @Component({
     templateUrl: 'options.html',
@@ -32,17 +31,11 @@ export class OptionsPage {
             button: true,
             buttonLabel: 'LogOut',
             callback: () => {
-                this.goToRoot();
+                this.authenticationService.logout();
             }
         }
     ];
 
-    constructor(private router: Router,
-                private securedStrg: SecuredStorageService) {
-    }
-
-    async goToRoot() {
-        await this.securedStrg.set('isLogged', 'false');
-        this.router.navigateByUrl('/login');
+    constructor(private authenticationService: AuthenticationService) {
     }
 }

@@ -8,16 +8,23 @@ import { LoginPage } from './pages/login/login';
 import { EntitiesPage } from './pages/entities/entities';
 import { CameraPage } from './pages/tabsPage/camera/camera';
 import { CredentialDetailPage } from './pages/credential-detail/credential-detail';
+import { AuthGuardService } from './services/auth-guard.service';
 
 const routes: Routes = [
   { path: 'login', component: LoginPage },
-  { path: 'entities', component: EntitiesPage },
-  { path: 'camera', component: CameraPage },
-  { path: 'profile', component: ProfilePage },
-  { path: 'settings', component: UserSettingsPage },
-  { path: 'credential-detail', component: CredentialDetailPage },
+  { path: 'entities', component: EntitiesPage,
+    canActivate: [AuthGuardService] },
+  { path: 'camera', component: CameraPage,
+    canActivate: [AuthGuardService] },
+  { path: 'profile', component: ProfilePage,
+    canActivate: [AuthGuardService] },
+  { path: 'settings', component: UserSettingsPage,
+    canActivate: [AuthGuardService] },
+  { path: 'credential-detail', component: CredentialDetailPage,
+    canActivate: [AuthGuardService] },
   { path: 'tabs',
-    loadChildren: () => import('./pages/tabsPage/tabsPage.module').then( m => m.TabsPageModule)
+    loadChildren: () => import('./pages/tabsPage/tabsPage.module').then( m => m.TabsPageModule),
+    canActivate: [AuthGuardService]
   },
   {
     path: '',
