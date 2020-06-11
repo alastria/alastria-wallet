@@ -83,9 +83,10 @@ export class ActivityPage {
                         promises.push(this.getCredentialStatus(this.web3, elementObj[AppConfig.PSM_HASH], did)
                             .then((credentialStatus) => {
                                 const statusType = parseInt(credentialStatus[1], 0);
-
-                                return this.createActivityObject(count++, key, elementObj[key], elementObj.entityName, elementObj.iat,
-                                    statusType, elementObj[AppConfig.REMOVE_KEY]);
+                                if (statusType !== 2) {
+                                    return this.createActivityObject(count++, key, elementObj[key], elementObj.entityName, elementObj.iat,
+                                        statusType, elementObj[AppConfig.REMOVE_KEY]);
+                                }
                             }));
                     } else {
                         const iat = new Date(elementObj[AppConfig.PAYLOAD][AppConfig.NBF]);
@@ -106,9 +107,9 @@ export class ActivityPage {
                 });
 
                 return Promise.all(promises)
-                    .then((res) => {
+                    .then((results) => {
 
-                        return res;
+                        return results.filter((result) => (result));
                     });
             });
     }
@@ -284,24 +285,26 @@ export class ActivityPage {
      * @param activity - item selected
      */
     selectActivity(index: number, activity: any): void {
-        this.selection = true;
-        if (this.activitiesSelected && this.activitiesSelected.length &&
-            (this.activitiesSelected[index] || this.activitiesSelected[index] === 0)) {
-            this.activitiesSelected[index] = undefined;
-            let unselectAll = true;
-            this.activitiesSelected.forEach(activityId => {
-                if (activityId || activityId === 0) {
-                    unselectAll = false;
+        if (this.type === AppConfig.PRESENTATION_TYPE) {
+            this.selection = true;
+            if (this.activitiesSelected && this.activitiesSelected.length &&
+                (this.activitiesSelected[index] || this.activitiesSelected[index] === 0)) {
+                this.activitiesSelected[index] = undefined;
+                let unselectAll = true;
+                this.activitiesSelected.forEach(activityId => {
+                    if (activityId || activityId === 0) {
+                        unselectAll = false;
+                    }
+                });
+                if (unselectAll) {
+                    this.resetSelection();
                 }
-            });
-            if (unselectAll) {
-                this.resetSelection();
+            } else {
+                this.activitiesSelected[index] = activity.activityId;
             }
-        } else {
-            this.activitiesSelected[index] = activity.activityId;
-        }
 
-        this.forceChangeSelectAll();
+            this.forceChangeSelectAll();
+        }
     }
 
     /**
