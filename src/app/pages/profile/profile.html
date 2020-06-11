@@ -9,6 +9,7 @@
     <ion-searchbar placeholder="busca tus datos" class="normal-search" [(ngModel)]="searchTerm" (ionInput)="onSearch($event)"></ion-searchbar>
 
     <identity-data-list *ngIf="(credentials | async) as credentialList"
+        isShowDetail=true
         [allCredentials]="credentialList"
         [canRevoke]=false>
     </identity-data-list>

@@ -19,6 +19,7 @@
         isSelectable="true"
         [allCredentials]="credentials"
         [isPresentationRequest]="isPresentationRequest"
+        [isShowDetail]="isPresentationRequest"
         (handleIdentitySelect)="handleIdentitySelect($event)"
         (loadCredential)="loadCredential($event)">
     </identity-data-list>

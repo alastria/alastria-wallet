@@ -31,6 +31,8 @@ export class IdentityDataListComponent implements OnInit {
     public canRevoke = false;
     @Input()
     public isPresentationRequest: boolean;
+    @Input()
+    public isShowDetail: boolean;
 
     @Output()
     public handleIdentitySelect = new EventEmitter();
