@@ -446,44 +446,44 @@ export class ActivityPage {
             const messageSuccessPresent = 'Se han revocado las actividades correctamente';
             // this.loadingSrv.showModal();
 
-            this.activities.forEach((activities) => {
-                if (this.type === AppConfig.CREDENTIAL_TYPE) {
-                    ids.map(id => {
-                        const key = activities[id][AppConfig.REMOVE_KEY];
-                        keysToRemove.push(this.securedStrg.removePresentation(key));
-                    });
+            // this.activities.forEach((activities) => {
+            if (this.type === AppConfig.CREDENTIAL_TYPE) {
+                ids.map(id => {
+                    const key = this.activities[id][AppConfig.REMOVE_KEY];
+                    keysToRemove.push(this.securedStrg.removePresentation(key));
+                });
 
-                    keysToRemove = Promise.all(keysToRemove);
+                keysToRemove = Promise.all(keysToRemove);
 
-                    messageSuccess = messageSuccessCred;
+                messageSuccess = messageSuccessCred;
 
-                } else {
-                    keysToRemove = ids.reduce(
-                        (prevVal, element, i) => {
-                            return prevVal.then(() => {
-                                if (element && this.activities[i].status !== AppConfig.ActivityStatus.Revoked) {
-                                    return this.securedStrg.getJSON(this.activities[i][AppConfig.REMOVE_KEY])
-                                    .then(presentation => this.revokePresentation(presentation[AppConfig.PSM_HASH]));
-                                }
-                            });
-                        },
-                        Promise.resolve());
+            } else {
+                keysToRemove = ids.reduce(
+                    (prevVal, element, i) => {
+                        return prevVal.then(() => {
+                            if (element && this.activities[i].status !== AppConfig.ActivityStatus.Revoked) {
+                                return this.securedStrg.getJSON(this.activities[i][AppConfig.REMOVE_KEY])
+                                .then(presentation => this.revokePresentation(presentation[AppConfig.PSM_HASH]));
+                            }
+                        });
+                    },
+                    Promise.resolve());
 
-                    messageSuccess = messageSuccessPresent;
-                }
+                messageSuccess = messageSuccessPresent;
+            }
 
-                keysToRemove
-                    .then(async (res) => {
-                        this.resetSelection();
-                        from(this.getActivities()).subscribe((activitiesRes) => {
-                            this.activities = activitiesRes;
-                        })
-                        return this.activities;
+            keysToRemove
+                .then(async (res) => {
+                    this.resetSelection();
+                    from(this.getActivities()).subscribe((activitiesRes) => {
+                        this.activities = activitiesRes;
                     })
-                    .then(() => {
-                        this.toastCtrl.presentToast(messageSuccess);
-                    });
-            });
+                    return this.activities;
+                })
+                .then(() => {
+                    this.toastCtrl.presentToast(messageSuccess);
+                });
+            // });
 
         } catch (error) {
             this.loadingSrv.hide();
