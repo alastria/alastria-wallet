@@ -128,6 +128,7 @@ export class ConfirmAccessPage {
 
                 if (!pendingIdentities.length) {
                     this.showLoading();
+                    this.modalCtrl.dismiss();
                     const callbackUrl = this.verifiedJWTDecode.payload.cbu;
                     const web3 = this.web3Srv.getWeb3(AppConfig.nodeURL);
                     const uri = AppConfig.procUrl;
@@ -176,6 +177,7 @@ export class ConfirmAccessPage {
         try {
             if (this.identitiesSelected.length > 0) {
                 this.showLoading();
+                this.modalCtrl.dismiss();
                 this.identitiesSelected.reduce(async (prevVal: Promise<void>, index: number) => {
                     return prevVal.then(async () => {
                         const web3 = this.web3Srv.getWeb3(AppConfig.nodeURL);
@@ -288,12 +290,7 @@ export class ConfirmAccessPage {
     }
 
     public async showSuccess() {
-        await this.dismiss();
         this.loadingSrv.hide();
         this.loadingSrv.updateModalState(this.isDeeplink);
-    }
-
-    public dismiss() {
-        this.modalCtrl.dismiss();
     }
 }
