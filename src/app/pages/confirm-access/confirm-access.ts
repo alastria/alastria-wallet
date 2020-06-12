@@ -293,4 +293,8 @@ export class ConfirmAccessPage {
         this.loadingSrv.hide();
         this.loadingSrv.updateModalState(this.isDeeplink);
     }
+
+    public dismiss() {
+        this.modalCtrl.dismiss();
+    }
 }
