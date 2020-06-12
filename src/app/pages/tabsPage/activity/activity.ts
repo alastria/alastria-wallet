@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit, ChangeDetectorRef } from '@angular/core';
 import { AlertController, ModalController } from '@ionic/angular';
 import { Router, NavigationExtras } from '@angular/router';
 import { from, Observable } from 'rxjs';
@@ -36,6 +36,7 @@ export class ActivityPage {
     public type: string;
     public activitiesSelected: Array<any> = new Array<any>();
     public selection = false;
+    isSelectAll = false;
     headerScrollConfig: ScrollHideConfig = { cssProperty: 'margin-top', maxValue: 80 };
 
     constructor(private toastCtrl: ToastService,
@@ -44,6 +45,7 @@ export class ActivityPage {
                 private transactionSrv: TransactionService,
                 private loadingSrv: LoadingService,
                 private router: Router,
+                private cdRef : ChangeDetectorRef,
                 public alertCtrl: AlertController,
                 public web3Srv: Web3Service,
                 public modalCtrl: ModalController
@@ -258,25 +260,23 @@ export class ActivityPage {
      * Force change of selectAll variable
      */
     forceChangeSelectAll(): void {
-        if (this.optionsComponent) {
-            this.activities.forEach(activity => {
-                if (this.activitiesSelected && this.activitiesSelected.length) {
-                    if (this.activities.length === this.activitiesSelected.length) {
-                        let isSelectAllActivities = true;
-                        for (let i = 0, length = this.activitiesSelected.length; i < length; i++) {
-                            if (this.activitiesSelected[i] === null || this.activitiesSelected[i] === undefined) {
-                                isSelectAllActivities = false;
-                            }
+        this.activities.forEach(() => {
+            if (this.activitiesSelected && this.activitiesSelected.length) {
+                if (this.activities.length === this.activitiesSelected.length) {
+                    let isSelectAllActivities = true;
+                    for (let i = 0, length = this.activitiesSelected.length; i < length; i++) {
+                        if (this.activitiesSelected[i] === null || this.activitiesSelected[i] === undefined) {
+                            isSelectAllActivities = false;
                         }
-                        this.optionsComponent.clickSelectAllFromParent(!isSelectAllActivities, isSelectAllActivities);
-                    } else {
-                        this.optionsComponent.clickSelectAllFromParent(true, false);
                     }
+                    this.handleSelectAll(isSelectAllActivities);
                 } else {
-                    this.optionsComponent.clickSelectAllFromParent(false, false);
+                    this.handleSelectAll(false);
                 }
-            });
-        }
+            } else {
+                    this.handleSelectAll(false);
+            }
+        });
     }
 
     /**
@@ -311,18 +311,27 @@ export class ActivityPage {
      * Function that listening if 'selectAll' checkbox in options component, if true then select all activities
      * @param isSelectAll - *
      */
-    handleSelectAll(isSelectAll: boolean): void {
-        if (isSelectAll) {
-            this.activities.forEach((activity, i) => {
-                // activities.map((activity, i) => {
-                    if (!this.activitiesSelected[i]) {
-                        this.activitiesSelected[i] = activity.activityId;
+    handleSelectAll(event?: any): void {
+        if (event && event.target) {
+            if (event.target.checked != this.isSelectAll) {
+                this.isSelectAll = event.target.checked;
+                this.cdRef.detectChanges();
+                if (this.isSelectAll) {
+                    this.activities.forEach((activity, i) => {
+                            if (!this.activitiesSelected[i]) {
+                                this.activitiesSelected[i] = activity.activityId;
+                            }
+                        });
+                } else {
+                    if (this.isSelectAll !== null) {
+                        this.resetSelection();
                     }
-                });
-            // });
+                }
+            }
         } else {
-            if (isSelectAll !== null) {
-                this.resetSelection();
+            if (event != this.isSelectAll) {
+                this.isSelectAll = event;
+                this.cdRef.detectChanges();
             }
         }
     }

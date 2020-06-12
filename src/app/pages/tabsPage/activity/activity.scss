@@ -42,15 +42,6 @@ ion-header {
     font-size: 18px !important;
 }
 
-.options {
-    color: #8e8e93;
-    font-size: 25px;
-    position: relative;
-    float: left;
-    width: 100%;
-    padding: 10px 0px;
-}
-
 .datetime {
     float: right;
     margin-right: 25px;
@@ -71,4 +62,28 @@ ion-header {
 
 .status-deleted-by-subject {
     color: grey;
+}
+
+ion-checkbox {
+    position: relative;
+    float: left;
+    margin-right: 5px;
+    height: 20px;
+    top: 5px;
+    width: 20px;
+}
+
+#icons {
+    position: relative;
+    float: right;
+}
+
+
+.options {
+    color: #8e8e93;
+    font-size: 25px;
+    position: relative;
+    float: left;
+    width: 100%;
+    padding: 10px 0px;
 }
