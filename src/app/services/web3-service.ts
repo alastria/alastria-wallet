@@ -11,7 +11,7 @@ export class Web3Service {
     public constructor() {}
 
     public getWeb3(nodeIp): Web3 {
-        this.web3 = new Web3('http://5.56.60.217/rpc');
+        this.web3 = new Web3(nodeIp);
         return this.web3;
     }
 }
