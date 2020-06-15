@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
+import { Component, ViewChild, ChangeDetectorRef, NgZone } from '@angular/core';
 import { AlertController, ModalController } from '@ionic/angular';
 import { Router, NavigationExtras } from '@angular/router';
 import { from, Observable } from 'rxjs';
