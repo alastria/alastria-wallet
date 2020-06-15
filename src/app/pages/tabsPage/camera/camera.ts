@@ -35,6 +35,10 @@ export class CameraPage {
         public activatedRoute: ActivatedRoute,
         private http: HttpClient,
         private messageManagerService: MessageManagerService) {
+    }
+
+
+    ionViewWillEnter() {
         const pageName = this.activatedRoute.snapshot.paramMap.get('token');
         const options = {
             prompt: 'Situe el código Qr en el interior del rectángulo.',
@@ -62,7 +66,9 @@ export class CameraPage {
                         });
                 }
             } else {
-                this.showConfirmEror('Error: Contacte con el service provider', pageName);
+                if (!barcodeData.cancelled) {
+                    this.showConfirmEror('Error: Contacte con el service provider', pageName);
+                }
             }
         }).catch((error) => {
             this.showConfirmEror();
