@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, ViewChild, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
 import { AlertController, ModalController } from '@ionic/angular';
 import { Router, NavigationExtras } from '@angular/router';
 import { from, Observable } from 'rxjs';
@@ -48,7 +48,8 @@ export class ActivityPage {
                 private cdRef : ChangeDetectorRef,
                 public alertCtrl: AlertController,
                 public web3Srv: Web3Service,
-                public modalCtrl: ModalController
+                public modalCtrl: ModalController,
+                private ngZone: NgZone
             ) {
         this.type = AppConfig.CREDENTIAL_TYPE;
         this.web3 = this.web3Srv.getWeb3(AppConfig.nodeURL);
@@ -249,8 +250,10 @@ export class ActivityPage {
             this.resetSelection();
             this.type = (event && event.detail) ? event.detail.value : AppConfig.CREDENTIALS;
             from(this.getActivities()).subscribe((activities) => {
-                this.activities = activities;
-            })
+                this.ngZone.run(() => {
+                    this.activities = activities;
+                });
+            });
         } catch (error) {
             console.error(error);
         }
