@@ -1,3 +1,13 @@
+img {
+    object-fit: fill;
+    margin: auto;
+}
+
+ion-footer {
+    position: absolute;
+    bottom: 20px;
+}
+
 .inbox-icon{
     height: 40px;
 }
@@ -40,11 +50,6 @@
     left: 90%;
     top: 10px;
     font-size: 25px;
-}
-
-img {
-    object-fit: fill;
-    margin: auto;
 }
 
 .specific-height {
