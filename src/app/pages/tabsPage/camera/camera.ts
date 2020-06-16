@@ -50,8 +50,8 @@ export class CameraPage {
             if (barcodeData.text && !barcodeData.cancelled) {
                 const alastriTokenPrepared = alastriaToken.replace(/['"]+/g, '')
                 if (alastriTokenPrepared.match(/(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/gi)) {
-                    this.http.get(alastriTokenPrepared).subscribe(data => {
-                        const dataStringified = JSON.stringify(data)
+                    this.http.get(alastriTokenPrepared).subscribe((data: any) => {
+                        const dataStringified = (data.jwt) ? data.jwt : JSON.stringify(data);
                         this.messageManagerService.prepareDataAndInit(dataStringified)
                             .catch((error) => {
                                 throw error;

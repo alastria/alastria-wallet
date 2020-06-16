@@ -134,12 +134,11 @@ export class ConfirmAccessPage {
                     const uri = AppConfig.procUrl;
                     const privKey = await this.securedStrg.get('userPrivateKey');
                     const did = await this.securedStrg.get('userDID');
-                    const jti = Math.random().toString(36).substring(2);
+                    const jti = `Alastria/presentation/${Math.random().toString().substring(5)}`
                     const signedCredentialJwts = this.getSignedCredentials(securedCredentials);
                     const presentation = tokensFactory.tokens.createPresentation(`${did}#keys-1`, did, this.verifiedJWTDecode.payload.iss,
-                        this.verifiedJWTDecode.payload.pr['@context'], signedCredentialJwts,
-                        AppConfig.procUrl, this.verifiedJWTDecode.payload.pr.procHash,
-                        this.verifiedJWTDecode.payload.exp, this.verifiedJWTDecode.payload.nbf, jti);
+                        this.verifiedJWTDecode.payload.pr['@context'], signedCredentialJwts, AppConfig.procUrl,
+                        `0x${this.verifiedJWTDecode.payload.pr.procHash}`, this.verifiedJWTDecode.payload.exp, this.verifiedJWTDecode.payload.nbf, jti);
 
                     const signedPresentation = tokensFactory.tokens.signJWT(presentation, privKey.substring(2));
                     const presentationPSMHash = tokensFactory.tokens.PSMHash(web3, signedPresentation, did);
@@ -159,7 +158,7 @@ export class ConfirmAccessPage {
                     await this.http.post(`${callbackUrl}`, signedPresentation, httpOptions).toPromise();
                     // tslint:disable-next-line: no-string-literal
                     presentation['PSMHash'] = presentationPSMHash;
-                    await this.securedStrg.setJSON(AppConfig.PRESENTATION_PREFIX + Math.random().toString(36).substring(2), presentation);
+                    await this.securedStrg.setJSON(AppConfig.PRESENTATION_PREFIX + jti, presentation);
 
                     this.showSuccess();
                 } else {
