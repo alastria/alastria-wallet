@@ -31,14 +31,8 @@ or
 npm install
 ```
 
-**AFTER INSTALLATION: it is necessary to change these code lines (54 and 69 in node_modules/web3-eht-abi/src/index.js)
-```
- functionName = utils._jsonInterfaceMethodToString(functionName);
-```
-to 
-```
-functionName = utils.jsonInterfaceMethodToString(functionName);
-```
+**AFTER INSTALLATION: it is necessary to do this:
+https://github.com/auth0/node-jsonwebtoken/issues/471#issuecomment-398798497
 
 
 ### Run application in browser

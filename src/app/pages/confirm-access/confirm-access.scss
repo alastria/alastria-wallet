@@ -1,0 +1,26 @@
+img {
+  object-fit: fill;
+  padding-bottom: 15px;
+}
+
+h2 {
+  text-align: center;
+}
+
+.footer-md::before {
+  background-image: none;
+}
+
+.button-inner {
+  font-size: 17px;
+}
+
+.description {
+  // color: $blueT;
+  padding: 2%;
+  font-weight: normal;
+
+  &.bold {
+    font-weight: bold;
+  }
+}
