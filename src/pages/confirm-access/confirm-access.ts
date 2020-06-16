@@ -133,7 +133,7 @@ export class ConfirmAccess {
                     const uri = AppConfig.procUrl
                     const privKey = await this.securedStrg.get('userPrivateKey');
                     const did = await this.securedStrg.get('userDID');
-                    let jti = Math.random().toString(36).substring(2)
+                    let jti = `Alastria/presentation/${Math.random().toString().substring(5)}`
                     let signedCredentialJwts = this.getSingalCredentials(securedCredentials);
                     let presentation = tokensFactory.tokens.createPresentation(`${did}#keys-1`, did, this.verifiedJWT.payload.iss, 
                         this.verifiedJWT.payload.pr['@context'], signedCredentialJwts, AppConfig.procUrl, `0x${this.verifiedJWT.payload.pr.procHash}`,
@@ -155,7 +155,7 @@ export class ConfirmAccess {
                     };
                     await this.http.post(`${callbackUrl}`, signedPresentation, httpOptions).toPromise();
                     presentation['PSMHash'] = presentationPSMHash
-                    await this.securedStrg.setJSON(AppConfig.PRESENTATION_PREFIX + Math.random().toString(36).substring(2), presentation);
+                    await this.securedStrg.setJSON(AppConfig.PRESENTATION_PREFIX + jti, presentation);
     
                     this.showSuccess();
                 } else {

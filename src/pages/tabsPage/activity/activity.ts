@@ -93,10 +93,11 @@ export class Activity {
                     } else {
                         const iat = new Date(elementObj[AppConfig.PAYLOAD][AppConfig.NBF]);
                         const iatString = iat.getDate() + "/" + (iat.getMonth() + 1) + "/" + iat.getFullYear();
-                        const title = "Presentación " + count++;
-
+                        
                         promises.push(this.getPresentationStatus(this.web3, elementObj[AppConfig.PSM_HASH], did)
                         .then(async (credentialStatus) => {
+                            const title = `${elementObj[AppConfig.PAYLOAD][AppConfig.JTI]}`;
+                            // const title = "Presentación " + count++;
                             const statusType = parseInt(credentialStatus[1]);
                             const entityName = await this.transactionSrv.getEntity(this.web3, elementObj[AppConfig.PAYLOAD][AppConfig.AUDIENCE])
                             
@@ -195,7 +196,7 @@ export class Activity {
     private parseCredential(id: number, title: string, value: any, addDate: string, endDate: string, issuer: string, level: number, stars: Array<any>, credentialAssigned: boolean) {
         return {
             id: id,
-            titleP: (title) ? title.toUpperCase().replace(/_/g, " ") : '',
+            titleP: (title) ? title.replace(/_/g, " ") : '',
             emitter: "Emisor del testimonio",
             valueT: "Valor",
             value: (value) ? value : "Credencial no selecionada o no disponible",
@@ -408,7 +409,6 @@ export class Activity {
             let messageSuccess;
             const messageSuccessCred = 'Se han borrado las actividades correctamente';
             const messageSuccessPresent = 'Se han revocado las actividades correctamente';
-            let prefix: string;
             this.loadingSrv.showModal()
             if (this.type === AppConfig.CREDENTIAL_TYPE) {
                 keysToRemove = ids.map(element => {
@@ -442,7 +442,7 @@ export class Activity {
                 return this.getActivities();
             })
             .then(() => {
-                //this.toastCtrl.presentToast(messageSuccess);
+                // this.toastCtrl.presentToast(messageSuccess);
             });
             
         } catch(error) {
