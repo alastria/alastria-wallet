@@ -1,50 +1,54 @@
 confirm-access {
-    img {
-        object-fit: fill;
-    }
 
-    .footer-md::before {
-        background-image: none;
-    }
+  img {
+    object-fit: fill;
+    padding-bottom: 15px;
+  }
 
-    .btnConfirm {
-        background: linear-gradient(90deg, #325B8E 0%, #00CAD6 100%);
-        border-radius: 30px;
-        height: 50px;
-    }
+  .footer-md::before {
+    background-image: none;
+  }
 
-    .btnConfirm:before {
-        content: '>';
-        position: absolute;
-        left: 90%;
-        top: 10px;
-        font-size: 25px;
-    }
+  .btnConfirm {
+    background: linear-gradient(90deg, #325b8e 0%, #00cad6 100%);
+    border-radius: 30px;
+    height: 50px;
+  }
 
-    .button-inner {
-        font-size: 17px;
-    }
+  .btnCancel {
+    margin-top: 15px;
+    font-weight: 500;
+  }
 
-    ion-footer {
-        height: 80px;
-    }
+  .alastria-logo {
+    margin-top: 15px;
+    height: 110px;
+  }
 
-    .cross {
-        margin-top: 15px;
-        margin-right: 15px;
-    }
+  .btnConfirm:before {
+    content: ">";
+    position: absolute;
+    left: 90%;
+    top: 10px;
+    font-size: 25px;
+  }
 
-    .description {
-        color: $blueT;
-        padding: 2%;
-        font-weight: normal;
+  .button-inner {
+    font-size: 17px;
+  }
 
-        &.bold {
-            font-weight: bold;
-        }
-    }
+  ion-footer {
+    height: 110px;
+  }
 
-    .logo {
-        height: 70px;
+  .description {
+    color: $blueT;
+    padding: 2%;
+    font-weight: normal;
+
+    &.bold {
+      font-weight: bold;
     }
+  }
+
 }

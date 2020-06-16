@@ -1,22 +1,20 @@
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
-import { Login } from './login';
-import { Camera } from '../tabsPage/camera/camera';
+import { LoginPage } from './login';
+import { FingerprintAIO } from '@ionic-native/fingerprint-aio';
 
 @NgModule({
-    declarations: [
-        Login,
-    ],
-    imports: [
-        IonicPageModule.forChild(Login),
-    ],
-    exports: [
-        Login
-    ],
-    entryComponents:[
-        Camera
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  declarations: [
+    LoginPage,
+  ],
+  imports: [
+    IonicPageModule.forChild(LoginPage),
+  ],
+  providers: [
+    FingerprintAIO
+  ],
+  exports: [
+    LoginPage
+  ]
 })
-
-export class LoginModule { }
+export class LoginPageModule {}

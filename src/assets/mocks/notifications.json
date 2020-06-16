@@ -1,0 +1,29 @@
+[
+    {
+      "id": 1,
+      "title": "Samelan",
+      "subtitle": "Solicita acceso a 1 dato",
+      "image": "assets/images/logo/logo-samelan.jpg",
+      "ionBadge": "follow",
+      "accept": "Aceptar",
+      "delete": "Borrar"
+    },
+    {
+      "id": 2,
+      "title": "Univ. de Barcelona",
+      "subtitle": "Solicita acceso a 3 datos",
+      "image": "assets/images/logo/logo-univ.jpg",
+      "ionBadge": "follow",
+      "accept": "Aceptar",
+      "delete": "Borrar"
+    },
+    {
+      "id": 3,
+      "title": "Univ. de Barcelona",
+      "subtitle": "Solicita acceso a 1 dato",
+      "image": "assets/images/logo/logo-univ.jpg",
+      "ionBadge": "follow",
+      "accept": "Aceptar",
+      "delete": "Borrar"
+    }
+]

@@ -18,7 +18,7 @@
             <!-- Content -->
             <ion-list no-margin>
               <ion-item-sliding *ngFor="let item of data.items" #slidingItem>
-                <ion-item no-lines (click)="onEvent('onItemClick', item.title, $event)">
+                <ion-item no-lines (click)="onItemClick(item.title, $event)">
                   <!-- Images -->
                   <ion-thumbnail item-start>
                     <img src="{{item.image}}">

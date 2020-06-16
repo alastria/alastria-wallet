@@ -15,7 +15,13 @@ identity-data-list {
         background-color: #ffffff ;
     }
 
-    .description-position {
+    .description-notSelectable {
+        margin-left: 5px !important;
+        bottom: 5px;
+        position: relative;
+    }
+
+    .description-selectable {
         margin-left: 30px !important;
         bottom: 5px;
         position: relative;
@@ -27,9 +33,25 @@ identity-data-list {
 
     .card-title-md {
         font-size: 0;
+        padding-top: 2px;
+        padding-bottom: 2px;
     }
 
     .scroll-content {
-        height: 85%;
+        height: 81%;
+    }
+    
+    .expand-btn {
+        font-size: 2.2em;
+    }
+
+    .credential-card-content {
+        padding-top: 2px;
+        padding-bottom: 2px;
+    }
+
+    .center-vertical-col {
+        align-self: center;
+        color: gray;
     }
 }

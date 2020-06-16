@@ -1,20 +1,26 @@
 <ion-header>
-    <ion-toolbar>
-        <ion-buttons end>
-            <a (click)="dismiss()">
-                <img src="assets/images/alastria/ic_close.png" class="cross" (click)="dismiss()">
-            </a>
-        </ion-buttons>
-    </ion-toolbar>
-    <ion-row text-center>
-        <h2 class="description"> {{issName | uppercase}} quiere ofrecerte <strong>{{dataNumberAccess}} datos</strong>  para tu identidad</h2>
+    <ion-row justify-content-center>
+        <img src="assets/images/logo/alastria-icon.png" class="alastria-logo">
     </ion-row>
+    <ion-row *ngIf="isPresentationRequest; else credentialOffer" text-center>
+        <h2 class="description"> {{entitiyName | uppercase}} ha <strong>solicitado acceso</strong> a {{dataNumberAccess}}
+            dato/s de tu identidad</h2>
+    </ion-row>
+    <ng-template #credentialOffer>
+        <ion-row text-center>
+            <h2 class="description"> {{entitiyName | uppercase}} quiere ofrecerte <strong>{{dataNumberAccess}}
+                dato/s</strong> para tu identidad</h2>
+        </ion-row>
+    </ng-template>
 </ion-header>
 <ion-content class="tutorial-page">
-    <identity-data-list isSelectable="true" (handleIdentitySelect)="handleIdentitySelect($event)"></identity-data-list>
+    <identity-data-list isSelectable="true" (handleIdentitySelect)="handleIdentitySelect($event)" (loadCredential)="loadCredential($event)"></identity-data-list>
     <ion-footer>
-      <ion-row justify-content-center>
-          <button ion-button class="btnConfirm" style="width: 80%" (click)="sendAuthentication()">ACEPTAR</button>
-      </ion-row>
+        <ion-row justify-content-center>
+            <button ion-button class="btnConfirm" style="width: 80%" (click)="manageCredentials()">ACEPTAR</button>
+        </ion-row>
+        <ion-row justify-content-center>
+            <div class="btnCancel" (click)="dismiss()">CANCELAR</div>
+        </ion-row>
     </ion-footer>
 </ion-content>

@@ -1,99 +1,92 @@
 import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BarcodeScanner } from '@ionic-native/barcode-scanner';
+import { ModalController, NavController, NavParams } from 'ionic-angular';
+import { AppConfig } from '../../../app.config';
+
+// SERVICE
+import { MessageManagerService } from '../../../services/messageManager-service';
 import { IonicPage } from 'ionic-angular';
 import { ToastService } from '../../../services/toast-service';
-import { TabsService } from '../../../services/tabs-service';
-import { BarcodeScanner } from '@ionic-native/barcode-scanner';
-import { AlertController, NavController, PopoverController, ModalController } from 'ionic-angular';
-import { ConfirmLogin } from '../../confirmLogin/confirmLogin';
-import { Index } from '../index';
-import { TokenService } from '../../../services/token-service';
-import { ConfirmAccess } from '../../confirm-access/confirm-access';
+
+// COMPONENTS - PAGES
+import { ConfirmError } from '../../confirmError/confirmError';
 
 @IonicPage()
 @Component({
-  templateUrl: 'camera.html',
-  providers: [TabsService, ToastService]
+    templateUrl: 'camera.html',
+    providers: [ToastService]
 })
+
 export class Camera {
 
-  qrCode: string;
-  data: any = {};
-  cameraEnabled: boolean = true;
-  file: File;
+    data: any = {
+        title: "Cámara",
+        format: "Escaneo de QRCodes blockchain",
+        text: "Desde aquí puede leer códigos blockchain formateados como QRCode. Utilice la cámara de su dispositivo."
+    };
+    cameraEnabled = true;
+    file: File;
 
-  constructor(private toastCtrl: ToastService, 
-    public barcodeScanner: BarcodeScanner,
-    public alertCtrl: AlertController,
-    public navCtrl: NavController,
-    public popoverCtrl: PopoverController,
-    public modalCtrl: ModalController,
-    private tokenSrv: TokenService) {
-    this.data = {
-      title: "Cámara",
-      format: "Escaneo de QRCodes blockchain",
-      text: "Desde aquí puede leer códigos blockchain formateados como QRCode. Utilice la cámara de su dispositivo."
+    constructor(
+        public barcodeScanner: BarcodeScanner,
+        public modalCtrl: ModalController,
+        public navCtrl: NavController,
+        private navParams: NavParams,
+        private http: HttpClient,
+        private messageManagerService: MessageManagerService) {
+        let pageName = this.navParams.get('pageName');
+        let options = {
+            prompt: "Situe el código Qr en el interior del rectángulo.",
+            formats: AppConfig.QR_CODE
+        }
+
+        this.barcodeScanner.scan(options).then(async barcodeData => {
+            let alastriaToken = barcodeData.text;
+            if (barcodeData.text && !barcodeData.cancelled) {
+                let alastriTokenPrepared = alastriaToken.replace(/['"]+/g, '')
+                if (alastriTokenPrepared.match(/(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/gi)) {
+                    this.http.get(alastriTokenPrepared).subscribe(data => {
+                        let dataStringified = (data['jwt']) ? data['jwt'] : JSON.stringify(data)
+                        this.messageManagerService.prepareDataAndInit(dataStringified)
+                            .catch((error) => {
+                                throw error;
+                            })
+                    }, (error) => {
+                        this.showConfirmEror("Error: Contacte con el service provider", pageName);
+                    });
+                } else {
+                    this.messageManagerService.prepareDataAndInit(alastriaToken)
+                        .catch((error) => {
+                            this.showConfirmEror("Error: Contacte con el service provider", pageName);
+                        });
+                }
+            } else {
+                if (!pageName) {
+                    pageName = this.getPageName();
+                }
+                if (pageName === 'TabsPage' || pageName === 'Camera' || pageName === 'Index') {
+                    this.showConfirmEror("Error: Contacte con el service provider", pageName);
+                }
+            }
+        }).catch((error) => {
+            this.showConfirmEror();
+        });
     }
 
-    let options = {
-      prompt: "Situe el código Qr en el interior del rectángulo.",
-      formats: "QR_CODE"
+    private showConfirmEror(message?: string, pageName?: string) {
+        const error = {
+            message: message ? message : "Error: Contacte con el service provider"
+        };
+        if (!pageName) {
+            pageName = this.getPageName();
+        }
+        const alert = this.modalCtrl.create(ConfirmError, { 'error': error, 'pageName': pageName });
+        alert.present();
     }
-    this.barcodeScanner.scan(options).then(barcodeData => {
-      console.log('QR data', barcodeData.text);
-      let alastriaToken = barcodeData.text;
-      let secret = "your-256-bit-secret";
 
-      let verifiedJWT = this.tokenSrv.verifyToken(alastriaToken, secret);
-
-      let tokenType = this.tokenSrv.getTokenType(verifiedJWT);
-
-      switch (tokenType){
-        case "authentication":
-            this.authProtocol(verifiedJWT, secret);
-            break;
-        case "credentialRequest":
-            this.credentialProtocol(verifiedJWT, secret);
-            break;
-      }
-    }).catch(err => {
-      console.log('Error', err);
-      this.qrCode = "hola";
-      this.toastCtrl.presentToast("Error: Contacte con el service provider", 3000);
-      this.navCtrl.setRoot(Index);
-    });
-  }
-
-  private showConfirmLogin(iss: string, issName: string, cbu: string, as: string | object ) {
-    const alert = this.modalCtrl.create(ConfirmLogin, {"iss": iss, "issName": issName, "cbu": cbu, "as": as});
-    alert.present();
-  }
-
-  private showConfirmAcces(issName: string, cbu: string, credentials: Array<any>, iat: number, exp: number) {
-    const alert = this.modalCtrl.create(ConfirmAccess, {"issName": issName, "cbu": cbu,"dataNumberAccess": credentials.length, "credentials": credentials, "iat": iat, "exp": exp});
-    alert.present();
-  }
-
-  private authProtocol(verifiedToken: string|object, secret: string) {
-    let alastriaSession;
-
-    if (verifiedToken){
-      alastriaSession = this.tokenSrv.getSessionToken(verifiedToken);
-      this.showConfirmLogin(verifiedToken["iss"], "SERVICE PROVIDER", verifiedToken["cbu"], alastriaSession);
-    
-    }else{
-      this.toastCtrl.presentToast("Error: Contacte con el service provider", 1000);
+    private getPageName() {
+        const currentStack = this.navCtrl.getViews();
+        return (currentStack.length) ? (currentStack[currentStack.length - 1]) ? currentStack[currentStack.length - 1].name : (currentStack[0]) ? currentStack[0].name  : '' : '';
     }
-  }
-
-  private credentialProtocol(verifiedToken: string|object, secret: string) {
-    let alastriaSession;
-
-    if (verifiedToken){
-      alastriaSession = this.tokenSrv.getSessionToken(verifiedToken);
-      this.showConfirmAcces("SERVICE PROVIDER", verifiedToken["cbu"], verifiedToken["credentials"], verifiedToken["iat"], verifiedToken["exp"]);
-    
-    }else{
-      this.toastCtrl.presentToast("Error: Contacte con el service provider", 1000);
-    }
-  }
 }

@@ -1,131 +1,185 @@
-import { Component, Input } from '@angular/core';
-import { IonicPage, ModalController, ViewController, NavParams, NavController } from 'ionic-angular';
-import { BarcodeScanner } from '@ionic-native/barcode-scanner';
-import { ContructionsPage } from '../contructions/contructions';
-import { SessionSecuredStorageService } from '../../services/securedStorage.service';
-import { HomePage } from '../home/home';
+import { Component, Output, EventEmitter } from '@angular/core';
+import { IonicPage, NavParams, Platform } from 'ionic-angular';
+import { FingerprintAIO } from '@ionic-native/fingerprint-aio';
+
+
+// SERVICES
+import { SecuredStorageService } from '../../services/securedStorage.service';
+import { Validators, FormBuilder, FormGroup } from '@angular/forms';
+
+/**
+ * Generated class for the LoginPage page.
+ *
+ * See https://ionicframework.com/docs/components/#navigation for more info on
+ * Ionic pages and navigation.
+ */
 
 @IonicPage()
 @Component({
-    selector: 'login',
-    templateUrl: 'login.html',
-    styleUrls: ['/login.scss']
+  selector: 'login-page',
+  templateUrl: 'login.html',
 })
-export class Login {
-    @Input() data: any;
-    @Input() events: any;
-    //export PATH=$PATH:/home/agomez/.gradle/wrapper/dists/gradle-5.1.1-all/97z1ksx6lirer3kbvdnh7jtjg/gradle-5.1.1/bin
-
-    user: string;
-    pass: string;
-
-    private isCamera: boolean = false;
-
-    private isUsernameValid: boolean = true;
-    private isPasswordValid: boolean = true;
-
-    constructor(
-        public barcodeScanner: BarcodeScanner,
-        public navCtrl: NavController,
-        public modalCtrl: ModalController,
-        public sessionSecuredStorageService: SessionSecuredStorageService
-    ) {
-
-        this.user = '';
-        this.pass = '';
+export class LoginPage {
+  @Output() handleLogin = new EventEmitter<boolean>();
+  accessKeyForm: FormGroup;
+  title: string = 'Accede para gestionar tu identidad de Alastria.';
+  logoUrl: string = 'assets/images/logo/letter-alastria-white.png';
+  loginType: string; // key = key access; fingerprint
+  buttons: Array<any> = [
+    {
+      type: 'key',
+      label: 'CREA CLAVE DE ACCESO '
     }
-
-    /*TODO: NO SE LLAMA NUNCA, cambiar de sitio */
-    scanBarcode() {
-        if (this.isCamera) {
-
-        }
-        this.isCamera = true;
-        let options = {
-            prompt: "Situe el código Qr en el interior del rectángulo.",
-            formats: "QR_CODE"
-        }
-
-        /* Comprobamos si el usuario esta registrado */
-        this.sessionSecuredStorageService.isRegistered()
-            .then(
-                (result) => {
-                    /* Comprobar si el usuario coincide */
-                    this.navCtrl.setRoot(HomePage);
-                }
-            )
-            .catch(
-                (error) => {
-                    /* TODO Cambiar esto para la version final */
-                    if (error === "cordova_not_available") {
-                        this.navCtrl.setRoot(HomePage);
-                    }
-
-                    console.log(error)
-                }
-            );
-
-        this.barcodeScanner.scan(options).then(barcodeData => {
-            this.onEvent("onLogin");
-        }).catch(err => {
-            if (err === "cordova_not_available") {
-                this.onEvent("onLogin");
-            }
-        });
-
+  ];
+  inputsKeyForm: Array<any> = [
+    {
+      label: 'Clave de acceso',
+      key: 'key'
+    },
+    {
+      label: 'Repita clave de acceso',
+      key: 'repeatKey'
     }
+  ];
+  hashKeyLoginType: boolean;
 
-    onEvent = (event: string): void => {
-        if (event == "onLogin" && !this.validate()) {
-            return;
+  constructor(public navParams: NavParams,
+              private platform: Platform,
+              private faio: FingerprintAIO,
+              private securedStrg: SecuredStorageService,
+              private fb: FormBuilder) {
+    this.platform.registerBackButtonAction(async () => {
+      if (this.loginType) {
+        if (!this.hashKeyLoginType) {
+          this.loginType = null;
         }
-        if (this.events[event]) {
+      }
+    },1);
 
-            this.events[event]({
-                'username': this.user,
-                'password': this.pass
+    this.platform.ready()
+      .then(async () => {
+        await this.securedStrg.initSecureStorage();
+        this.hashKeyLoginType = await this.securedStrg.hasKey('loginType');
+
+        if (this.hashKeyLoginType) {
+          const loginTypeRes = await this.securedStrg.getLoginType();
+          this.selectTypeLogin(loginTypeRes);
+        } else {
+          this.faio.isAvailable()
+            .then( () => {
+              this.buttons.push(
+                {
+                  type: 'fingerprint',
+                  label: 'ACCEDE CON HUELLA'
+                }
+              )
+            })
+            .catch( () => {
+              this.selectTypeLogin(this.buttons[0].type);
             });
         }
+      });
+  }
+
+  selectTypeLogin(type: string) {
+    this.loginType = type;
+    switch (this.loginType) {
+      case this.buttons[0].type:
+        this.generateForm();
+        this.title = 'Crea un código con el que poder accede a tu AlastriaID';
+        break;
+      case this.buttons[1].type:
+        this.title = 'Accede para gestionar tu identidad de Alastria.';
+        break;
+      default:
+        this.title = 'Accede para gestionar tu identidad de Alastria.';
+        break;
     }
+  }
 
-    validate(): boolean {
-        this.isUsernameValid = true;
-        this.isPasswordValid = true;
-
-        return this.isPasswordValid && this.isUsernameValid;
+  async createAccessKey() {
+    if (this.accessKeyForm && this.accessKeyForm.status === "VALID") {
+      await this.securedStrg.setLoginType(this.loginType);
+      const hasKey = await this.securedStrg.hasKey('accessKey');
+      if (!hasKey) {
+        await this.securedStrg.setAccessKey(this.accessKeyForm.get('key').value);
+      }
+      const isAuthorized = await this.securedStrg.isAuthorized(this.accessKeyForm.get('key').value);
+      if (!isAuthorized) {
+        this.accessKeyForm.get('key').setErrors({incorrect: true});
+      }
+      this.handleLogin.emit(isAuthorized);
     }
+  }
 
-    openPage(page: string) {
-        let modal = this.modalCtrl.create(InfoPage, { title: page });
-        modal.present();
+  /*
+  * Generate accessKeyForm with inputsForm
+  */
+  generateForm(): void {
+    if (this.hashKeyLoginType) {
+      this.inputsKeyForm.splice(1,1);
+      this.accessKeyForm = this.fb.group({
+        key: [null, Validators.required]
+      });
+    } else {
+      this.accessKeyForm = this.fb.group({
+        key: [null, Validators.required],
+        repeatKey: [null, Validators.required],
+      },
+      {
+        validator : this.validateAreEqual.bind(this)
+      });
     }
+  }
 
-    navegateTo(text: string) {
-        let modal = this.modalCtrl.create(ContructionsPage);
-
-        modal.present();
-        console.log('Navigating to page: ' + text);
+   /*
+  * Check if passwords are equal
+  */
+  private validateAreEqual(): void {
+    if (this.accessKeyForm &&  this.accessKeyForm.get('repeatKey') && this.accessKeyForm.get('key')) {
     }
-
-}
-
-@Component({
-    selector: 'info',
-    templateUrl: 'info.html',
-    styleUrls: ['/info.scss']
-})
-export class InfoPage {
-
-    title: string;
-
-    constructor(
-        public viewCtrl: ViewController,
-        params: NavParams
-    ) {
-        this.title = params.get('title');
+    if (this.accessKeyForm &&  this.accessKeyForm.get('repeatKey') && this.accessKeyForm.get('key')
+      && this.accessKeyForm.get('repeatKey').value !== '' && this.accessKeyForm.get('key').value !== ''
+      && this.accessKeyForm.get('repeatKey').value !== this.accessKeyForm.get('key').value) {
+        this.accessKeyForm.get('repeatKey').setErrors({mismatch: true});
+    } else {
+      if (this.accessKeyForm && this.accessKeyForm.get('repeatKey') && this.accessKeyForm.get('repeatKey').value !== '') {
+        this.accessKeyForm.get('repeatKey').setErrors(null);
+      }
     }
+  }
 
-    dismiss() {
-        this.viewCtrl.dismiss();
-    }
+  regFinger() {
+    return new Promise(
+      (next, reject) => {
+        this.faio.isAvailable()
+          .then(result => {
+            this.faio.show({
+                clientId: "AlastriaID",
+                clientSecret: "NddAHBODmhACXHITWJTU",
+                disableBackup: true,
+                localizedFallbackTitle: 'Touch ID for AlastriaID', //Only for iOS
+            })
+            .then(() => {
+              this.securedStrg.setLoginType(this.loginType)
+                .then(() => {
+                  this.handleLogin.emit(true);
+                });
+            })
+            .catch(() => {            
+                this.handleLogin.emit(false);
+                reject('Error in fingerprint');
+            });
+        }).catch(err => {
+            this.handleLogin.emit(false);
+            if (err === "cordova_not_available") {
+              reject('Cordova not aviable');
+            } else {
+              reject(err);
+            }
+        });
+      }
+    )
+  }
+
 }

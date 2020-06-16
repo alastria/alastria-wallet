@@ -1,26 +1,36 @@
 import { Component } from '@angular/core';
 import { ToastService } from '../../../services/toast-service';
-import { TabsService } from '../../../services/tabs-service';
-import { IonicPage } from 'ionic-angular/umd';
+import { IonicPage, Platform, NavController } from 'ionic-angular';
 import { ScrollHideConfig } from '../../../components/parallax/parallax.directive';
+import { ArticleService } from '../../../services/article.service';
 
 @IonicPage({
     defaultHistory: ['TabsPage']
 })
 @Component({
     templateUrl: 'index.html',
-    providers: [TabsService, ToastService]
+    providers: [ToastService]
 })
 export class Index {
 
     params: any = {};
     data: any = {};
-    searchTerm: string = "Buscar";
 
     headerScrollConfig: ScrollHideConfig = { cssProperty: 'margin-top', maxValue: 80 };
 
-    constructor(private toastCtrl: ToastService) {
-        console.log("[Debug] Index enter");
+    constructor(private toastCtrl: ToastService,
+                private articleService: ArticleService,
+                private platform: Platform,
+                private navCtrl: NavController) {
+        this.platform.registerBackButtonAction(async () => {
+            const currentStack = this.navCtrl.getViews();
+            if (currentStack &&  currentStack.length > 1 && currentStack[currentStack.length - 1] && currentStack[currentStack.length - 1].name !== 'Index') {
+                this.navCtrl.pop();
+            }
+        },1);
+    }
+
+    ngOnInit(){
         this.getList();
     }
 
@@ -32,32 +42,11 @@ export class Index {
         this.toastCtrl.presentToast("Folow");
     }
 
-    getList() {
-        this.params.data = [
-            {
-                "backgroundImage": "assets/images/alastria/basicos.png",
-                "title": "Datos básicos",
-                "description": "Tus datos más valiosos bajo tu control: tu dirección, tu fecha de nacimiento, tu email...",
-                "link": "page-contructions"
-            },
-            {
-                "backgroundImage": "assets/images/alastria/salud.png",
-                "title": "Salud",
-                "description": "Aquí puedes encontrar tus datos sanitarios, tu historial de vacunación o tus recetas médicas ",
-                "link": "page-contructions"
-            },
-            {
-                "backgroundImage": "assets/images/alastria/finanzas.png",
-                "title": "Finanzas",
-                "description": "Añade tus datos de titularidad de tus cuentas corrientes u otros datos financieros.",
-                "link": "page-contructions"
-            },
-            {
-                "backgroundImage": "assets/images/alastria/estudios.png",
-                "title": "Estudios",
-                "description": "Añade tus datos académicos, tanto si ya has finalizado tus estudios como si aún estás en ello.",
-                "link": "page-contructions"
-            }
-        ];
+    async getList() {
+        try {
+            this.params.data = await this.articleService.getArticles();
+        } catch (error) {
+            console.error('Error ', error);
+        }
     }
 }

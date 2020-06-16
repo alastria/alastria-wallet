@@ -1,8 +1,12 @@
 import { Component, Input } from '@angular/core';
 import { IonicPage, NavController } from 'ionic-angular';
+
+// Components
 import { UserSettings } from './userSettings/user-settings';
 import { ProfilePage } from '../../pages/profile/profile';
-import { SessionSecuredStorageService } from '../../services/securedStorage.service';
+
+// Services
+import { SecuredStorageService } from '../../services/securedStorage.service';
 
 @IonicPage()
 @Component({
@@ -19,8 +23,8 @@ export class UserInfoHeader {
     @Input() fixed: boolean;
 
     constructor(public navController: NavController,
-        public sessionSecuredStorageService: SessionSecuredStorageService) {
-        this.sessionSecuredStorageService.getUsername().then(
+        public securedStrg: SecuredStorageService) {
+        this.securedStrg.getUsername().then(
             (result) => {
                 this.userName = result;
             }
@@ -33,10 +37,10 @@ export class UserInfoHeader {
     }
 
     profilePage() {
-        // Si estoy en la pagina de Profile no la vuelvo a cargar
         let p = this.navController.getActive();
         if (p.component.name !== 'ProfilePage') {
             this.navController.push(ProfilePage);
         }
     }
+
 }
