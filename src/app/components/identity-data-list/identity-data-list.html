@@ -7,7 +7,7 @@
                     <ion-col>
                         <ion-card-title>
                             <ion-label>{{ item['item'] }} </ion-label>
-                            <ion-checkbox *ngIf="isSelectable" class="checkbox-item" [(ngModel)]="item['isChecked']"
+                            <ion-checkbox *ngIf="isSelectable" class="checkbox-item" [checked]="item['isChecked']"
                                 (ionChange)="changeIdentitySelect($event, item.id)"></ion-checkbox>
                             <strong style="font-size: 15px"> {{ item.titleP }} </strong>
                             <span style="font-size: 13px"> - {{ item.place }} - {{item.issuer}} </span>

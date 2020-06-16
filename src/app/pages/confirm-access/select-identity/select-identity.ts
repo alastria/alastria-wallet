@@ -26,10 +26,15 @@ export class SelectIdentityPage {
         public modalCtrl: ModalController,
         private activatedRoute: ActivatedRoute,
     ) {
-        this.securedCredentials = this.activatedRoute.snapshot.paramMap.get('securedCredentials');
-        this.allCredentials = this.activatedRoute.snapshot.paramMap.get('allCredentials');
-        this.iat = this.activatedRoute.snapshot.paramMap.get('iat');
-        this.exp = this.activatedRoute.snapshot.paramMap.get('exp');
+        this.securedCredentials = this.navParams.get('securedCredentials');
+        this.allCredentials = this.navParams.get('allCredentials');
+        this.allCredentials = this.allCredentials.map((credential) => {
+            credential.isSelectIdentity = true;
+
+            return credential;
+        });
+        this.iat = this.navParams.get('iat');
+        this.exp = this.navParams.get('exp');
     }
 
     onSearch(event?: any) {

@@ -80,7 +80,7 @@ export class IdentityDataListComponent implements OnInit {
                     const resultKey = await this.securedStrg.get(AppConfig.CREDENTIAL_PREFIX + key);
                     securedCredentials = JSON.parse(resultKey);
                     credentialRes = this.parseCredential(count++, credential[AppConfig.FIELD_NAME], securedCredentials[key], iatString,
-                        expString, securedCredentials.entityName, level, stars, true);
+                        expString, securedCredentials.entityName, level, stars, true, false);
                     this.identityDisplay.push(credentialRes);
                     const credentialSelected: any = {
                         credential: this.credentials[credentialRes.id],
@@ -92,7 +92,7 @@ export class IdentityDataListComponent implements OnInit {
                     return Promise.resolve();
                 } else {
                     credentialRes = this.parseCredential(count++, credential[AppConfig.FIELD_NAME], null, '',
-                        'expString', '', level, stars, false);
+                        'expString', '', level, stars, false, false);
                     this.identityDisplay.push(credentialRes);
                     return Promise.resolve();
                 }
@@ -107,7 +107,7 @@ export class IdentityDataListComponent implements OnInit {
                 iatString = this.parseFormatDate(credential[AppConfig.NBF]);
                 expString = this.parseFormatDate(credential[AppConfig.EXP]);
                 credentialRes = this.parseCredential(count++, key, credential[key], iatString,
-                expString, entityName, level, stars, true);
+                expString, entityName, level, stars, true, credential.isSelectIdentity);
                 this.identityDisplay.push(credentialRes);
                 return Promise.resolve();
             }
@@ -117,7 +117,9 @@ export class IdentityDataListComponent implements OnInit {
                 this.isDataSetted = true;
                 this.identityDisplay.map(identity => {
                     const event = {
-                        checked: true
+                        detail: {
+                            checked: true
+                        }
                     };
                     this.changeIdentitySelect(event, identity.id);
                 });
@@ -135,7 +137,7 @@ export class IdentityDataListComponent implements OnInit {
                     && keyCredential !== 'exp' && keyCredential !== 'iat' && keyCredential !== 'issuer'
                     && keyCredential !== 'PSMHash' && keyCredential !== 'required' &&
                     keyCredential !== 'entityName' && keyCredential !== 'iss' && keyCredential !== 'nbf'
-                    && keyCredential !== 'credentialJWT' && keyCredential !== 'sub') {
+                    && keyCredential !== 'credentialJWT' && keyCredential !== 'sub' && keyCredential !== 'isSelectIdentity') {
                     key = keyCredential;
                 }
             }
@@ -203,7 +205,8 @@ export class IdentityDataListComponent implements OnInit {
     }
 
     private parseCredential(id: number, title: string, value: any, addDate: string, endDate: string,
-                            issuer: string, level: number, stars: Array<any>, credentialAssigned: boolean) {
+                            issuer: string, level: number, stars: Array<any>, credentialAssigned: boolean,
+                            isSelectIdentity: boolean) {
         return {
             id,
             titleP: (title) ? title.toUpperCase().replace(/_/g, ' ') : '',
@@ -221,7 +224,7 @@ export class IdentityDataListComponent implements OnInit {
             credentialAssigned,
             isExpanded: false,
             isHidden: false,
-            isChecked: true
+            isChecked: (isSelectIdentity) ? false : true,
         };
     }
 
@@ -298,7 +301,7 @@ export class IdentityDataListComponent implements OnInit {
             result.data = this.identityDisplay[id];
             this.chosenIndex = id;
             for (let i = 0; i < this.identityDisplay.length; i++) {
-                if (i !== id) {
+                if (!this.identityDisplay[i].credentialAssigned) {
                     this.identityDisplay[i][isChecked] = null;
                 }
             }
