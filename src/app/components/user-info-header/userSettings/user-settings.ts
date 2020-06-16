@@ -16,7 +16,7 @@ export class UserSettingsPage {
 
     constructor(
         public modalCtrl: ModalController,
-        private navCtrl: NavController,
+        private navController: NavController,
         public securedStrg: SecuredStorageService
     ) {
         this.securedStrg.getUsername().then(
@@ -27,7 +27,4 @@ export class UserSettingsPage {
         this.userImagePath = './assets/images/avatar/0.jpg';
     }
 
-    dismiss() {
-        this.navCtrl.pop();
-    }
 }

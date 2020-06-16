@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavParams, AlertController } from '@ionic/angular';
+import { AlertController, NavController } from '@ionic/angular';
 import { TransactionService } from '../../services/transaction-service';
 import { Web3Service } from '../../services/web3-service';
 import { AppConfig } from '../../../app.config';
@@ -32,6 +32,7 @@ export class CredentialDetailPage implements OnInit {
         private alertCtrl: AlertController,
         private toastCtrl: ToastService,
         private loadingSrv: LoadingService,
+        private navController: NavController
     ) {
         this.web3 = this.web3Srv.getWeb3(AppConfig.nodeURL);
     }
