@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { SecuredStorageService } from '../../services/securedStorage.service';
 import { Observable, from } from 'rxjs';
 import { share, map } from 'rxjs/operators';
+import { NavController } from '@ionic/angular';
 
 @Component({
     selector: 'page-profile',
@@ -17,9 +18,9 @@ export class ProfilePage {
     isHaveCredentials: boolean;
 
     constructor(private securedStrg: SecuredStorageService,
-                private router: Router) {
+                private router: Router,
+                private navController: NavController) {
     }
-
 
     ionViewWillEnter() {
         this.credentials = from(this.getAllCredentials()).pipe(map((credentials) => {
@@ -29,6 +30,11 @@ export class ProfilePage {
             this.isHaveCredentials = (credentials && credentials.length) ? true : false;
         });
     }
+
+    public openUserSettings(): void {
+        this.router.navigate(['/', 'settings']);
+    }
+
 
     /**
      * Search activities fake
