@@ -11,8 +11,8 @@
     <ion-grid no-padding>
         <ion-row>
             <ion-col size="12">
-                <ion-list no-margin>
-                    <ion-item border no-lines [ngClass]="animateClass" *ngFor="let option of options; let i = index;">
+                <ion-list class="ion-no-margin">
+                    <ion-item no-lines [ngClass]="animateClass" *ngFor="let option of options; let i = index;">
                         <ion-label>
                             <ion-icon name="{{option.icon}}" item-start></ion-icon>
                             <h2 item-start>{{option.title}}</h2>

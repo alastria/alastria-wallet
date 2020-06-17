@@ -18,20 +18,20 @@
         [canRevoke]=false>
     </identity-data-list>
 
-    <ion-row *ngIf="!(credentials | async)?.length && this.isHaveCredentials" justify-content-center class="without-credentials-search">
+    <ion-row *ngIf="!(credentials | async)?.length && this.isHaveCredentials" class="without-credentials-search ion-justify-content-center">
         No se han encontrado credenciales para esa búsqueda
     </ion-row>
 
-    <ion-row *ngIf="!(credentials | async)?.length && !this.isHaveCredentials" justify-content-center class="without-credentials">
+    <ion-row *ngIf="!(credentials | async)?.length && !this.isHaveCredentials" class="without-credentials ion-justify-content-center">
         ¿Quieres obtener tu primera credencial?
     </ion-row>
 
 
-    <ion-row *ngIf="!(credentials | async)?.length && !this.isHaveCredentials" justify-content-center class="without-credentials">
+    <ion-row *ngIf="!(credentials | async)?.length && !this.isHaveCredentials" class="without-credentials ion-justify-content-center">
         <ion-button class="btnConfirm" style="width: 80%" (click)="goToEntitiesList()">LISTADO DE ENTIDADES</ion-button>
     </ion-row>
 
-    <ion-row *ngIf="!(credentials | async)?.length && !this.isHaveCredentials" justify-content-center  class="without-credentials">
+    <ion-row *ngIf="!(credentials | async)?.length && !this.isHaveCredentials" class="without-credentials ion-justify-content-center">
         O si lo prefieres, escanea el código QR que te genera tu proveedor de credenciales.
     </ion-row>
 </ion-content>
