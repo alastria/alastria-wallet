@@ -7,24 +7,24 @@
         <div background-size *ngIf="data != null" [ngStyle]="{'background-image': 'url(' + data.headerImage + ')'}">
             <div search-bar-bcg>
                 <!-- Header Title -->
-                <ion-text no-margin padding-left search-bar-title>{{data.title}}</ion-text>
+                <ion-text class="ion-padding-left ion-no-margin" search-bar-title>{{data.title}}</ion-text>
             </div>
         </div>
     </ion-toolbar>
 </ion-header>
 <ion-content>
     <!-- El div inferior es el cuadrado que pondremos de estilo -->
-    <ngx-qrcode *ngIf="qrCode" [qrc-value]="qrCode" qrc-class = "qr-class"></ngx-qrcode>
+    <ngx-qrcode *ngIf="qrCode" [qrc-value]="qrCode" qrc-class="qr-class"></ngx-qrcode>
 </ion-content>
 <ion-footer style="margin-bottom: 49px">
-    <ion-grid no-padding position="bottom">
+    <ion-grid class="ion-no-padding" position="bottom">
         <ion-row>
             <ion-col size="12">
-                <ion-list no-margin>
-                    <ion-item item-bcg padding-right text-wrap>
+                <ion-list class="ion-no-margin">
+                    <ion-item class="ion-padding-right ion-text-wrap" item-bcg>
                         <ion-label item-title>{{data.format}}</ion-label>
                     </ion-item>
-                    <ion-item item-bcg no-lines padding-right text-wrap>
+                    <ion-item class="ion-padding-right ion-text-wrap" item-bcg no-lines>
                         <ion-label item-subtitle>{{data.text}}</ion-label>
                     </ion-item>
                 </ion-list>

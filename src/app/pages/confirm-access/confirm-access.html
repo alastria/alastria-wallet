@@ -7,7 +7,7 @@
             dato/s de tu identidad</h2>
     </ion-row>
     <ng-template #credentialOffer>
-        <ion-row text-center>
+        <ion-row class="ion-text-center">
             <h2 class="description"> {{entitiyName | uppercase}} quiere ofrecerte <strong>{{dataNumberAccess}}
                 dato/s</strong> para tu identidad</h2>
         </ion-row>
@@ -24,10 +24,10 @@
         (loadCredential)="loadCredential($event)">
     </identity-data-list>
     <ion-footer class="modal-buttons">
-        <ion-row justify-content-center>
+        <ion-row class="ion-justify-content-center">
             <ion-button class="btnConfirm" style="width: 80%" (click)="manageCredentials()">ACEPTAR</ion-button>
         </ion-row>
-        <ion-row justify-content-center>
+        <ion-row class="ion-justify-content-center">
             <div class="btnCancel" (click)="dismiss()">CANCELAR</div>
         </ion-row>
     </ion-footer>
