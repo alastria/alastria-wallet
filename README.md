@@ -16,9 +16,9 @@ git clone https://github.com/alastria/alastria-wallet.git
 ### Requirements
 * Node.js 8+
 * Yarn / Npm
-* Ionic 3 / Angular 6
+* Ionic 5.2.1 / Angular 8.2.14
 * Android SDK / iOS SDK
-* Cordova 7.1.0+
+* Cordova 9.0.0+
 * Barcode Scanner
 
 ionic cordova plugin add phonegap-plugin-barcodescanner

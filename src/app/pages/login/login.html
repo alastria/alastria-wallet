@@ -1,7 +1,7 @@
 <ion-header></ion-header>
 <ion-nav class="main" id="nav" #content [root]="Login">
 </ion-nav>
-<ion-content padding class="mainContent">
+<ion-content class="mainContent">
     <ion-grid>
         <ion-row>
             <ion-col size="12">
@@ -12,7 +12,7 @@
             </ion-col>
         </ion-row>
         <ion-row class="row-bottom">
-            <ion-col size="12" id="key-form" class="row2" *ngIf="loginType === buttons[0].type" align-self-end>
+            <ion-col size="12" id="key-form" class="row2 ion-align-self-end" *ngIf="loginType === buttons[0].type">
                 <form [formGroup]="accessKeyForm">
                     <ion-item *ngFor="let input of inputsKeyForm; let i = index" class="input-key">
                         <ion-label position="floating" class="grey">{{input.label}}</ion-label>
@@ -41,7 +41,7 @@
                     <ion-icon class="arrow-icon" name="ios-arrow-forward"></ion-icon>
                 </ion-button>
             </ion-col>
-            <ion-col size="12" *ngIf="buttons[1] && loginType === buttons[1].type" align-self-end>
+            <ion-col class="ion-align-self-end" size="12" *ngIf="buttons[1] && loginType === buttons[1].type">
                 <div class="fingerPrint" (click)="regFinger()">
                     <img src="assets/images/logo/BiometricFinger.png" />
                     <p>
