@@ -19,6 +19,7 @@ import { ToastService } from '../../../services/toast-service';
 import { ActivitiesService } from '../../../services/activities.service';
 import { Web3Service } from '../../../services/web3-service';
 import { LoadingService } from '../../../services/loading-service';
+import { getCredentialStatus } from 'src/utils';
 
 @Component({
     templateUrl: 'activity.html',
@@ -83,13 +84,11 @@ export class ActivityPage {
                     const key = this.getCreedKey(elementObj);
 
                     if (prefix === AppConfig.CREDENTIAL_PREFIX) {
-                        promises.push(this.getCredentialStatus(this.web3, elementObj[AppConfig.PSM_HASH], did)
+                        promises.push(getCredentialStatus(this.transactionSrv, this.web3, elementObj[AppConfig.PSM_HASH], did)
                             .then((credentialStatus) => {
                                 const statusType = parseInt(credentialStatus[1], 0);
-                                if (statusType !== 2) {
-                                    return this.createActivityObject(count++, key, elementObj[key], elementObj.entityName, elementObj.iat,
-                                        statusType, elementObj[AppConfig.REMOVE_KEY]);
-                                }
+                                return this.createActivityObject(count++, key, elementObj[key], elementObj.entityName, elementObj.iat,
+                                    statusType, elementObj[AppConfig.REMOVE_KEY]);
                             }));
                     } else {
                         const iat = new Date(elementObj[AppConfig.PAYLOAD][AppConfig.NBF]);
@@ -408,12 +407,6 @@ export class ActivityPage {
             status: AppConfig.ActivityStatus[auxArray[statusType]],
             removeKey,
         };
-    }
-
-    private async getCredentialStatus(web3: any, psmHash: string, did: string) {
-        const status = await this.transactionSrv.getSubjectPresentationStatus(web3, did, psmHash);
-
-        return status;
     }
 
     private createStars(level: number): Array<any> {
