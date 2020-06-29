@@ -11,6 +11,7 @@ import { TransactionService } from '../../services/transaction-service';
 import { Web3Service } from '../../services/web3-service';
 import { ModalController } from '@ionic/angular';
 import { SelectIdentityPage } from 'src/app/pages/confirm-access/select-identity/select-identity';
+import { getCredentialStatus } from 'src/utils';
 
 @Component({
     selector: 'identity-data-list',
@@ -231,11 +232,11 @@ export class IdentityDataListComponent implements OnInit {
     public async detail(item: any): Promise<void> {
         try {
             if (this.isPresentationRequest) {
-                const allCredentials = await this.securedStrg.getAllCredentials();
+                const allCredentials = await this.getAllCredentials();
                 const modal = await this.modalCtrl.create({
                     component: SelectIdentityPage,
                     componentProps: {
-                        allCredentials: allCredentials.map(cred => JSON.parse(cred)),
+                        allCredentials,
                         iat: this.iat,
                         exp: this.exp,
                         securedCredentials: this.credentials
@@ -300,6 +301,7 @@ export class IdentityDataListComponent implements OnInit {
         if (event.checked || event.detail.checked) {
             result.data = this.identityDisplay[id];
             this.chosenIndex = id;
+            // tslint:disable-next-line:prefer-for-of
             for (let i = 0; i < this.identityDisplay.length; i++) {
                 if (!this.identityDisplay[i].credentialAssigned) {
                     this.identityDisplay[i][isChecked] = null;
@@ -307,5 +309,26 @@ export class IdentityDataListComponent implements OnInit {
             }
         }
         this.handleIdentitySelect.emit(result);
+    }
+
+    private async getAllCredentials() {
+        const allCredentials = await this.securedStrg.getAllCredentials();
+        const web3 = this.web3Srv.getWeb3(AppConfig.nodeURL);
+        const promises = [];
+        allCredentials.map(async cred => {
+            const creedParse = JSON.parse(cred);
+            promises.push(getCredentialStatus(this.transactionSrv, web3, creedParse[AppConfig.PSM_HASH], creedParse[AppConfig.ISSUER])
+                .then((status) => {
+                    if (parseInt(status[1], 0) !== 2) {
+                        return creedParse;
+                    }
+                }));
+        });
+
+        return Promise.all(promises)
+            .then((credentials) => {
+
+                return credentials.filter(creed => (creed));
+            });
     }
 }
