@@ -78,15 +78,19 @@ export class LoginPage {
           this.selectTypeLogin(loginTypeRes);
         } else {
           this.faio.isAvailable()
-            .then( () => {
-              this.buttons.push(
-                {
-                  type: 'fingerprint',
-                  label: 'ACCEDE CON HUELLA'
-                }
-              );
+            .then( (res) => {
+              if (res === 'OK') {
+                this.buttons.push(
+                  {
+                    type: 'fingerprint',
+                    label: 'ACCEDE CON HUELLA'
+                  }
+                );
+              } else {
+                this.selectTypeLogin(this.buttons[0].type);
+              }
             })
-            .catch( () => {
+            .catch(() => {
               this.selectTypeLogin(this.buttons[0].type);
             });
         }
