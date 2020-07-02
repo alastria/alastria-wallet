@@ -59,7 +59,6 @@ export class ActivityPage {
     ionViewWillEnter() {
         from(this.getActivities()).subscribe((activities => {
             this.activities = activities;
-            console.log('activities ', this.activities);
         }));
     }
 
@@ -156,7 +155,7 @@ export class ActivityPage {
         }
         const iatString = this.parseFormatDate(itemDetail[AppConfig.NBF]);
         const expString = this.parseFormatDate(itemDetail[AppConfig.EXP]);
-        const credentialRes = this.parseCredential(0, item.title, entityName, iatString,
+        const credentialRes = this.parseCredential(0, item.title, item.subtitle, iatString,
             expString, entityName, 3, this.createStars(3), true);
 
         // Send credentialRes to creadential detail.

@@ -97,7 +97,6 @@
     <plugin name="phonegap-plugin-barcodescanner" spec="8.0.1">
         <variable name="ANDROID_SUPPORT_V4_VERSION" value="27.+" />
     </plugin>
-    <plugin name="cordova-plugin-secure-storage" spec="2.6.8" />
     <plugin name="cordova-plugin-fingerprint-aio" spec="2.0.0" />
     <plugin name="cordova-plugin-inappbrowser" spec="^3.2.0" />
     <plugin name="ionic-plugin-deeplinks">
