@@ -16,9 +16,9 @@ git clone https://github.com/alastria/alastria-wallet.git
 ### Requirements
 * Node.js 8+
 * Yarn / Npm
-* Ionic 3 / Angular 6
+* Ionic 5.2.1 / Angular 8.2.14
 * Android SDK / iOS SDK
-* Cordova 7.1.0+
+* Cordova 9.0.0+
 * Barcode Scanner
 
 ionic cordova plugin add phonegap-plugin-barcodescanner
@@ -31,14 +31,8 @@ or
 npm install
 ```
 
-**AFTER INSTALLATION: it is necessary to change these code lines (54 and 69 in node_modules/web3-eht-abi/src/index.js)
-```
- functionName = utils._jsonInterfaceMethodToString(functionName);
-```
-to 
-```
-functionName = utils.jsonInterfaceMethodToString(functionName);
-```
+**AFTER INSTALLATION: it is necessary to do this:
+https://github.com/auth0/node-jsonwebtoken/issues/471#issuecomment-398798497
 
 
 ### Run application in browser

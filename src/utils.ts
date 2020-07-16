@@ -1,16 +1,22 @@
-import { NavControllerBase, App } from 'ionic-angular';
-
-export function getNav(app: App): NavControllerBase {    
-    const navs = app.getRootNavs(); 
-    const result = (navs && navs.length > 0) ? navs[0] : app.getActiveNav();
-
-    return result;
-}
+import { TransactionService } from './app/services/transaction-service';
 
 export function parseCredentials(credentials: string): string {
-    let result = {
+    const result = {
         verifiableCredential: credentials.split(',')
-    }
+    };
 
     return JSON.stringify(result);
+}
+
+
+export async function  getCredentialStatus(transactionSrv: TransactionService, web3: any, psmHash: string, did: string) {
+    const status = await transactionSrv.getSubjectPresentationStatus(web3, did, psmHash);
+
+    return status;
+}
+
+export async function  getIssuerCredentialStatus(transactionSrv: TransactionService, web3: any, psmHash: string, did: string) {
+    const status = await transactionSrv.getIssuerCredentialStatus(web3, did, psmHash);
+
+    return status;
 }

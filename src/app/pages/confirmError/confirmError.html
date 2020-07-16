@@ -1,0 +1,23 @@
+<ion-content class="tutorial-page">
+    <ion-toolbar>
+        <ion-buttons slot="primary">
+          <ion-back-button></ion-back-button>
+        </ion-buttons>
+    </ion-toolbar>
+    <ion-row class="ion-text-center ion-justify-content-center">
+        <h2>
+            ¡Fallo en el envío de la información!
+        </h2>
+    </ion-row>
+    <ion-row class="ion-justify-content-center">
+        <img src="assets/svg/fly-error.svg" id="fly-error"/>
+    </ion-row>
+    <ion-row class="ion-text-center">
+        <h3 class="description"> {{ error.message }}</h3>
+    </ion-row>
+    <ion-footer>
+        <ion-row class="ion-justify-content-center">
+            <ion-button class="btnConfirm" style="width: 80%" (click)="dismiss()">ACEPTAR</ion-button>
+        </ion-row>
+    </ion-footer>
+</ion-content>

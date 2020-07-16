@@ -29,12 +29,12 @@
     <preference name="UseSwiftLanguageVersion" value="4.0" />
     <platform name="android">
         <allow-intent href="market:*" />
-        <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.png" />
-        <icon density="mdpi" src="resources/android/icon/drawable-mdpi-icon.png" />
-        <icon density="hdpi" src="resources/android/icon/drawable-hdpi-icon.png" />
-        <icon density="xhdpi" src="resources/android/icon/drawable-xhdpi-icon.png" />
-        <icon density="xxhdpi" src="resources/android/icon/drawable-xxhdpi-icon.png" />
-        <icon density="xxxhdpi" src="resources/android/icon/drawable-xxxhdpi-icon.png" />
+        <icon density="ldpi" src="resources/icon.png" />
+        <icon density="mdpi" src="resources/icon.png" />
+        <icon density="hdpi" src="resources/icon.png" />
+        <icon density="xhdpi" src="resources/icon.png" />
+        <icon density="xxhdpi" src="resources/icon.png" />
+        <icon density="xxxhdpi" src="resources/icon.png" />
         <splash density="land-ldpi" src="resources/android/splash/splash.png" />
         <splash density="land-mdpi" src="resources/android/splash/splash.png" />
         <splash density="land-hdpi" src="resources/android/splash/splash.png" />
@@ -97,7 +97,6 @@
     <plugin name="phonegap-plugin-barcodescanner" spec="8.0.1">
         <variable name="ANDROID_SUPPORT_V4_VERSION" value="27.+" />
     </plugin>
-    <plugin name="cordova-plugin-secure-storage" spec="2.6.8" />
     <plugin name="cordova-plugin-fingerprint-aio" spec="2.0.0" />
     <plugin name="cordova-plugin-inappbrowser" spec="^3.2.0" />
     <plugin name="ionic-plugin-deeplinks">

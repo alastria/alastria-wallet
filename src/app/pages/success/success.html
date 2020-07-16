@@ -1,0 +1,28 @@
+<ion-content class="tutorial-page">
+    <ion-toolbar>
+        <ion-buttons slot="primary">
+          <ion-back-button></ion-back-button>
+        </ion-buttons>
+    </ion-toolbar>
+    <ion-row class="ion-margin ion-justify-content-center">
+        <h2 class="description-login ion-text-center" [innerHTML]="data.titleSuccess"></h2>
+    </ion-row>
+    <ion-row class="specific-height ion-margin ion-justify-content-center" *ngIf="data.page==='loading'">
+        <p class="description-login ion-text-center" [innerHTML]="data.textSuccess"></p>
+    </ion-row>
+    <ion-row class="ion-margin ion-justify-content-center">
+        <img *ngIf="data.page==='loading'" [src]="data.imgPrincipal" class="alastria-letters" />
+        <img *ngIf="data.page==='success'" [src]="data.imgPrincipal" class="alastria-letters extra-margin-bottom" />
+    </ion-row>
+    <ion-row class="specific-height ion-margin ion-justify-content-center" *ngIf="data.page==='success'">
+        <p class="description-login ion-text-center" [innerHTML]="data.textSuccess"></p>
+    </ion-row>
+    <ion-row class="ion-margin ion-justify-content-center">
+        <img [src]="data.imgSuccess" class="inbox-icon" />
+    </ion-row>
+    <ion-footer *ngIf="data.page==='success'">
+        <ion-row class="ion-margin ion-justify-content-center">
+            <ion-button class="btnConfirm" (click)="closeModal()">ACEPTAR</ion-button>
+        </ion-row>
+    </ion-footer>
+</ion-content>

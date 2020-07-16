@@ -1,0 +1,6 @@
+<ion-header [scrollHide]="headerScrollConfig" [scrollContent]="pageContent">
+    <user-info-header></user-info-header>
+</ion-header>
+<ion-content #pageContent fullscreen>
+    <parallax style="margin-top: 100px" *ngIf="(articles | async) as articleList" [data]="articleList"></parallax>
+</ion-content>

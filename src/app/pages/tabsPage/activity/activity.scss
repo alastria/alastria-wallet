@@ -1,0 +1,89 @@
+/*  #Style Settings for Tab-1
+===========================================*/
+[Index] { }
+
+ion-segment {
+    margin-bottom: 3px;
+}
+
+ion-segment-button > ion-label.label {
+    margin-top: 4px;
+}
+
+ion-header {
+    background-color: white;
+}
+
+#description {
+    color: #8e8e93;
+}
+
+#activity-status {
+    position: relative;
+    float: right;
+    color: #8e8e93;
+}
+
+#activity-status > ion-icon {
+    font-size: 18px !important;
+}
+
+#activity-status span {
+    margin-right: 3px;
+}
+
+#item-row {
+    width: 100%;
+}
+
+.title {
+    font-weight: bold !important;
+    color: black;
+    font-size: 18px !important;
+}
+
+.datetime {
+    float: right;
+    margin-right: 25px;
+    color: #8e8e93;
+}
+
+.status-askissuer {
+    color:darkorange;
+}
+
+.status-valid {
+    color: dodgerblue;
+}
+
+.status-revoked {
+    color: blueviolet;
+}
+
+.status-deleted-by-subject {
+    color: grey;
+}
+
+ion-checkbox {
+    position: relative;
+    float: left;
+    margin-right: 5px;
+    height: 20px;
+    top: 5px;
+    width: 20px;
+}
+
+#icons {
+    position: relative;
+    float: right;
+}
+
+
+.options {
+    color: #8e8e93;
+    font-size: 25px;
+    position: relative;
+    float: left;
+    width: 100%;
+    padding: 10px 0px;
+}

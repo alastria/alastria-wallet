@@ -6,7 +6,6 @@ export class AppConfig {
     public static readonly ISSUER = "iss";
     public static readonly AUDIENCE = "aud";
     public static readonly SUBJECT = "sub";
-    public static readonly ISSUER_NAME = "issName";
     public static readonly CBU = "cbu";
     public static readonly GWU = "gwu";
     public static readonly AS = "as";
@@ -47,6 +46,8 @@ export class AppConfig {
     public static readonly PRIVATE_KEY = "privateKey";
     public static readonly DID_KEY = "did";
     public static readonly PROXY_ADDRESS = "proxyAddress";
+    public static readonly TYPE = ["VerifiablePresentation", "AlastriaVerifiablePresentation"]
+    public static readonly AICCONTEXT = ["https://alastria.github.io/identity/artifacts/v1"]
 
 
 

@@ -1,0 +1,24 @@
+<div style="margin-top: 20px" *ngIf="data">
+
+    <p style="font-size: 20px;">Amplia el control sobre tu identidad, añade tus datos</p>
+
+    <ion-searchbar placeholder="búsqueda de datos" class="normal-search"></ion-searchbar>
+    <span style="font-size: small">
+        Ejemplo: Dirección, título universitario, nombre de empresa...
+    </span>
+    <ion-list>
+        <ion-card  *ngFor="let item of data; let i = index">
+            <img [src]=item.backgroundImage />
+
+            <ion-card-content>
+                <ion-card-title>
+                    {{item.title}}
+                </ion-card-title>
+                <p>
+                    {{item.description}}
+                </p>
+            </ion-card-content>
+            <ion-button class="white-button" (click)="navegateTo(item.link)">EXPLORAR</ion-button>
+        </ion-card>
+    </ion-list>
+</div>
