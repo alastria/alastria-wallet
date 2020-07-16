@@ -3,12 +3,12 @@
         <img src="assets/images/logo/alastria-icon.png" id="alastria-logo">
     </ion-row>
     <ion-row *ngIf="isPresentationRequest; else credentialOffer">
-        <h2 class="description"> {{issName | uppercase}} ha <strong>solicitado acceso</strong> a {{dataNumberAccess}}
+        <h2 class="description"> {{entityName | uppercase}} ha <strong>solicitado acceso</strong> a {{dataNumberAccess}}
             dato/s de tu identidad</h2>
     </ion-row>
     <ng-template #credentialOffer>
         <ion-row class="ion-text-center">
-            <h2 class="description"> {{entitiyName | uppercase}} quiere ofrecerte <strong>{{dataNumberAccess}}
+            <h2 class="description"> {{entityName | uppercase}} quiere ofrecerte <strong>{{dataNumberAccess}}
                 dato/s</strong> para tu identidad</h2>
         </ion-row>
     </ng-template>

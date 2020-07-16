@@ -5,12 +5,10 @@ import { AppConfig } from '../../../app.config';
 import { NavParams, ModalController } from '@ionic/angular';
 
 // Libraries
-import * as Web3 from 'web3';
 import { tokensFactory, transactionFactory } from 'alastria-identity-lib';
 
 // Services
 import { TransactionService } from '../../services/transaction-service';
-import { TokenService } from '../../services/token-service';
 import { Web3Service } from '../../services/web3-service';
 import { IdentityService } from '../../services/identity-service';
 import { LoadingService } from '../../services/loading-service';
@@ -25,8 +23,7 @@ import { SecuredStorageService } from '../../services/securedStorage.service';
 export class ConfirmAccessPage {
     public dataNumberAccess: number;
     public isPresentationRequest: boolean;
-    public issName = 'Empresa X';
-    public entitiyName = 'Entidad publica Ejemplo';
+    public entityName = 'Entidad publica Ejemplo';
     public credentials: Array<any>;
     public isDeeplink = false;
     private identitiesSelected: Array<number> = [];
@@ -44,8 +41,7 @@ export class ConfirmAccessPage {
         private transactionSrv: TransactionService,
         private http: HttpClient,
         private web3Srv: Web3Service,
-        private identitySrv: IdentityService,
-        private tokenSrv: TokenService
+        private identitySrv: IdentityService
     ) {
         this.dataNumberAccess = this.navParams.get(AppConfig.DATA_COUNT);
         this.isPresentationRequest = this.navParams.get(AppConfig.IS_PRESENTATION_REQ);
@@ -63,7 +59,7 @@ export class ConfirmAccessPage {
             this.credentialJWT = this.navParams.get(AppConfig.VERIFIED_JWT);
             if (this.credentialJWT) {
                 this.credentialJWT.map(item => {
-                    credentialJWTArr.push(this.tokenSrv.decodeTokenES(item));
+                    credentialJWTArr.push(tokensFactory.tokens.decodeJWT(item));
                 });
             }
             this.verifiedJWTDecode = credentialJWTArr;
@@ -75,7 +71,7 @@ export class ConfirmAccessPage {
         if (did) {
             const entity = await this.transactionSrv.getEntity(web3, did);
             if (entity && entity.name) {
-                this.entitiyName = entity.name;
+                this.entityName = entity.name;
             }
         }
     }
@@ -126,19 +122,22 @@ export class ConfirmAccessPage {
                     }
                 }
 
-                if (!pendingIdentities.length) {
+                if (!pendingIdentities.length || !pendingIdentities[0]['field_name']) {
+
                     this.showLoading();
                     this.modalCtrl.dismiss();
                     const callbackUrl = this.verifiedJWTDecode.payload.cbu;
                     const web3 = this.web3Srv.getWeb3(AppConfig.nodeURL);
                     const uri = AppConfig.procUrl;
                     const privKey = await this.securedStrg.get('userPrivateKey');
+                    const pubKey = await this.securedStrg.get('userPublicKey')
                     const did = await this.securedStrg.get('userDID');
                     const jti = `Alastria/presentation/${Math.random().toString().substring(5)}`
                     const signedCredentialJwts = this.getSignedCredentials(securedCredentials);
-                    const presentation = tokensFactory.tokens.createPresentation(`${did}#keys-1`, did, this.verifiedJWTDecode.payload.iss,
-                        this.verifiedJWTDecode.payload.pr['@context'], signedCredentialJwts, AppConfig.procUrl,
-                        `0x${this.verifiedJWTDecode.payload.pr.procHash}`, this.verifiedJWTDecode.payload.exp, this.verifiedJWTDecode.payload.nbf, jti);
+                    const presentation = tokensFactory.tokens.createPresentation(did, this.verifiedJWTDecode.payload.iss, this.verifiedJWTDecode.payload.pr['@context'],
+                                                                                signedCredentialJwts, AppConfig.procUrl, `0x${this.verifiedJWTDecode.payload.pr.procHash}`,
+                                                                                AppConfig.TYPE, `${did}#keys-1`, pubKey, this.verifiedJWTDecode.payload.exp,
+                                                                                this.verifiedJWTDecode.payload.nbf,jti)
 
                     const signedPresentation = tokensFactory.tokens.signJWT(presentation, privKey.substring(2));
                     const presentationPSMHash = tokensFactory.tokens.PSMHash(web3, signedPresentation, did);
@@ -194,7 +193,7 @@ export class ConfirmAccessPage {
                                 let ret;
                                 try {
                                     if (result) {
-                                        ret = await this.existKey(web3, currentCredentialKey, key, index, finalCredential);
+                                        ret = await this.existKey(web3, currentCredentialKey, index, finalCredential);
                                     } else {
                                         ret = await this.notExistKey(web3, currentCredentialKey, index, finalCredential);
                                     }
@@ -237,7 +236,7 @@ export class ConfirmAccessPage {
         });
     }
 
-    private async existKey(web3: any, currentCredentialKey: string,  key: any, index: number, finalCredential: any): Promise<any> {
+    private async existKey(web3: any, currentCredentialKey: string, index: number, finalCredential: any): Promise<any> {
         try {
             const result = await this.securedStrg.getJSON(currentCredentialKey);
             const subDID = await this.securedStrg.get('userDID');

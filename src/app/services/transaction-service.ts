@@ -90,6 +90,17 @@ export class TransactionService {
         });
     }
 
+    public getIssuerCredentialStatus(web3: any, issuer: string, credentialHash: string): Promise<CredentialStatus> {
+        const subjectCredentialTransaction =
+            transactionFactory.credentialRegistry.getIssuerCredentialStatus(web3, issuer, credentialHash);
+        return web3.eth.call(subjectCredentialTransaction).then(IssuerCredentialStatus => {
+            const result = web3.eth.abi.decodeParameters(['bool', 'uint8'], IssuerCredentialStatus);
+            const credentialStatus: CredentialStatus = result;
+            console.log('CREDENTIALSTATUS ----->', credentialStatus)
+            return credentialStatus;
+        });
+    }
+
     public async getEntity(web3: any, did: string): Promise<any> {
         const entityTX = transactionFactory.identityManager.getEntity(web3, did);
         const result = await web3.eth.call(entityTX);

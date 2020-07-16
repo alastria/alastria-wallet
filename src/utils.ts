@@ -9,8 +9,14 @@ export function parseCredentials(credentials: string): string {
 }
 
 
-export async function  getCredentialStatus(transactionSrv: TransactionService,web3: any, psmHash: string, did: string) {
+export async function  getCredentialStatus(transactionSrv: TransactionService, web3: any, psmHash: string, did: string) {
     const status = await transactionSrv.getSubjectPresentationStatus(web3, did, psmHash);
+
+    return status;
+}
+
+export async function  getIssuerCredentialStatus(transactionSrv: TransactionService, web3: any, psmHash: string, did: string) {
+    const status = await transactionSrv.getIssuerCredentialStatus(web3, did, psmHash);
 
     return status;
 }

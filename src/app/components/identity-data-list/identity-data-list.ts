@@ -73,13 +73,13 @@ export class IdentityDataListComponent implements OnInit {
             const stars = this.createStars(level);
             const key = this.getCreedKey(credential);
             let credentialRes: Identity;
+            let securedCredentials
 
             if (this.isPresentationRequest) {
-                let securedCredentials;
                 const hasKey = await this.securedStrg.hasKey(AppConfig.CREDENTIAL_PREFIX + key);
+                const resultKey = await this.securedStrg.get(AppConfig.CREDENTIAL_PREFIX + key);
+                securedCredentials = JSON.parse(resultKey);
                 if (hasKey) {
-                    const resultKey = await this.securedStrg.get(AppConfig.CREDENTIAL_PREFIX + key);
-                    securedCredentials = JSON.parse(resultKey);
                     credentialRes = this.parseCredential(count++, credential[AppConfig.FIELD_NAME], securedCredentials[key], iatString,
                         expString, securedCredentials.entityName, level, stars, true, false);
                     this.identityDisplay.push(credentialRes);
@@ -92,15 +92,15 @@ export class IdentityDataListComponent implements OnInit {
                     this.loadCredential.emit(credentialSelected);
                     return Promise.resolve();
                 } else {
+                    console.log('SECCREDENTIALS ------>', securedCredentials)
                     credentialRes = this.parseCredential(count++, credential[AppConfig.FIELD_NAME], null, '',
-                        'expString', '', level, stars, false, false);
+                        '', '', level, stars, false, false);
                     this.identityDisplay.push(credentialRes);
                     return Promise.resolve();
                 }
             } else {
                 if (credential[AppConfig.ISSUER]) {
                     const entity = await this.transactionSrv.getEntity(web3, credential[AppConfig.ISSUER]);
-                    // let entity = await this.transactionSrv.getEntity(credential[AppConfig.GWU], credential[AppConfig.ISSUER])
                     entityName = entity.name;
                 } else {
                     entityName = credential.entityName;
@@ -213,7 +213,7 @@ export class IdentityDataListComponent implements OnInit {
             titleP: (title) ? title.toUpperCase().replace(/_/g, ' ') : '',
             emitter: 'Emisor del testimonio',
             valueT: 'Valor',
-            value: (value) ? value : 'Credencial no selecionada o no disponible',
+            value: (value) ? value : 'Credencial no disponible',
             place: 'Emisor',
             issuer,
             addDateT: 'Fecha incorporación del testimonio',
