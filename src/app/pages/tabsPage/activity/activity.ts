@@ -19,7 +19,7 @@ import { ToastService } from '../../../services/toast-service';
 import { ActivitiesService } from '../../../services/activities.service';
 import { Web3Service } from '../../../services/web3-service';
 import { LoadingService } from '../../../services/loading-service';
-import { getCredentialStatus } from 'src/utils';
+import { getCredentialStatus, getIssuerCredentialStatus } from 'src/utils';
 
 @Component({
     templateUrl: 'activity.html',
@@ -81,9 +81,10 @@ export class ActivityPage {
                 elements.map(async (element: any) => {
                     const elementObj = JSON.parse(element);
                     const key = this.getCreedKey(elementObj);
+                    console.log(elementObj)
 
                     if (prefix === AppConfig.CREDENTIAL_PREFIX) {
-                        promises.push(getCredentialStatus(this.transactionSrv, this.web3, elementObj[AppConfig.PSM_HASH], did)
+                        promises.push(getIssuerCredentialStatus(this.transactionSrv, this.web3, elementObj[AppConfig.PSM_HASH], elementObj.iss)
                             .then((credentialStatus) => {
                                 const statusType = parseInt(credentialStatus[1], 0);
                                 return this.createActivityObject(count++, key, elementObj[key], elementObj.entityName, elementObj.iat,

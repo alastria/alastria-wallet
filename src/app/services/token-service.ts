@@ -46,19 +46,4 @@ export class TokenService {
             return tokenType;
         });
     }
-
-    public decodeTokenES(token: string): string | object {
-        let decodedToken = tokensFactory.tokens.decodeJWT(token);
-        return decodedToken;
-    }
-
-    public verifyTokenES(token: string, pku: string): string | object {
-        let decodedToken = tokensFactory.tokens.verifyJWT(token, pku);
-        return decodedToken;
-    }
-
-    public signTokenES(token: string, privateKey: string) {
-        let signedToken = tokensFactory.tokens.signJWT(token, privateKey);
-        return signedToken;
-    }
 }
