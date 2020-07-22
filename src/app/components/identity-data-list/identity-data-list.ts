@@ -92,7 +92,6 @@ export class IdentityDataListComponent implements OnInit {
                     this.loadCredential.emit(credentialSelected);
                     return Promise.resolve();
                 } else {
-                    console.log('SECCREDENTIALS ------>', securedCredentials)
                     credentialRes = this.parseCredential(count++, credential[AppConfig.FIELD_NAME], null, '',
                         '', '', level, stars, false, false);
                     this.identityDisplay.push(credentialRes);
