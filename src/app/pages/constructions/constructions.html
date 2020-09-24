@@ -1,0 +1,23 @@
+<ion-header>
+  
+  <ion-navbar>
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center">{{text}}</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content>
+
+  <img [src]=img >
+
+  <ion-button (click)="closeModal()" id="close-button" class="white-button"> Volver </ion-button>
+
+  <ion-button (click)="navegateTo('page-success')" class="white-button"> Success </ion-button>
+
+  <ion-button (click)="navegateTo('page-loading')" class="white-button"> Loading </ion-button>
+
+</ion-content>

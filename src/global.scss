@@ -1,0 +1,220 @@
+/*
+ * App Global CSS
+ * ----------------------------------------------------------------------------
+ * Put style rules here that you want to apply globally. These styles are for
+ * the entire app and not just one component. Additionally, this file can be
+ * used as an entry point to import other CSS/Sass files to be included in the
+ * output CSS.
+ * For more information on global stylesheets, visit the documentation:
+ * https://ionicframework.com/docs/layout/global-stylesheets
+ */
+
+/* Core CSS required for Ionic components to work properly */
+@import "~@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "~@ionic/angular/css/normalize.css";
+@import "~@ionic/angular/css/structure.css";
+@import "~@ionic/angular/css/typography.css";
+@import '~@ionic/angular/css/display.css';
+
+/* Optional CSS utils that can be commented out */
+@import "~@ionic/angular/css/padding.css";
+@import "~@ionic/angular/css/float-elements.css";
+@import "~@ionic/angular/css/text-alignment.css";
+@import "~@ionic/angular/css/text-transformation.css";
+@import "~@ionic/angular/css/flex-utils.css";
+
+// http://ionicframework.com/docs/theming/
+
+
+// App Global Sass
+// --------------------------------------------------
+// Put style rules here that you want to apply globally. These
+// styles are for the entire app and not just one component.
+// Additionally, this file can be also used as an entry point
+// to import other Sass files to be included in the output CSS.
+//
+// Shared Sass variables, which can be used to adjust Ionic's
+// default Sass variables, belong in "theme/variables.scss".
+//
+// To declare rules for a specific mode, create a child rule
+// for the .md, .ios, or .wp mode classes. The mode class is
+// automatically applied to the <body> element in the app.
+
+ion-header {
+    position: initial;
+}
+
+.top10 {
+    margin-top: 10px !important;
+}
+.top30 {
+    margin-top: 30px !important;
+}
+
+.top50 {
+    margin-top: 50px !important;
+}
+
+.version-info {
+    position: absolute;
+    bottom: 15px;
+    left: 6px;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    line-height: normal;
+    font-size: 14px;
+    color: #325B8E;
+}
+
+.main {
+    background: linear-gradient(153.34deg, rgba(50, 91, 142, 0.8) 7.11%, rgba(0, 178, 188, 0.8) 78.61%), url('./assets/images/background/background.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    mix-blend-mode: normal;
+    filter: blur(1px);
+}
+
+.toolbar img {
+    max-height: 37px;
+}
+
+.toolbar-background {
+    --ion-background-color: rgba(0,0,0,0);
+    color: #FFFFFF;
+}
+
+.mainContent {
+    --ion-background-color: rgba(0,0,0,0);
+    color: #FFFFFF;
+}
+
+.menu {
+    color: #FFFFFF;
+}
+
+.grey,
+.item-inner .input-wrapper .grey {
+    color :#cccccc;
+}
+
+.grey input::placeholder {
+    color :#cccccc;
+}
+
+.header-ios {
+    padding-top:24px;
+}
+
+.label {
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    line-height: normal;
+    font-size: 18px;
+    color: #325B8E;
+}
+
+.logo {
+    padding-left: 10px;
+}
+
+.iconLogin {
+    height: 27px;
+}
+
+.nameUser {
+    font-size: 18px;
+    color: #FFFFFF;
+    text-align: center;
+    padding-bottom: 10%;
+}
+
+.list-md .item-input:last-child {
+    border-bottom: 0;
+}
+
+.col {
+    width: inherit;
+    min-height: inherit;
+}
+
+.without-items {
+    width: 100%;
+    text-align: center;
+    margin-top: 50%;
+    font-size: xx-large;
+}
+
+.white-button {
+    --border-radius: 30px;
+    --background: white;
+    color: #3A6D96;
+}
+
+ion-searchbar.normal-search {
+    --border-radius: 30px;
+}
+
+ion-searchbar.normal-search  ion-icon {
+    color: #325B8E !important;
+}
+
+#logo-row {
+    margin-top: 15px;
+}
+
+#alastria-logo {
+    height: 110px;
+    margin: auto;
+}
+
+ion-footer.modal-buttons {
+    position: absolute;
+    bottom: 50px;
+    
+    ion-row {
+      margin-top: 30px;
+    }
+}
+
+.btnConfirm {
+    --background: linear-gradient(90deg, #325b8e 0%, #00cad6 100%);
+    --border-radius: 30px;
+    height: 50px;
+    margin: auto;
+}
+  
+.btnCancel {
+    margin-top: 15px;
+    font-weight: 500;
+    margin: auto;
+}
+  
+.btnConfirm:before {
+    content: ">";
+    position: absolute;
+    left: 90%;
+    top: 10px;
+    font-size: 25px;
+}
+
+#header-title {
+    height: 61px;
+    width: 100%;
+    --background: linear-gradient(155.73deg, #325B8E 44.4%, #00B2BC 73.25%);
+    margin-bottom: 15px;
+    color: white;
+    display: flex;
+}
+#header-title p {
+    color: white;
+    font-size: 18px;
+}
+
+ion-back-button {
+    --color: white;
+    display: block;
+}

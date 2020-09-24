@@ -1,0 +1,22 @@
+<ion-header>
+  <div class="header-title">
+    <ion-title>
+      <p align="center">Entidades validadoras</p>
+    </ion-title>
+  </div>
+  <ion-searchbar class="normal-search" [(ngModel)]="searchTerm" (ionInput)="onSearch($event)"></ion-searchbar>
+</ion-header>
+
+<ion-content #pageContent fullscreen>
+  <div *ngIf="(entities | async) as entityList">
+    <item-list  [items]="entityList" (handleSelectItem)="openBlank($event)">
+    </item-list>
+    <div *ngIf="!entityList.length" class="without-items">
+      No hay entidades
+    </div>
+  </div>
+</ion-content>
+
+<ion-footer>
+  <img class="readQr" src="../assets/svg/tabIcon/qr-read.svg" alt="qr image" (click)="readQr()">
+</ion-footer>

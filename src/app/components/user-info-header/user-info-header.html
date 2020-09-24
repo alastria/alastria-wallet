@@ -1,0 +1,10 @@
+<div class="" [class.compact]="compact" id="userInfoHeader" style="z-index: 1;">
+    <div class="outterOval "></div>
+    <div class="innerOval "></div>
+    <label class="name ">{{userName}}</label>
+    <ion-button fill="clear" slot="start" class="userSettings" (click)="openUserSettings()">
+        <img src="assets/svg/user-settings.svg">
+    </ion-button>
+    <span class="outerUserCircle "></span>
+    <img class="innerUserCircle " [src]="userImagePath" (click)="profilePage()">
+</div>

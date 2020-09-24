@@ -1,0 +1,25 @@
+/*  # Style Parallax - New list
+================================================*/
+// Parallax Big Image
+[background-size] {
+  position: relative;
+} // Settings Badge
+
+ion-badge {
+  position: absolute;
+  right: 12px;
+  bottom: 0;
+} 
+
+// Settings Content Avatar
+ion-thumbnail {
+  opacity: 0.7;
+  filter: none;
+  img {
+    // border-radius: $border-radius !important;
+  }
+}
+
+.input-wrapper {
+  display: block;
+}

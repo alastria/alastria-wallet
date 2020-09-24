@@ -1,98 +1,79 @@
-import { IdentityDataListModule } from './../components/identity-data-list/identity-data-list.module';
-import { Activities } from './../services/activities/activities.service';
+import { RouteReuseStrategy } from '@angular/router';
+import { IonicRouteStrategy, IonicModule } from '@ionic/angular';
 import { BrowserModule } from '@angular/platform-browser';
-import { ErrorHandler, NgModule } from '@angular/core';
-import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
-import { SplashScreen } from '@ionic-native/splash-screen';
-import { StatusBar } from '@ionic-native/status-bar';
-
-import { MyApp } from './app.component';
-import { HomePage } from '../pages/home/home';
-import { Login, InfoPage } from '../pages/login/login';
-import { LoadingService } from '../services/loading-service';
-import { BarcodeScanner } from '@ionic-native/barcode-scanner';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { NgxQRCodeModule } from 'ngx-qrcode2';
-import { RegisterHub } from '../pages/register/register-hub/register-hub';
-import { RegisterFormModule } from '../pages/register/register-hub/register-form/register-form.module';
-import { TabsPageModule } from '../pages/tabsPage/tabsPage.module';
-import { UserInfoHeaderModule } from '../components/user-info-header/user-info-header.module';
-import { SecureStorage } from '@ionic-native/secure-storage';
-import { FingerprintAIO } from '@ionic-native/fingerprint-aio';
-import { ContructionsPageModule } from './../pages/contructions/contructions.module'
-import { SuccessPageModule } from '../pages/success/success.module';
-import { ProfilePage } from '../pages/profile/profile';
-import { DetailProfilePage } from '../pages/detail-profile/detail-profile';
-import { SessionSecuredStorageService, IdentitySecuredStorageService } from '../services/securedStorage.service';
-import { WalkthroughPage } from '../pages/walkthrough/walkthrough';
-import { ConfirmLogin } from '../pages/confirmLogin/confirmLogin';
-import { TermsConditionsPageModule } from '../pages/terms-conditions/terms-conditions.module';
-import { ConfirmAccess } from '../pages/confirm-access/confirm-access';
-import { SelectIdentity } from './../pages/confirm-access/select-identity/select-identity';
-import { HttpClientModule } from "@angular/common/http"
-import { TokenService } from '../services/token-service';
-import { ToastService } from '../services/toast-service';
+import { SecureStorage } from '@ionic-native/secure-storage/ngx';
+import { HttpClientModule } from '@angular/common/http';
+import { Deeplinks } from '@ionic-native/deeplinks/ngx';
+import { AppComponent } from './app.component';
+import { AppRoutingModule } from './app-routing.module';
+import { SplashScreen } from '@ionic-native/splash-screen/ngx';
+import { StatusBar } from '@ionic-native/status-bar/ngx';
+
+// MODULES
+import { TabsPageModule } from './pages/tabsPage/tabsPage.module';
+import { SuccessPageModule } from './pages/success/success.module';
+import { ConfirmAccessModule } from './pages/confirm-access/confirm-access.module';
+import { LoginPageModule } from './pages/login/login.module';
+import { EntitiesPageModule } from './pages/entities/entities.module';
+import { UserSettingsModule } from './components/user-info-header/userSettings/user-settings.module';
+import { CameraModule } from './pages/tabsPage/camera/camera.module';
+import { ProfilePageModule } from './pages/profile/profile.module';
+
+// PAGES - COMPONETS
+import { CredentialDetailPage } from './pages/credential-detail/credential-detail';
+import { ConfirmErrorPage } from './pages/confirmError/confirmError';
+
+// SERVICES
+import { ToastService } from './services/toast-service';
+import { Web3Service } from './services/web3-service';
+import { AuthGuardService } from './services/auth-guard.service';
+import { AuthenticationService } from './services/authentication.service';
 
 @NgModule({
     declarations: [
-        MyApp,
-        HomePage,
-        Login,
-        InfoPage,
-        ProfilePage,
-        DetailProfilePage,
-        RegisterHub,
-        WalkthroughPage,
-        ConfirmLogin,
-        WalkthroughPage,
-        ConfirmAccess,
-        SelectIdentity
+      AppComponent,
+      CredentialDetailPage,
+      ConfirmErrorPage
     ],
     imports: [
+        IonicModule.forRoot(),
+        AppRoutingModule,
         BrowserModule,
-        IonicModule.forRoot(MyApp, {
-            backButtonText: 'Tu AlastriaID',
-            backButtonIcon: 'ios-arrow-back'
-        }
-        ),
-        RegisterFormModule,
+        HttpClientModule,
+        AppRoutingModule,
         TabsPageModule,
         NgxQRCodeModule,
-        ContructionsPageModule,
-        TermsConditionsPageModule,
         SuccessPageModule,
-        UserInfoHeaderModule,
-        IdentityDataListModule,
-        UserInfoHeaderModule,
-        HttpClientModule
+        ConfirmAccessModule,
+        LoginPageModule,
+        EntitiesPageModule,
+        ProfilePageModule,
+        UserSettingsModule,
+        CameraModule
     ],
-    bootstrap: [IonicApp],
+    bootstrap: [AppComponent],
     entryComponents: [
-        MyApp,
-        HomePage,
-        Login,
-        InfoPage,
-        ProfilePage,
-        DetailProfilePage,
-        RegisterHub,
-        WalkthroughPage,
-        ConfirmAccess,
-        WalkthroughPage,
-        ConfirmLogin,
-        SelectIdentity
+      AppComponent,
+      CredentialDetailPage,
+      ConfirmErrorPage
     ],
     providers: [
-        StatusBar,
-        SplashScreen,
-        LoadingService,
-        BarcodeScanner,
-        FingerprintAIO,
-        SecureStorage,
-        SessionSecuredStorageService,
-        IdentitySecuredStorageService,
-        Activities,
-        { provide: ErrorHandler, useClass: IonicErrorHandler },
-        ToastService,
-        TokenService
+      BarcodeScanner,
+      Deeplinks,
+      SecureStorage,
+      Web3Service,
+      SplashScreen,
+      StatusBar,
+      { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+      ToastService,
+      AuthGuardService,
+      AuthenticationService
+    ],
+    schemas: [
+      CUSTOM_ELEMENTS_SCHEMA
     ]
 })
 export class AppModule { }

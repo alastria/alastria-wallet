@@ -1,0 +1,37 @@
+<ion-header>
+    <ion-toolbar id="header-title">
+    <ion-buttons slot="start">
+        <ion-back-button (click)="navController.back()"></ion-back-button>
+    </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content style="margin-top: 20px;">
+    <ion-row style="margin-left: 20px">
+        <span style="font-size: 20px;">Tu AlastriaID</span>
+    </ion-row>
+    <ion-searchbar placeholder="busca tus datos" class="normal-search" [(ngModel)]="searchTerm" (ionInput)="onSearch($event)"></ion-searchbar>
+
+    <identity-data-list *ngIf="(credentials | async) as credentialList"
+        isShowDetail=true
+        [allCredentials]="credentialList"
+        [canRevoke]=false>
+    </identity-data-list>
+
+    <ion-row *ngIf="!(credentials | async)?.length && this.isHaveCredentials" class="without-credentials-search ion-justify-content-center">
+        No se han encontrado credenciales para esa búsqueda
+    </ion-row>
+
+    <ion-row *ngIf="!(credentials | async)?.length && !this.isHaveCredentials" class="without-credentials ion-justify-content-center">
+        ¿Quieres obtener tu primera credencial?
+    </ion-row>
+
+
+    <ion-row *ngIf="!(credentials | async)?.length && !this.isHaveCredentials" class="without-credentials ion-justify-content-center">
+        <ion-button class="btnConfirm" style="width: 80%" (click)="goToEntitiesList()">LISTADO DE ENTIDADES</ion-button>
+    </ion-row>
+
+    <ion-row *ngIf="!(credentials | async)?.length && !this.isHaveCredentials" class="without-credentials ion-justify-content-center">
+        O si lo prefieres, escanea el código QR que te genera tu proveedor de credenciales.
+    </ion-row>
+</ion-content>

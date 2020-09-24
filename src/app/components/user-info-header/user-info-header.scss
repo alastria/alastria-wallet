@@ -1,0 +1,149 @@
+#userInfoHeader {
+  height: 140px;
+  margin-bottom: 15px;
+}
+
+#userInfoHeader  .ios .nav-decor{
+  background:transparent !important;
+}
+
+#userInfoHeader  .outterOval {
+  border-radius: 50%;
+  position: absolute;
+  width: 525px;
+  height: 175px;
+  left: -75px;
+  top: -26px;
+  background-color:rgba(181, 222, 225, 0.24);
+}
+
+#userInfoHeader  .innerOval {
+  border-radius: 50%;
+
+  position: absolute;
+  width: 587px;
+  height: 230px;
+  left: -106px;
+  top: -91px;
+
+  background: linear-gradient(155.73deg, #325B8E 44.4%, #00B2BC 73.25%);
+}
+
+#userInfoHeader .outerUserCircle {
+  width: 147px;
+  height: 147px;
+  border-radius: 100%;
+  background-color:rgba(255, 255, 255, 0.10);
+  position: absolute;
+  top: 35px;
+  left: 5px;
+}
+
+#userInfoHeader .innerUserCircle {
+  width: 120px;
+  height: 120px;
+  border-radius: 100%;
+  background-size: cover;
+
+  position: absolute;
+  top: 49px;
+  left: 19px;
+}
+
+#userInfoHeader .name {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  line-height: normal;
+  font-size: 18px;
+
+  color: #FEFFFF;
+}
+
+#userInfoHeader  .scroll-content {
+  padding: 0px !important;
+  margin-bottom: 0px !important;
+}
+
+#userInfoHeader .expandable-list {
+  padding: 16px;
+}
+
+#userInfoHeader .userSettings {
+  position: absolute;
+  width: 65px;
+  right: 15px;
+  top: 40px;
+  padding:0;
+}
+
+#userInfoHeader.compact {
+  height: 70px;
+}
+
+#userInfoHeader.compact .outterOval {
+  height: 0px;
+  z-index: 9999;
+}
+
+#userInfoHeader.compact .innerOval {
+  height: 61px;
+  position: fixed;
+  top:0;
+  left: 0;
+  border-radius: 0;
+  width: 100%;
+  z-index: 9999;
+}
+
+#userInfoHeader.compact .outerUserCircle {
+  width: 53px;
+  height: 53px;
+  position: fixed;
+  top: 4px;
+  left: 8px;
+  z-index: 9999;
+
+}
+
+#userInfoHeader.compact .innerUserCircle {
+  width: 43px;
+  height: 43px;
+  position: fixed;
+  top: 9px;
+  left: 13px;
+  z-index: 9999;
+}
+
+#userInfoHeader.compact .name {
+  position: fixed;
+  top: 18px;
+  right: 25%;
+  left: 25%;
+
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  line-height: normal;
+  font-size: 18px;
+  z-index: 9999;
+
+  color: #FEFFFF;
+}
+
+
+#userInfoHeader.compact .userSettings {
+  position: fixed;
+  right: 25px;
+  top: 10px;
+  z-index: 9999;
+
+}
+
+.fixed-element {
+    position: fixed !important;
+}

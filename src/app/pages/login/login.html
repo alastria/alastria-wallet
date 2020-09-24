@@ -1,0 +1,55 @@
+<ion-header></ion-header>
+<ion-nav class="main" id="nav" #content [root]="Login">
+</ion-nav>
+<ion-content class="mainContent">
+    <ion-grid>
+        <ion-row>
+            <ion-col size="12">
+                <img [src]="logoUrl" id="logo">
+                <br />
+                <h3 *ngIf="loginType !== 'key'"> ¡Hola! </h3>
+                <h3> {{ title }} </h3>
+            </ion-col>
+        </ion-row>
+        <ion-row class="row-bottom">
+            <ion-col size="12" id="key-form" class="row2 ion-align-self-end" *ngIf="loginType === buttons[0].type">
+                <form [formGroup]="accessKeyForm">
+                    <ion-item *ngFor="let input of inputsKeyForm; let i = index" class="input-key">
+                        <ion-label position="floating" class="grey">{{input.label}}</ion-label>
+                        <ion-input class="menu form-control" type="number" style="-webkit-text-security:disc" [id]="input.key" [formControlName]="input.key">
+                        </ion-input>
+                    </ion-item>
+                    <div class="error" *ngIf="accessKeyForm?.controls['repeatKey']?.errors?.mismatch">
+                        Las claves no coinciden
+                    </div>
+                    <div class="error" *ngIf="accessKeyForm?.controls['key']?.errors?.incorrect">
+                        Clave incorrecta
+                    </div>
+                </form>
+            </ion-col>
+            <ion-col size="12" *ngIf="!loginType" id="button-select-login">
+                <ion-button *ngFor="let button of buttons; let i = index"
+                    expand="block" class="btnLogin" 
+                    (click)="selectTypeLogin(button.type)">
+                    {{ button.label }}
+                    <ion-icon class="arrow-icon" name="ios-arrow-forward"></ion-icon>
+                </ion-button>
+            </ion-col>
+            <ion-col size="12" class="ion-align-self-end" *ngIf="buttons[0] && loginType === buttons[0].type">
+                <ion-button expand="block" class="btnLogin" (click)="createAccessKey()">
+                    Aceptar
+                    <ion-icon class="arrow-icon" name="ios-arrow-forward"></ion-icon>
+                </ion-button>
+            </ion-col>
+            <ion-col class="ion-align-self-end" size="12" *ngIf="buttons[1] && loginType === buttons[1].type">
+                <div class="fingerPrint" (click)="regFinger()">
+                    <img src="assets/images/logo/BiometricFinger.png" />
+                    <p>
+                        Accede con tu huella
+                    </p>
+                </div>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-content>
+ 

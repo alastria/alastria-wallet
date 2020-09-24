@@ -1,0 +1,41 @@
+{
+    "header": {
+        "typ": "JWT",
+        "alg": "ES256K",
+        "kid": "did:ala:quor:redt:QmeeasCZ9jLbXueBJ7d7csxhb#keys-1"
+    },
+    "payload": {
+        "jti": "https://www.metrovacesa.com/alastria/credentials/3732",
+        "iss": "did:alastria:quorum:testnet1:QmeeasCZ9jLbX...ueBJ7d7csxhb",
+        "iat": 1525465044,
+        "exp": 2030735444,
+        "nbf": 1525465044,
+        "pr": {
+            "@context": [
+                "https://www.w3.org/2018/credentials/v1",
+                "JWT"
+            ],
+            "type": [
+                "VerifiablePresentationRequest"
+            ],
+            "procHash": "H398sjHd...kldjUYn475n",
+            "procUrl": "https://www.metrovacesa.com/alastria/businessprocess/4583",
+            "data": [
+                {
+                    "@context": "JWT",
+                    "levelOfAssurance": "High",
+                    "required": true,
+                    "field_name": "phone_number"
+                },
+                {
+                    "@context": "JWT",
+                    "levelOfAssurance": "High",
+                    "required": true,
+                    "field_name": "email"
+                }
+            ]
+        }
+    },
+
+    "jwt": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsImtpZCI6ImRpZDphbGE6cXVvcjpyZWR0OlFtZWVhc0NaOWpMYlh1ZUJKN2Q3Y3N4aGIja2V5cy0xIn0.eyJqdGkiOiJodHRwczovL3d3dy5tZXRyb3ZhY2VzYS5jb20vYWxhc3RyaWEvY3JlZGVudGlhbHMvMzczMiIsImlzcyI6ImRpZDphbGFzdHJpYTpxdW9ydW06dGVzdG5ldDE6UW1lZWFzQ1o5akxiWC4uLnVlQko3ZDdjc3hoYiIsImlhdCI6MTUyNTQ2NTA0NCwiZXhwIjoyMDMwNzM1NDQ0LCJuYmYiOjE1MjU0NjUwNDQsInByIjp7IkBjb250ZXh0IjpbImh0dHBzOi8vd3d3LnczLm9yZy8yMDE4L2NyZWRlbnRpYWxzL3YxIiwiSldUIl0sInR5cGUiOlsiVmVyaWZpYWJsZVByZXNlbnRhdGlvblJlcXVlc3QiXSwicHJvY0hhc2giOiJIMzk4c2pIZC4uLmtsZGpVWW40NzVuIiwicHJvY1VybCI6Imh0dHBzOi8vd3d3Lm1ldHJvdmFjZXNhLmNvbS9hbGFzdHJpYS9idXNpbmVzc3Byb2Nlc3MvNDU4MyIsImRhdGEiOlt7IkBjb250ZXh0IjoiSldUIiwibGV2ZWxPZkFzc3VyYW5jZSI6IkhpZ2giLCJyZXF1aXJlZCI6dHJ1ZSwiZmllbGRfbmFtZSI6InBob25lX251bWJlciJ9LHsiQGNvbnRleHQiOiJKV1QiLCJsZXZlbE9mQXNzdXJhbmNlIjoiSGlnaCIsInJlcXVpcmVkIjp0cnVlLCJmaWVsZF9uYW1lIjoiZW1haWwifV19fQ.kWZ1BlAAA9KOEFP9vauxB9u4bm6sb6JcbJ8je2Qgnlo"
+}

@@ -1,0 +1,48 @@
+<ion-header>
+  <user-info-header [compact]=true></user-info-header>
+  <div style="margin-left: 20px">
+      <span style="font-size: 20px;">
+          Avisos
+      </span>
+      <h2 class="ion-no-margin ion-padding-left">Deliza cada elemento a la izquierda para ver sus opciones.</h2>  
+  </div>
+</ion-header>
+<ion-content>
+    <ion-grid class="ion-no-padding" *ngIf="(notifications | async) as notificationList">
+      <!-- Content -->
+      <ion-list>
+        <ion-notification-sliding #slidingItem *ngFor="let notification of notificationList">
+          <ion-notification no-lines (click)="onItemClick(notification.title, $event)">
+            <ion-row>
+              <ion-col size="4">
+                <!-- Images -->
+                <ion-thumbnail>
+                  <img src="{{notification.image}}">
+                </ion-thumbnail>
+              </ion-col>
+              <ion-col size="8">
+                <!-- Title -->
+                <h2>{{notification.title}}</h2>
+                <!-- Subtitle -->
+                <p class="ion-text-wrap">{{notification.subtitle}}</p>
+              </ion-col>
+            </ion-row>
+          </ion-notification>
+          <!--Action Button-->
+          <!-- <ion-notification-options no-lines> -->
+            <!-- Button -->
+            <!-- <ion-button  class="ion-text-capitalize">
+              <ion-text>
+                {{notification.accept}}
+              </ion-text>
+            </ion-button>
+            <ion-button style="background-color: #9e001e" class="ion-text-capitalize" (click)="delete(notification)">
+              <ion-text>
+                {{notification.delete}}
+              </ion-text>
+            </ion-button>
+          </ion-notification-options> -->
+        </ion-notification-sliding>
+      </ion-list>
+      </ion-grid>
+</ion-content>

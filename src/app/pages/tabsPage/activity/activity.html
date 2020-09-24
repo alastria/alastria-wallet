@@ -1,0 +1,84 @@
+<!--- Settings TAB lauout-1 -->
+<ion-header [scrollHide]="headerScrollConfig" [scrollContent]="pageContent">
+    <user-info-header [compact]=true></user-info-header>
+    <div style="margin-left: 20px">
+        <span style="font-size: 20px;">
+            Tu actividad reciente con AlastriaId
+        </span>
+        <ion-row class="options" *ngIf="selection">
+            <ion-col size="8">
+                <ion-label>Todos</ion-label>
+                <ion-checkbox 
+                [checked]="isSelectAll"
+                [indeterminate]="!isSelectAll"
+                (ionChange)="handleSelectAll($event)"></ion-checkbox>
+            </ion-col>
+            <ion-col size="3">
+                <div id="icons">
+                <!-- <ion-icon name="cloud-upload" (click)="handleDeleteOrBackup('backup')"></ion-icon> -->
+                <ion-icon name="trash-outline" (click)="handleDeleteOrBackup('delete',  type == 'presentations')"></ion-icon>
+                </div>
+            </ion-col>
+        </ion-row>
+        <ion-searchbar class="normal-search" *ngIf="!selection" [(ngModel)]="searchTerm" (ionInput)="onSearch($event)"></ion-searchbar>
+    </div>
+    <ion-segment (ionChange)="segmentChanged($event)" [value]="type">
+        <ion-segment-button value="credentials">
+            <ion-label>Credentials</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="presentations">
+            <ion-label>Presentations</ion-label>
+        </ion-segment-button>
+    </ion-segment>
+</ion-header>
+<ion-content #pageContent fullscreen>
+    <div *ngIf="activities?.length">
+        <ion-list>
+            <ion-card *ngFor="let activity of activities; let i = index"
+            (click)=!selection?onItemClick(activity):selectActivity(i,activity) (press)=selectActivity(i,activity)>
+                <ion-row id="item-row"
+                    [ngStyle]="{'background-color': activitiesSelected[i] === activity.activityId ? '#F2F2F2' : '#FFFFFF'}">
+                    <ion-col size=9>
+                        <ion-row>
+                            <ion-col>    
+                                <span class="title">
+                                    {{ activity.title }}
+                                </span>
+                            </ion-col>
+                        </ion-row>
+                        <ion-row>
+                            <ion-col>    
+                                <span class="title">{{ activity.subtitle }}</span>
+                            </ion-col>
+                        </ion-row>
+                        <ion-row>
+                            <ion-col>
+                                <ion-label id="description">
+                                    Issuer: {{ activity.description }}
+                                </ion-label>
+                            </ion-col>
+                        </ion-row>
+                    </ion-col>
+                    <ion-col size=3>
+                        <ion-row id="activity-status">
+                            <ion-col>
+                                <div [ngClass]="{
+                                    'status-valid':activity.status === 'Valid',
+                                    'status-askissuer':activity.status === 'AskIssuer',
+                                    'status-revoked':activity.status === 'Revoked',
+                                    'status-deleted-by-subject':activity.status === 'DeletedBySubject'}">
+                                    <ion-icon name="radio-button-on"></ion-icon>
+                                    <span>{{ activity.status }}</span>
+                                    <ion-icon name="arrow-forward-outline"></ion-icon>
+                                </div>
+                            </ion-col>
+                        </ion-row>
+                    </ion-col>
+                </ion-row>
+            </ion-card>
+        </ion-list>
+    </div>
+    <div class="without-items" *ngIf="!activities?.length">
+        No se han encontrado actividades
+    </div>
+</ion-content>

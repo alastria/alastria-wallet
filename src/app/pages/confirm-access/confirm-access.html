@@ -1,0 +1,34 @@
+<ion-header>
+    <ion-row id="logo-row">
+        <img src="assets/images/logo/alastria-icon.png" id="alastria-logo">
+    </ion-row>
+    <ion-row *ngIf="isPresentationRequest; else credentialOffer">
+        <h2 class="description"> {{entityName | uppercase}} ha <strong>solicitado acceso</strong> a {{dataNumberAccess}}
+            dato/s de tu identidad</h2>
+    </ion-row>
+    <ng-template #credentialOffer>
+        <ion-row class="ion-text-center">
+            <h2 class="description"> {{entityName | uppercase}} quiere ofrecerte <strong>{{dataNumberAccess}}
+                dato/s</strong> para tu identidad</h2>
+        </ion-row>
+    </ng-template>
+</ion-header>
+<ion-content class="tutorial-page">
+    <identity-data-list 
+        *ngIf="credentials && credentials.length"
+        isSelectable="true"
+        [allCredentials]="credentials"
+        [isPresentationRequest]="isPresentationRequest"
+        [isShowDetail]="isPresentationRequest"
+        (handleIdentitySelect)="handleIdentitySelect($event)"
+        (loadCredential)="loadCredential($event)">
+    </identity-data-list>
+    <ion-footer class="modal-buttons">
+        <ion-row class="ion-justify-content-center">
+            <ion-button class="btnConfirm" style="width: 80%" (click)="manageCredentials()">ACEPTAR</ion-button>
+        </ion-row>
+        <ion-row class="ion-justify-content-center">
+            <div class="btnCancel" (click)="dismiss()">CANCELAR</div>
+        </ion-row>
+    </ion-footer>
+</ion-content>

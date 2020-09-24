@@ -1,0 +1,29 @@
+<!--- Settings TAB lauout-1 -->
+<ion-header>
+    <user-info-header [compact]=true></user-info-header>
+    <div style="margin-left: 20px">
+        <span style="font-size: 20px;">
+            Opciones
+        </span>
+    </div>
+</ion-header>
+<ion-content>
+    <ion-grid no-padding>
+        <ion-row>
+            <ion-col size="12">
+                <ion-list class="ion-no-margin">
+                    <ion-item no-lines [ngClass]="animateClass" *ngFor="let option of options; let i = index;">
+                        <ion-label>
+                            <ion-icon name="{{option.icon}}" item-start></ion-icon>
+                            <h2 item-start>{{option.title}}</h2>
+                        </ion-label>
+                        <ion-toggle item-right *ngIf="!option.button" (ionChange)="onEvent('onSelect',option)" [checked]="option.selected"></ion-toggle>
+                        <ion-button defoult-button item-right (click)="option.callback(this)" *ngIf="option.button">
+                            {{option.buttonLabel}}
+                        </ion-button>
+                    </ion-item>
+                </ion-list>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-content>
