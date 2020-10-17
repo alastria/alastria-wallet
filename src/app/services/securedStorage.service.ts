@@ -1,26 +1,69 @@
 import { Injectable } from '@angular/core';
-import { SecureStorage, SecureStorageObject } from '@ionic-native/secure-storage/ngx';
+import { SecureStorageEcho, SecureStorageEchoObject } from '@ionic-native/secure-storage-echo/ngx';
+
 import { AppConfig } from '../../app.config';
+
+class LocalStorageWrapper {
+
+    private readonly PREFIX = '__SS__';
+    
+    get(key: string): Promise<string> {
+        return Promise.resolve(localStorage.getItem(this.PREFIX + key));
+    }
+    
+    set(key: string, value: string): Promise<any> {
+        return Promise.resolve(localStorage.setItem(this.PREFIX + key, value));
+    }
+
+    remove(key: string): Promise<string> {
+        localStorage.removeItem(this.PREFIX + key);
+        return Promise.resolve(key);
+    }
+
+    keys(): Promise<string[]> {
+        const ret = new Array<string>();
+        for(let i = 0; i < localStorage.length; ++i) {
+            ret.push(localStorage.key(i));
+        }
+        return Promise.resolve(ret.filter(key => key && key.indexOf(this.PREFIX) === 0));
+    }
+
+    clear(): Promise<any> {
+        for(let i = 0; i < localStorage.length; ++i) {
+            const key = localStorage.key(i);
+            if(key && key.indexOf(this.PREFIX) === 0) {
+                localStorage.removeItem(key);
+            }
+        }
+        return Promise.resolve();
+    }
+
+    secureDevice(): Promise<any> {
+        return Promise.resolve();
+    }
+
+}
 
 @Injectable({
     providedIn: 'root',
 })
 export class SecuredStorageService {
 
-    securedStorageObject: SecureStorageObject;
-    promiseState: Promise<any>;
+    private securedStorageObject: SecureStorageEchoObject;
 
     constructor(
-        private securedStorage: SecureStorage
+        private securedStorage: SecureStorageEcho
     ) {
     }
 
     initSecureStorage(): Promise<void> {
-        return this.securedStorage.create('identitySecureStorage').then(
-            (securedStorageObject) => {
-            this.securedStorageObject = securedStorageObject;
-            }
-        );
+        return (this.securedStorage.create('identitySecureStorage') || Promise.reject("No plugin"))
+        .then(ssObj => {
+            this.securedStorageObject = ssObj;
+        }).catch(err => {
+            console.log('WARNING: Secure storage not available, falling back to localStorage. Err: ', err);
+            this.securedStorageObject = new LocalStorageWrapper() as unknown as SecureStorageEchoObject;
+        });
     }
 
     // GETTERS
