@@ -59,7 +59,7 @@ export class LoginPage {
               private deeplinks: Deeplinks,
               platform: Platform) {
 
-    this.initPlatform(platform).then(() => console.log("Platform initialized"))
+    this.initPlatform(platform).then(() => console.log('Platform initialized'));
 
   }
 
@@ -92,7 +92,7 @@ export class LoginPage {
       }
       this.handleLogin(isAuthorized);
     } else {
-      console.log("Invalid access key form");
+      console.log('Invalid access key form');
     }
   }
 
@@ -137,10 +137,10 @@ export class LoginPage {
     return this.faio.isAvailable()
     .then(result => {
         this.faio.show({
-            //clientId: 'AlastriaID',
-            //clientSecret: 'NddAHBODmhACXHITWJTU',
+            // clientId: 'AlastriaID',
+            // clientSecret: 'NddAHBODmhACXHITWJTU',
             disableBackup: true,
-            //localizedFallbackTitle: 'Touch ID for AlastriaID', // Only for iOS
+            // localizedFallbackTitle: 'Touch ID for AlastriaID', // Only for iOS
         })
         .then(() => {
           this.securedStrg.setLoginType(this.loginType)
@@ -150,7 +150,7 @@ export class LoginPage {
         })
         .catch(() => {
             this.handleLogin(false);
-            throw 'Error in fingerprint';
+            throw new Error('Error in fingerprint');
         });
     }).catch(err => {
         this.handleLogin(false);
@@ -208,28 +208,28 @@ export class LoginPage {
             break;
 
         default:
-            console.log("WARNING: unsupported deep link: " + path);
+            console.log('WARNING: unsupported deep link: ' + path);
             break;
     }
   }
 
   private async initPlatform(platform: Platform): Promise<void> {
     await platform.ready();
-    console.log("Platform ready. Starting initialization...")
-    try{
+    console.log('Platform ready. Starting initialization...');
+    try {
       await this.securedStrg.initSecureStorage();
       await this.securedStrg.set('isLogged', 'false');
       this.hashKeyLoginType = await this.securedStrg.hasKey('loginType');
-    }catch(err){
-      console.log("Secure storage initialization error", err);
+    } catch (err) {
+      console.log('Secure storage initialization error', err);
     }
     if (this.hashKeyLoginType) {
       const loginTypeRes = await this.securedStrg.getLoginType();
       this.selectTypeLogin(loginTypeRes);
     } else {
-      console.log("Checking fingerprint");
+      console.log('Checking fingerprint');
       const fioAvailable = await this.faio.isAvailable().catch(() => 'KO');
-      if(fioAvailable === 'OK') {
+      if (fioAvailable === 'OK') {
         this.buttons.push(
           {
             type: 'fingerprint',
@@ -237,7 +237,7 @@ export class LoginPage {
           }
         );
       } else {
-        console.log("WARNING: Fingerprint not available");
+        console.log('WARNING: Fingerprint not available');
         this.selectTypeLogin(this.buttons[0].type);
       }
     }

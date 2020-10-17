@@ -10,6 +10,7 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
+    "lint:fix": "ng lint --fix=true",
     "e2e": "ng e2e",
     "start:android": "ionic cordova run android",
     "start:android:device": "ionic cordova run android --device --debug",
