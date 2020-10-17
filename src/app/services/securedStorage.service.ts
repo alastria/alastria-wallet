@@ -1,40 +1,41 @@
 import { Injectable } from '@angular/core';
 import { SecureStorageEcho, SecureStorageEchoObject } from '@ionic-native/secure-storage-echo/ngx';
 
+import * as SecureLS from 'secure-ls';
 import { AppConfig } from '../../app.config';
 
-class LocalStorageWrapper {
+interface ISecureStorage {
+    get(key: string): Promise<string>;    
+    set(key: string, value: string): Promise<any>;    
+    remove(key: string): Promise<string>;    
+    keys(): Promise<string[]>;    
+    clear(): Promise<any>;
+    secureDevice(): Promise<any>;
+}
 
-    private readonly PREFIX = '__SS__';
+class SecureLsWrapper implements ISecureStorage {
+
+    private readonly secureLs = new SecureLS({encodingType: 'aes'});
     
     get(key: string): Promise<string> {
-        return Promise.resolve(localStorage.getItem(this.PREFIX + key));
+        return Promise.resolve(this.secureLs.get(key));
     }
     
     set(key: string, value: string): Promise<any> {
-        return Promise.resolve(localStorage.setItem(this.PREFIX + key, value));
+        return Promise.resolve(this.secureLs.set(key, value));
     }
 
     remove(key: string): Promise<string> {
-        localStorage.removeItem(this.PREFIX + key);
+        this.secureLs.remove(key);
         return Promise.resolve(key);
     }
 
     keys(): Promise<string[]> {
-        const ret = new Array<string>();
-        for(let i = 0; i < localStorage.length; ++i) {
-            ret.push(localStorage.key(i));
-        }
-        return Promise.resolve(ret.filter(key => key && key.indexOf(this.PREFIX) === 0));
+        return Promise.resolve(this.secureLs.getAllKeys());
     }
 
     clear(): Promise<any> {
-        for(let i = 0; i < localStorage.length; ++i) {
-            const key = localStorage.key(i);
-            if(key && key.indexOf(this.PREFIX) === 0) {
-                localStorage.removeItem(key);
-            }
-        }
+        this.secureLs.removeAll();
         return Promise.resolve();
     }
 
@@ -49,7 +50,7 @@ class LocalStorageWrapper {
 })
 export class SecuredStorageService {
 
-    private securedStorageObject: SecureStorageEchoObject;
+    private securedStorageObject: ISecureStorage;
 
     constructor(
         private securedStorage: SecureStorageEcho
@@ -61,8 +62,8 @@ export class SecuredStorageService {
         .then(ssObj => {
             this.securedStorageObject = ssObj;
         }).catch(err => {
-            console.log('WARNING: Secure storage not available, falling back to localStorage. Err: ', err);
-            this.securedStorageObject = new LocalStorageWrapper() as unknown as SecureStorageEchoObject;
+            console.log('WARNING: Secure storage not available, falling back to SecureLS. Err: ', err);
+            this.securedStorageObject = new SecureLsWrapper();
         });
     }
 
