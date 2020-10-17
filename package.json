@@ -12,7 +12,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "start:android": "ionic cordova run android",
-    "start:android:device": "ionic cordova run android --device--debug",
+    "start:android:device": "ionic cordova run android --device --debug",
     "start:browser": "ionic cordova run browser --livereload-url"
   },
   "private": true,
@@ -94,13 +94,27 @@
         "URL_SCHEME": "walletapp",
         "DEEPLINK_SCHEME": "https",
         "DEEPLINK_HOST": "alastria.com",
-        "ANDROID_PATH_PREFIX": "/"
+        "ANDROID_PATH_PREFIX": "/",
+        "ANDROID_2_PATH_PREFIX": "/",
+        "ANDROID_3_PATH_PREFIX": "/",
+        "ANDROID_4_PATH_PREFIX": "/",
+        "ANDROID_5_PATH_PREFIX": "/",
+        "DEEPLINK_2_SCHEME": " ",
+        "DEEPLINK_2_HOST": " ",
+        "DEEPLINK_3_SCHEME": " ",
+        "DEEPLINK_3_HOST": " ",
+        "DEEPLINK_4_SCHEME": " ",
+        "DEEPLINK_4_HOST": " ",
+        "DEEPLINK_5_SCHEME": " ",
+        "DEEPLINK_5_HOST": " "
       },
       "cordova-plugin-inappbrowser": {},
       "cordova-plugin-fingerprint-aio": {},
       "cordova-plugin-whitelist": {},
       "cordova-plugin-device": {},
-      "cordova-plugin-ionic-webview": {},
+      "cordova-plugin-ionic-webview": {
+        "ANDROID_SUPPORT_ANNOTATIONS_VERSION": "27.+"
+      },
       "cordova-plugin-ionic-keyboard": {},
       "ionic-plugin-keyboard": {},
       "cordova-plugin-secure-storage-echo": {}
