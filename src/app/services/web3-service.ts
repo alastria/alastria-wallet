@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import * as Web3 from 'web3';
+import Web3 from 'web3';
 
 @Injectable({
     providedIn: 'root',
@@ -10,7 +10,7 @@ export class Web3Service {
 
     public constructor() {}
 
-    public getWeb3(nodeIp): Web3 {
+    public getWeb3(nodeIp: string): Web3 {
         this.web3 = new Web3(nodeIp);
         return this.web3;
     }
