@@ -64,9 +64,8 @@ export class TransactionService {
     public getSubjectPresentationStatus(web3: any, subject: string, presentationHash: string): Promise<PresentationStatus> {
         const presentationStatus = transactionFactory.presentationRegistry.getSubjectPresentationStatus(web3, subject, presentationHash);
         return web3.eth.call(presentationStatus).then(result => {
-            const resultStatus = web3.eth.abi.decodeParameters(['bool', 'uint8'], result);
-            const presentationStatus: PresentationStatus = resultStatus;
-            return presentationStatus;
+            const resultStatus = web3.eth.abi.decodeParameters(['bool', 'uint8'], result) as PresentationStatus;
+            return resultStatus;
         });
     }
 
@@ -96,7 +95,7 @@ export class TransactionService {
         return web3.eth.call(subjectCredentialTransaction).then(IssuerCredentialStatus => {
             const result = web3.eth.abi.decodeParameters(['bool', 'uint8'], IssuerCredentialStatus);
             const credentialStatus: CredentialStatus = result;
-            console.log('CREDENTIALSTATUS ----->', credentialStatus)
+            console.log('CREDENTIALSTATUS ----->', credentialStatus);
             return credentialStatus;
         });
     }
