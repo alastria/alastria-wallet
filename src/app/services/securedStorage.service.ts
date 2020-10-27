@@ -1,26 +1,70 @@
 import { Injectable } from '@angular/core';
-import { SecureStorage, SecureStorageObject } from '@ionic-native/secure-storage/ngx';
+import { SecureStorageEcho, SecureStorageEchoObject } from '@ionic-native/secure-storage-echo/ngx';
+
+import * as SecureLS from 'secure-ls';
 import { AppConfig } from '../../app.config';
+
+interface ISecureStorage {
+    get(key: string): Promise<string>;    
+    set(key: string, value: string): Promise<any>;    
+    remove(key: string): Promise<string>;    
+    keys(): Promise<string[]>;    
+    clear(): Promise<any>;
+    secureDevice(): Promise<any>;
+}
+
+class SecureLsWrapper implements ISecureStorage {
+
+    private readonly secureLs = new SecureLS({encodingType: 'aes'});
+    
+    get(key: string): Promise<string> {
+        return Promise.resolve(this.secureLs.get(key));
+    }
+    
+    set(key: string, value: string): Promise<any> {
+        return Promise.resolve(this.secureLs.set(key, value));
+    }
+
+    remove(key: string): Promise<string> {
+        this.secureLs.remove(key);
+        return Promise.resolve(key);
+    }
+
+    keys(): Promise<string[]> {
+        return Promise.resolve(this.secureLs.getAllKeys());
+    }
+
+    clear(): Promise<any> {
+        this.secureLs.removeAll();
+        return Promise.resolve();
+    }
+
+    secureDevice(): Promise<any> {
+        return Promise.resolve();
+    }
+
+}
 
 @Injectable({
     providedIn: 'root',
 })
 export class SecuredStorageService {
 
-    securedStorageObject: SecureStorageObject;
-    promiseState: Promise<any>;
+    private securedStorageObject: ISecureStorage;
 
     constructor(
-        private securedStorage: SecureStorage
+        private securedStorage: SecureStorageEcho
     ) {
     }
 
     initSecureStorage(): Promise<void> {
-        return this.securedStorage.create('identitySecureStorage').then(
-            (securedStorageObject) => {
-            this.securedStorageObject = securedStorageObject;
-            }
-        );
+        return (this.securedStorage.create('identitySecureStorage') || Promise.reject("No plugin"))
+        .then(ssObj => {
+            this.securedStorageObject = ssObj;
+        }).catch(err => {
+            console.log('WARNING: Secure storage not available, falling back to SecureLS. Err: ', err);
+            this.securedStorageObject = new SecureLsWrapper();
+        });
     }
 
     // GETTERS
