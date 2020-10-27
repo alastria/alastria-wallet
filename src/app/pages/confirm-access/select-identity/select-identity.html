@@ -17,12 +17,13 @@
 <ion-content class="tutorial-page">
     <identity-data-list isSelectable="true" [allCredentials]="allCredentials"
         [iat]="iat" [exp]="exp" (handleIdentitySelect)="handleIdentitySelect($event)"></identity-data-list>
-    <ion-footer class="modal-buttons">
-        <ion-row class="ion-justify-content-center">
-            <ion-button class="btnConfirm" style="width: 80%" (click)="accept()">ACEPTAR</ion-button>
-        </ion-row>
-        <ion-row class="ion-justify-content-center">
-            <div class="btnCancel" (click)="cancel()">CANCELAR</div>
-        </ion-row>
-    </ion-footer>
 </ion-content>
+
+<ion-footer class="modal-buttons">
+    <ion-row class="ion-justify-content-center">
+        <ion-button class="btnConfirm" style="width: 80%" (click)="accept()">ACEPTAR</ion-button>
+    </ion-row>
+    <ion-row class="ion-justify-content-center">
+        <div class="btnCancel" (click)="cancel()">CANCELAR</div>
+    </ion-row>
+</ion-footer>
