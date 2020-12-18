@@ -14,7 +14,7 @@ git clone https://github.com/alastria/alastria-wallet.git
 ## Installation 🔧
 
 ### Requirements
-* Node.js 8+
+* Node.js 10+
 * Yarn / Npm
 * Ionic 5.2.1 / Angular 8.2.14
 * Android SDK / iOS SDK
