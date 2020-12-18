@@ -73,7 +73,7 @@ export class IdentityDataListComponent implements OnInit {
             const stars = this.createStars(level);
             const key = this.getCreedKey(credential);
             let credentialRes: Identity;
-            let securedCredentials
+            let securedCredentials;
 
             if (this.isPresentationRequest) {
                 const hasKey = await this.securedStrg.hasKey(AppConfig.CREDENTIAL_PREFIX + key);
@@ -92,7 +92,7 @@ export class IdentityDataListComponent implements OnInit {
                     this.loadCredential.emit(credentialSelected);
                     return Promise.resolve();
                 } else {
-                    console.log('SECCREDENTIALS ------>', securedCredentials)
+                    console.log('SECCREDENTIALS ------>', securedCredentials);
                     credentialRes = this.parseCredential(count++, credential[AppConfig.FIELD_NAME], null, '',
                         '', '', level, stars, false, false);
                     this.identityDisplay.push(credentialRes);

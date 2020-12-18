@@ -139,7 +139,7 @@ export class MessageManagerService {
                 const pku = identity[AppConfig.USER_PKU];
                 const subjectDID = identity[AppConfig.USER_DID];
                 const alastriaSession =
-                    tokensFactory.tokens.createAlastriaSession(AppConfig.AICCONTEXT, subjectDID, subjectDID, AppConfig.TYPE, 
+                    tokensFactory.tokens.createAlastriaSession(AppConfig.AICCONTEXT, subjectDID, subjectDID, AppConfig.TYPE,
                                                                alastriaToken, expDate, pku, currentDate, jti);
                 const signedAlastriaSession = tokensFactory.tokens.signJWT(alastriaSession, privKey.substring(2));
                 const httpOptions = {
@@ -183,7 +183,8 @@ export class MessageManagerService {
 
                 const signedCreateTx = await subjectIdentity.getKnownTransaction(createTx);
 
-                const alastriaAIC = tokensFactory.tokens.createAIC(AppConfig.AICCONTEXT, AppConfig.TYPE, signedCreateTx, alastriaToken, pku);
+                const alastriaAIC = tokensFactory.tokens.createAIC(AppConfig.AICCONTEXT,
+                        AppConfig.TYPE, signedCreateTx, alastriaToken, pku);
                 const signedToken = tokensFactory.tokens.signJWT(alastriaAIC, privKey.substring(2));
                 let DID = null;
                 const httpOptions = {

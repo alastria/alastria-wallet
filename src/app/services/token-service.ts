@@ -1,20 +1,20 @@
-import { Injectable } from "@angular/core";
-import { tokensFactory } from "alastria-identity-lib";
+import { Injectable } from '@angular/core';
+import { tokensFactory } from 'alastria-identity-lib';
 import { AppConfig } from '../../app.config';
 
 // Services
-import { SecuredStorageService } from "./securedStorage.service";
+import { SecuredStorageService } from './securedStorage.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class TokenService {
 
-    private readonly ATR_CREDENTIAL = "verifiableCredential";
-    private readonly ATR_PRESENTATION_REQUEST = "pr";
-    private readonly TYPE_CREDENTIAL_OFFER = "presentation";
-    private readonly TYPE_AUTH = "authentication";
-    private readonly TYPE_PRESENTATION_REQ = "presentationRequest";
+    private readonly ATR_CREDENTIAL = 'verifiableCredential';
+    private readonly ATR_PRESENTATION_REQUEST = 'pr';
+    private readonly TYPE_CREDENTIAL_OFFER = 'presentation';
+    private readonly TYPE_AUTH = 'authentication';
+    private readonly TYPE_PRESENTATION_REQ = 'presentationRequest';
 
     constructor(private securedStrg: SecuredStorageService) {
     }
@@ -23,13 +23,13 @@ export class TokenService {
         let tokenType: string;
         return this.securedStrg.hasKey(AppConfig.IS_IDENTITY_CREATED).then(result => {
             if (token[this.ATR_CREDENTIAL]) {
-                tokenType = this.TYPE_CREDENTIAL_OFFER
+                tokenType = this.TYPE_CREDENTIAL_OFFER;
             } else if (token[AppConfig.PAYLOAD][this.ATR_PRESENTATION_REQUEST]) {
                 tokenType = this.TYPE_PRESENTATION_REQ;
             } else if (token[AppConfig.PAYLOAD][AppConfig.ANI]) {
                 if (result) {
                     const pathSplit = token[AppConfig.PAYLOAD][AppConfig.CBU].split('/');
-                    const lastPath = pathSplit[pathSplit.length -1];
+                    const lastPath = pathSplit[pathSplit.length - 1];
                     if (lastPath === 'identity') {
                         tokenType = AppConfig.ALASTRIA_TOKEN;
                     } else {
