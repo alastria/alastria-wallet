@@ -20,10 +20,9 @@
     <ion-row class="ion-margin ion-justify-content-center">
         <img [src]="data.imgSuccess" class="inbox-icon" />
     </ion-row>
+    <ion-footer *ngIf="data.page==='success'">
+        <ion-row class="ion-margin ion-justify-content-center">
+            <ion-button class="btnConfirm" (click)="closeModal()">ACEPTAR</ion-button>
+        </ion-row>
+    </ion-footer>
 </ion-content>
-
-<ion-footer *ngIf="data.page==='success'">
-    <ion-row class="ion-margin ion-justify-content-center">
-        <ion-button class="btnConfirm" (click)="closeModal()">ACEPTAR</ion-button>
-    </ion-row>
-</ion-footer>

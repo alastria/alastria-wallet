@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { NgxQRCodeModule } from 'ngx-qrcode2';
-import { SecureStorageEcho } from '@ionic-native/secure-storage-echo/ngx';
+import { SecureStorage } from '@ionic-native/secure-storage/ngx';
 import { HttpClientModule } from '@angular/common/http';
 import { Deeplinks } from '@ionic-native/deeplinks/ngx';
 import { AppComponent } from './app.component';
@@ -63,7 +63,7 @@ import { AuthenticationService } from './services/authentication.service';
     providers: [
       BarcodeScanner,
       Deeplinks,
-      SecureStorageEcho,
+      SecureStorage,
       Web3Service,
       SplashScreen,
       StatusBar,

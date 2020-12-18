@@ -30,9 +30,10 @@ export class AuthenticationService {
   }
 
 
-  login(key: string) {
+  login(key: any) {
     return this.securedStrg.isAuthorized(key).then((isAuthorized: boolean) => {
       this.authState.next(isAuthorized);
+
       return isAuthorized;
     });
   }

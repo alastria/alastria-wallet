@@ -14,8 +14,8 @@ export class ConstructionsPage {
 
     constructor(public modalCtrl: ModalController) {
 
-        this.text = 'Página en construcción';
-        this.img = 'assets/images/alastria/underConstruction.jpg';
+        this.text = 'Página en construcción'
+        this.img = 'assets/images/alastria/underConstruction.jpg'
 
     }
 

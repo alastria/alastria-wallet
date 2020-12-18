@@ -15,8 +15,8 @@ import { LoadingService } from 'src/app/services/loading-service';
 export class CredentialDetailPage implements OnInit {
 
     private title = 'Revocar presentacion';
-    private message = '¿Estas seguro de que quieres revocar esta presentación? ' +
-        'El proveedor deberá borrar las credenciales de esta presentación si solicitas la revocación.';
+    // tslint:disable-next-line: max-line-length
+    private message = '¿Estas seguro de que quieres revocar esta presentación? El proveedor deberá borrar las credenciales de esta presentación si solicitas la revocación.';
 
     data: any;
     public showDeleteAndShare: boolean;

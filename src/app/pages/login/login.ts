@@ -1,5 +1,5 @@
 import { AuthenticationService } from './../../services/authentication.service';
-import { Component } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { FingerprintAIO } from '@ionic-native/fingerprint-aio/ngx';
 
@@ -8,7 +8,7 @@ import { FingerprintAIO } from '@ionic-native/fingerprint-aio/ngx';
 import { SecuredStorageService } from '../../services/securedStorage.service';
 import { Validators, FormBuilder, FormGroup } from '@angular/forms';
 import { Deeplinks } from '@ionic-native/deeplinks/ngx';
-import { Router, NavigationExtras } from '@angular/router';
+import { ActivatedRoute, Router, NavigationExtras } from '@angular/router';
 import { parseCredentials } from 'src/utils';
 
 /**
@@ -51,16 +51,66 @@ export class LoginPage {
   ];
   hashKeyLoginType: boolean;
 
-  constructor(private faio: FingerprintAIO,
+  constructor(private platform: Platform,
+              private faio: FingerprintAIO,
               private securedStrg: SecuredStorageService,
               private authenticationService: AuthenticationService,
               private fb: FormBuilder,
               private router: Router,
-              private deeplinks: Deeplinks,
-              platform: Platform) {
+              private route: ActivatedRoute,
+              private deeplinks: Deeplinks) {
+    this.platform.backButton.subscribe(() => {
+      if (this.loginType) {
+        if (!this.hashKeyLoginType) {
+          this.loginType = null;
+        }
+      }
+    });
 
-    this.initPlatform(platform).then(() => console.log('Platform initialized'));
+    this.platform.ready()
+      .then(async () => {
+        await this.securedStrg.initSecureStorage();
+        await this.securedStrg.set('isLogged', 'false');
+        this.hashKeyLoginType = await this.securedStrg.hasKey('loginType');
 
+        if (this.hashKeyLoginType) {
+          const loginTypeRes = await this.securedStrg.getLoginType();
+          this.selectTypeLogin(loginTypeRes);
+        } else {
+          this.faio.isAvailable()
+            .then( (res) => {
+              if (res === 'OK') {
+                this.buttons.push(
+                  {
+                    type: 'fingerprint',
+                    label: 'ACCEDE CON HUELLA'
+                  }
+                );
+              } else {
+                this.selectTypeLogin(this.buttons[0].type);
+              }
+            })
+            .catch(() => {
+              this.selectTypeLogin(this.buttons[0].type);
+            });
+        }
+        this.deeplinks.route({
+            '/': LoginPage,
+            '/login': LoginPage,
+            '/createAI': LoginPage,
+            '/createCredentials': LoginPage,
+            '/createPresentations': LoginPage
+        }).subscribe(
+            async (match) => {
+                const path = (match &&  match.$link) ? match.$link.path : null;
+                const isLogged = await this.securedStrg.get('isLogged');
+                this.isLogged = (isLogged) ? JSON.parse(isLogged) : false;
+                this.controlDeeplink(path, match.$args);
+            },
+            (noMatch) => {
+            }
+        );
+      });
   }
 
   selectTypeLogin(type: string) {
@@ -91,15 +141,13 @@ export class LoginPage {
         this.accessKeyForm.get('key').setErrors({incorrect: true});
       }
       this.handleLogin(isAuthorized);
-    } else {
-      console.log('Invalid access key form');
     }
   }
 
   /*
   * Generate accessKeyForm with inputsForm
   */
-  private generateForm(): void {
+  generateForm(): void {
     if (this.hashKeyLoginType) {
       this.inputsKeyForm.splice(1, 1);
       this.accessKeyForm = this.fb.group({
@@ -134,31 +182,39 @@ export class LoginPage {
   }
 
   regFinger() {
-    return this.faio.isAvailable()
-    .then(result => {
-        this.faio.show({
-            // clientId: 'AlastriaID',
-            // clientSecret: 'NddAHBODmhACXHITWJTU',
-            disableBackup: true,
-            // localizedFallbackTitle: 'Touch ID for AlastriaID', // Only for iOS
-        })
-        .then(() => {
-          this.securedStrg.setLoginType(this.loginType)
+    return new Promise(
+      (next, reject) => {
+        this.faio.isAvailable()
+          .then(result => {
+            this.faio.show({
+                //clientId: 'AlastriaID',
+                //clientSecret: 'NddAHBODmhACXHITWJTU',
+                disableBackup: true,
+                //localizedFallbackTitle: 'Touch ID for AlastriaID', // Only for iOS
+            })
             .then(() => {
-              this.handleLogin(true);
+              this.securedStrg.setLoginType(this.loginType)
+                .then(() => {
+                  this.handleLogin(true);
+                });
+            })
+            .catch(() => {
+                this.handleLogin(false);
+                reject('Error in fingerprint');
             });
-        })
-        .catch(() => {
+        }).catch(err => {
             this.handleLogin(false);
-            throw new Error('Error in fingerprint');
+            if (err === 'cordova_not_available') {
+              reject('Cordova not aviable');
+            } else {
+              reject(err);
+            }
         });
-    }).catch(err => {
-        this.handleLogin(false);
-        throw err === 'cordova_not_available' ? 'Cordova not available' : err;
-    });
+      }
+    );
   }
 
-  private async handleLogin(isLogged: boolean): Promise<any> {
+  async handleLogin(isLogged: boolean): Promise<any> {
     this.isLogged = isLogged;
     await this.securedStrg.set('isLogged', this.isLogged.toString());
     if (isLogged) {
@@ -208,64 +264,10 @@ export class LoginPage {
             break;
 
         default:
-            console.log('WARNING: unsupported deep link: ' + path);
+
             break;
     }
   }
 
-  private async initPlatform(platform: Platform): Promise<void> {
-    await platform.ready();
-    console.log('Platform ready. Starting initialization...');
-    try {
-      await this.securedStrg.initSecureStorage();
-      await this.securedStrg.set('isLogged', 'false');
-      this.hashKeyLoginType = await this.securedStrg.hasKey('loginType');
-    } catch (err) {
-      console.log('Secure storage initialization error', err);
-    }
-    if (this.hashKeyLoginType) {
-      const loginTypeRes = await this.securedStrg.getLoginType();
-      this.selectTypeLogin(loginTypeRes);
-    } else {
-      console.log('Checking fingerprint');
-      const fioAvailable = await this.faio.isAvailable().catch(() => 'KO');
-      if (fioAvailable === 'OK') {
-        this.buttons.push(
-          {
-            type: 'fingerprint',
-            label: 'ACCEDE CON HUELLA'
-          }
-        );
-      } else {
-        console.log('WARNING: Fingerprint not available');
-        this.selectTypeLogin(this.buttons[0].type);
-      }
-    }
-    this.deeplinks.route({
-        '/': LoginPage,
-        '/login': LoginPage,
-        '/createAI': LoginPage,
-        '/createCredentials': LoginPage,
-        '/createPresentations': LoginPage
-    }).subscribe(
-        async (match) => {
-            const path = (match &&  match.$link) ? match.$link.path : null;
-            const isLogged = await this.securedStrg.get('isLogged');
-            this.isLogged = (isLogged) ? JSON.parse(isLogged) : false;
-            this.controlDeeplink(path, match.$args);
-        },
-        (noMatch) => {
-        }
-    );
-
-    platform.backButton.subscribe(() => {
-      if (this.loginType) {
-        if (!this.hashKeyLoginType) {
-          this.loginType = null;
-        }
-      }
-    });
-
-  }
 
 }

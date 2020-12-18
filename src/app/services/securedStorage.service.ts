@@ -1,70 +1,26 @@
 import { Injectable } from '@angular/core';
-import { SecureStorageEcho, SecureStorageEchoObject } from '@ionic-native/secure-storage-echo/ngx';
-
-import * as SecureLS from 'secure-ls';
+import { SecureStorage, SecureStorageObject } from '@ionic-native/secure-storage/ngx';
 import { AppConfig } from '../../app.config';
-
-interface ISecureStorage {
-    get(key: string): Promise<string>;
-    set(key: string, value: string): Promise<any>;
-    remove(key: string): Promise<string>;
-    keys(): Promise<string[]>;
-    clear(): Promise<any>;
-    secureDevice(): Promise<any>;
-}
-
-class SecureLsWrapper implements ISecureStorage {
-
-    private readonly secureLs = new SecureLS({encodingType: 'aes'});
-
-    get(key: string): Promise<string> {
-        return Promise.resolve(this.secureLs.get(key));
-    }
-
-    set(key: string, value: string): Promise<any> {
-        return Promise.resolve(this.secureLs.set(key, value));
-    }
-
-    remove(key: string): Promise<string> {
-        this.secureLs.remove(key);
-        return Promise.resolve(key);
-    }
-
-    keys(): Promise<string[]> {
-        return Promise.resolve(this.secureLs.getAllKeys());
-    }
-
-    clear(): Promise<any> {
-        this.secureLs.removeAll();
-        return Promise.resolve();
-    }
-
-    secureDevice(): Promise<any> {
-        return Promise.resolve();
-    }
-
-}
 
 @Injectable({
     providedIn: 'root',
 })
 export class SecuredStorageService {
 
-    private securedStorageObject: ISecureStorage;
+    securedStorageObject: SecureStorageObject;
+    promiseState: Promise<any>;
 
     constructor(
-        private securedStorage: SecureStorageEcho
+        private securedStorage: SecureStorage
     ) {
     }
 
     initSecureStorage(): Promise<void> {
-        return (this.securedStorage.create('identitySecureStorage') || Promise.reject('No plugin'))
-        .then(ssObj => {
-            this.securedStorageObject = ssObj;
-        }).catch(err => {
-            console.log('WARNING: Secure storage not available, falling back to SecureLS. Err: ', err);
-            this.securedStorageObject = new SecureLsWrapper();
-        });
+        return this.securedStorage.create('identitySecureStorage').then(
+            (securedStorageObject) => {
+            this.securedStorageObject = securedStorageObject;
+            }
+        );
     }
 
     // GETTERS
@@ -108,7 +64,7 @@ export class SecuredStorageService {
     }
 
     async getIdentityData(): Promise<any> {
-        const identity = {};
+        let identity = {};
         return this.get(AppConfig.USER_DID)
         .then(DID => {
             identity[AppConfig.USER_DID] = DID;
@@ -121,12 +77,12 @@ export class SecuredStorageService {
         .then(privKey => {
             identity[AppConfig.USER_PRIV_KEY] = privKey;
             return identity;
-        });
+        })
     }
 
     async getAllCredentials(): Promise<Array<any>> {
         let credentials: Array<any>;
-        const keys = await this.getKeys();
+        let keys = await this.getKeys();
         credentials = keys.filter(key => key.split('_')[0] === 'cred')
             .map(key => {
                 return this.get(key);
@@ -156,7 +112,7 @@ export class SecuredStorageService {
 
     async isAuthorized(key: string): Promise<boolean> {
         return this.getAccessKey()
-            .then((keyStore) => (parseInt(keyStore, 10) === parseInt(key, 10)));
+            .then((keyStore) => (parseInt(keyStore) === parseInt(key)));
     }
 
     setDID(DID: string): Promise<any> {
@@ -183,10 +139,10 @@ export class SecuredStorageService {
     }
 
     async removePresentation(jti: string): Promise<any> {
-        const keys = await this.getKeys();
-        const regex = new RegExp(jti);
+        let keys = await this.getKeys();
+        let regex = new RegExp(jti);
 
-        const key = keys.filter(keyFilt => regex.test(keyFilt));
+        let key = keys.filter(key => regex.test(key))
 
         return this.removeJson(key[0]);
     }
@@ -198,7 +154,7 @@ export class SecuredStorageService {
         if (this.securedStorageObject) {
             return this.securedStorageObject.keys()
                 .then(result => {
-                    keyExists = result.some(k => k === key);
+                    keyExists = result.some(k => { return k === key });
                     return keyExists;
                 });
         }
@@ -207,26 +163,26 @@ export class SecuredStorageService {
     // OTHERS
 
     async matchAndGetJSON(key: string): Promise<any> {
-        const regex = new RegExp(key);
+        let regex = new RegExp(key);
         let allKeys;
-        const matchingKeys = new Array<string>();
+        let matchingKeys = new Array<string>();
 
         return this.getKeys()
             .then(result => {
                 allKeys = result;
-                for (const itKey of allKeys) {
-                    if (regex.test(itKey)) {
-                        matchingKeys.push(itKey);
+                for (let i = 0; i < allKeys.length; i++) {
+                    if (regex.test(allKeys[i])) {
+                        matchingKeys.push(allKeys[i]);
                     }
                 }
-                const promises = [];
-                for (const itKey of matchingKeys) {
-                    promises.push(this.securedStorageObject.get(itKey)
+                let promises = [];
+                for (let z = 0; z < matchingKeys.length; z++) {
+                    promises.push(this.securedStorageObject.get(matchingKeys[z])
                         .then(currentKey => {
-                            const keyObj = JSON.parse(currentKey);
-                            keyObj[AppConfig.REMOVE_KEY] = itKey;
+                            let keyObj = JSON.parse(currentKey);
+                            keyObj[AppConfig.REMOVE_KEY] = matchingKeys[z];
                             return JSON.stringify(keyObj);
-                        }));
+                        }))
                 }
 
                 return Promise.all(promises);

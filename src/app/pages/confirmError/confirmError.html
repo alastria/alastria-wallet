@@ -15,10 +15,9 @@
     <ion-row class="ion-text-center">
         <h3 class="description"> {{ error.message }}</h3>
     </ion-row>
+    <ion-footer>
+        <ion-row class="ion-justify-content-center">
+            <ion-button class="btnConfirm" style="width: 80%" (click)="dismiss()">ACEPTAR</ion-button>
+        </ion-row>
+    </ion-footer>
 </ion-content>
-
-<ion-footer>
-    <ion-row class="ion-justify-content-center">
-        <ion-button class="btnConfirm" style="width: 80%" (click)="dismiss()">ACEPTAR</ion-button>
-    </ion-row>
-</ion-footer>

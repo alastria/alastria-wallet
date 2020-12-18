@@ -122,7 +122,7 @@ export class ConfirmAccessPage {
                     }
                 }
 
-                if (!pendingIdentities.length || !pendingIdentities[0][AppConfig.FIELD_NAME]) {
+                if (!pendingIdentities.length || !pendingIdentities[0]['field_name']) {
 
                     this.showLoading();
                     this.modalCtrl.dismiss();
@@ -130,23 +130,14 @@ export class ConfirmAccessPage {
                     const web3 = this.web3Srv.getWeb3(AppConfig.nodeURL);
                     const uri = AppConfig.procUrl;
                     const privKey = await this.securedStrg.get('userPrivateKey');
-                    const pubKey = await this.securedStrg.get('userPublicKey');
+                    const pubKey = await this.securedStrg.get('userPublicKey')
                     const did = await this.securedStrg.get('userDID');
-                    const jti = `Alastria/presentation/${Math.random().toString().substring(5)}`;
+                    const jti = `Alastria/presentation/${Math.random().toString().substring(5)}`
                     const signedCredentialJwts = this.getSignedCredentials(securedCredentials);
-                    const presentation = tokensFactory.tokens.createPresentation(
-                        did,
-                        this.verifiedJWTDecode.payload.iss,
-                        this.verifiedJWTDecode.payload.pr['@context'],
-                        signedCredentialJwts,
-                        AppConfig.procUrl,
-                        `0x${this.verifiedJWTDecode.payload.pr.procHash}`,
-                        AppConfig.TYPE,
-                        `${did}#keys-1`,
-                        pubKey,
-                        this.verifiedJWTDecode.payload.exp,
-                        this.verifiedJWTDecode.payload.nbf, jti
-                    );
+                    const presentation = tokensFactory.tokens.createPresentation(did, this.verifiedJWTDecode.payload.iss, this.verifiedJWTDecode.payload.pr['@context'],
+                                                                                signedCredentialJwts, AppConfig.procUrl, `0x${this.verifiedJWTDecode.payload.pr.procHash}`,
+                                                                                AppConfig.TYPE, `${did}#keys-1`, pubKey, this.verifiedJWTDecode.payload.exp,
+                                                                                this.verifiedJWTDecode.payload.nbf,jti)
 
                     const signedPresentation = tokensFactory.tokens.signJWT(presentation, privKey.substring(2));
                     const presentationPSMHash = tokensFactory.tokens.PSMHash(web3, signedPresentation, did);
@@ -268,18 +259,15 @@ export class ConfirmAccessPage {
     }
 
     private async notExistKey(web3: any, currentCredentialKey: string, index: number, finalCredential: any): Promise<any> {
-        return this.transactionSrv.addSubjectCredential(
-            web3,
-            this.credentialJWT[index],
-            this.verifiedJWTDecode[index][AppConfig.PAYLOAD][AppConfig.SUBJECT],
-            'www.google.com'
-        ).then(result => {
-            finalCredential[AppConfig.PSM_HASH] = result;
-            return this.securedStrg.setJSON(currentCredentialKey, finalCredential);
-        })
-        .catch(error => {
-            throw error;
-        });
+        return this.transactionSrv.addSubjectCredential(web3, this.credentialJWT[index],
+                                                        this.verifiedJWTDecode[index][AppConfig.PAYLOAD][AppConfig.SUBJECT], 'www.google.com')
+            .then(result => {
+                finalCredential[AppConfig.PSM_HASH] = result;
+                return this.securedStrg.setJSON(currentCredentialKey, finalCredential);
+            })
+            .catch(error => {
+                throw error;
+            });
     }
 
     public handleIdentitySelect(identitySelect: any): void {
