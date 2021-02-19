@@ -23,12 +23,13 @@
         (handleIdentitySelect)="handleIdentitySelect($event)"
         (loadCredential)="loadCredential($event)">
     </identity-data-list>
-    <ion-footer class="modal-buttons">
+    <div class="footer-separator"></div>
+    <div class="footer-container">
         <ion-row class="ion-justify-content-center">
             <ion-button class="btnConfirm" style="width: 80%" (click)="manageCredentials()">ACEPTAR</ion-button>
         </ion-row>
         <ion-row class="ion-justify-content-center">
             <div class="btnCancel" (click)="dismiss()">CANCELAR</div>
         </ion-row>
-    </ion-footer>
+    </div>
 </ion-content>

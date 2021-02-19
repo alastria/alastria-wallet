@@ -14,14 +14,12 @@ git clone https://github.com/alastria/alastria-wallet.git
 ## Installation 🔧
 
 ### Requirements
-* Node.js 8+
+* Node.js 10+
 * Yarn / Npm
 * Ionic 5.2.1 / Angular 8.2.14
 * Android SDK / iOS SDK
 * Cordova 9.0.0+
 * Barcode Scanner
-
-ionic cordova plugin add phonegap-plugin-barcodescanner
 
 ```
 yarn install
@@ -30,10 +28,6 @@ or
 ```
 npm install
 ```
-
-**AFTER INSTALLATION: it is necessary to do this:
-https://github.com/auth0/node-jsonwebtoken/issues/471#issuecomment-398798497
-
 
 ### Run application in browser
 ```
@@ -61,6 +55,8 @@ or
 ```
 npm run start:android
 ```
+
+The app supports Android version 9, later versions are not supported.
 
 ## Deeplinks
 To access the application through a deeplink you can access this link to see examples: https://codepen.io/samuelsan95/pen/poJwmrY

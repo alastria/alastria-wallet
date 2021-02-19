@@ -46,7 +46,7 @@ export class ActivityPage {
                 private transactionSrv: TransactionService,
                 private loadingSrv: LoadingService,
                 private router: Router,
-                private cdRef : ChangeDetectorRef,
+                private cdRef: ChangeDetectorRef,
                 public alertCtrl: AlertController,
                 public web3Srv: Web3Service,
                 public modalCtrl: ModalController,
@@ -81,15 +81,19 @@ export class ActivityPage {
                 elements.map(async (element: any) => {
                     const elementObj = JSON.parse(element);
                     const key = this.getCreedKey(elementObj);
-                    console.log(elementObj)
+                    console.log(elementObj);
 
                     if (prefix === AppConfig.CREDENTIAL_PREFIX) {
-                        promises.push(getIssuerCredentialStatus(this.transactionSrv, this.web3, elementObj[AppConfig.PSM_HASH], elementObj.iss)
-                            .then((credentialStatus) => {
-                                const statusType = parseInt(credentialStatus[1], 0);
-                                return this.createActivityObject(count++, key, elementObj[key], elementObj.entityName, elementObj.iat,
-                                    statusType, elementObj[AppConfig.REMOVE_KEY]);
-                            }));
+                        promises.push(getIssuerCredentialStatus(
+                            this.transactionSrv,
+                            this.web3,
+                            elementObj[AppConfig.PSM_HASH],
+                            elementObj.iss
+                        ).then((credentialStatus) => {
+                            const statusType = parseInt(credentialStatus[1], 0);
+                            return this.createActivityObject(count++, key, elementObj[key], elementObj.entityName, elementObj.iat,
+                                statusType, elementObj[AppConfig.REMOVE_KEY]);
+                        }));
                     } else {
                         const iat = new Date(elementObj[AppConfig.PAYLOAD][AppConfig.NBF]);
                         const iatString = iat.getDate() + '/' + (iat.getMonth() + 1) + '/' + iat.getFullYear();
@@ -315,7 +319,7 @@ export class ActivityPage {
      */
     handleSelectAll(event?: any): void {
         if (event && event.target) {
-            if (event.target.checked != this.isSelectAll) {
+            if (event.target.checked !== this.isSelectAll) {
                 this.isSelectAll = event.target.checked;
                 this.cdRef.detectChanges();
                 if (this.isSelectAll) {
@@ -331,7 +335,7 @@ export class ActivityPage {
                 }
             }
         } else {
-            if (event != this.isSelectAll) {
+            if (event !== this.isSelectAll) {
                 this.isSelectAll = event;
                 this.cdRef.detectChanges();
             }
@@ -351,8 +355,8 @@ export class ActivityPage {
             message = '¿Estas seguro de eliminar las actividades seleccionadas?';
         } else {
             title = 'Revocar presentacion';
-            // tslint:disable-next-line: max-line-length
-            message = '¿Estas seguro de que quieres revocar esta presentación? El proveedor deberá borrar las credenciales de esta presentación si solicitas la revocación.';
+            message = '¿Estas seguro de que quieres revocar esta presentación? ' +
+                'El proveedor deberá borrar las credenciales de esta presentación si solicitas la revocación.';
         }
         this.showConfirm(title, message, type);
     }
@@ -486,7 +490,7 @@ export class ActivityPage {
                     this.resetSelection();
                     from(this.getActivities()).subscribe((activitiesRes) => {
                         this.activities = activitiesRes;
-                    })
+                    });
                     return this.activities;
                 })
                 .then(() => {
