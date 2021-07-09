@@ -4,9 +4,11 @@ Example mobile application to implement Alastria user stories
 
 ## Starting 🚀
 
-These instructions will allow you to get a copy of the project running on your local machine for development and testing purposes:
+These general instructions will allow you to get a copy of the project running on your local machine for development and testing purposes. For instructions for specific operating systems, see:
+* [Docker](doc/install_docker.md)
+* [Ubuntu 16.04 LTS](doc/install_ubuntu1604.md)
 
-Clone the proyect:
+Clone the project:
 ```
 git clone https://github.com/alastria/alastria-wallet.git
 ```
