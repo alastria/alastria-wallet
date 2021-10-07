@@ -142,13 +142,14 @@ export class MessageManagerService {
                     tokensFactory.tokens.createAlastriaSession(AppConfig.AICCONTEXT, subjectDID, subjectDID, AppConfig.TYPE,
                                                                alastriaToken, expDate, pku, currentDate, jti);
                 const signedAlastriaSession = tokensFactory.tokens.signJWT(alastriaSession, privKey.substring(2));
+                const obj = {jwt: signedAlastriaSession};
                 const httpOptions = {
                     headers: new HttpHeaders({
                       'Content-Type':  'application/json',
                       Authorization: this.auth
                     })
                 };
-                await this.http.post(callbackUrl, signedAlastriaSession, httpOptions).toPromise();
+                await this.http.post(callbackUrl, obj, httpOptions).toPromise();
                 this.loadingSrv.updateModalState(this.isDeeplink);
                 this.loadingSrv.hide();
             }
@@ -186,6 +187,7 @@ export class MessageManagerService {
                 const alastriaAIC = tokensFactory.tokens.createAIC(AppConfig.AICCONTEXT,
                         AppConfig.TYPE, signedCreateTx, alastriaToken, pku);
                 const signedToken = tokensFactory.tokens.signJWT(alastriaAIC, privKey.substring(2));
+                const obj = {jwt: signedToken}
                 let DID = null;
                 const httpOptions = {
                     headers: new HttpHeaders({
@@ -193,7 +195,7 @@ export class MessageManagerService {
                       Authorization: this.auth
                     })
                 };
-                const resultCallbackUrl = await this.http.post(callbackUrl, signedToken, httpOptions).toPromise();
+                const resultCallbackUrl = await this.http.post(callbackUrl, obj, httpOptions).toPromise();
 
                 DID = resultCallbackUrl[AppConfig.DID_KEY];
 

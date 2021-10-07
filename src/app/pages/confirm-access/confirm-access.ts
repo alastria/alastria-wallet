@@ -149,6 +149,7 @@ export class ConfirmAccessPage {
                     );
 
                     const signedPresentation = tokensFactory.tokens.signJWT(presentation, privKey.substring(2));
+                    const obj = {jwt: signedPresentation};
                     const presentationPSMHash = tokensFactory.tokens.PSMHash(web3, signedPresentation, did);
                     const addPresentationTx =
                         transactionFactory.presentationRegistry.addSubjectPresentation(web3, presentationPSMHash, uri);
@@ -163,7 +164,7 @@ export class ConfirmAccessPage {
                           Authorization: this.auth
                         })
                     };
-                    await this.http.post(`${callbackUrl}`, signedPresentation, httpOptions).toPromise();
+                    await this.http.post(`${callbackUrl}`, obj, httpOptions).toPromise();
                     // tslint:disable-next-line: no-string-literal
                     presentation['PSMHash'] = presentationPSMHash;
                     await this.securedStrg.setJSON(AppConfig.PRESENTATION_PREFIX + jti, presentation);
